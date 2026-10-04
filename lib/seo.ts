@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
-export const SITE_NAME = "Sales CRM";
+export const SITE_NAME = "Evolution CRM · AI Evolution Polska";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
-export const SITE_DESCRIPTION = "Company pipeline for the sales team.";
-export const DEFAULT_OG_IMAGE = "/opengraph-image.jpg";
+export const SITE_DESCRIPTION =
+  "Evolution CRM od AI Evolution Polska. Firmy, kontakty, szanse sprzedaży i follow-upy w jednym spokojnym miejscu — po polsku.";
+export const DEFAULT_OG_IMAGE = "/opengraph-image";
 
 export function absoluteUrl(path: string) {
   return new URL(path, SITE_URL).toString();
@@ -28,7 +29,7 @@ export type SiteRoute = {
 export const SITE_ROUTES: SiteRoute[] = [
   {
     path: "/",
-    title: "Companies",
+    title: "Firmy",
     description: SITE_DESCRIPTION,
     changeFrequency: "weekly",
     priority: 1,
@@ -55,7 +56,7 @@ export function pageMetadata({
     description,
     alternates: { canonical: url },
     openGraph: {
-      locale: "en",
+      locale: "pl_PL",
       type: "website",
       url,
       siteName: SITE_NAME,

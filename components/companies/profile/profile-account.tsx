@@ -9,14 +9,17 @@ type ProfileAccountProps = {
   onOpen: () => void;
 };
 
-export default function ProfileAccount({ company, onOpen }: ProfileAccountProps) {
+export default function ProfileAccount({
+  company,
+  onOpen,
+}: ProfileAccountProps) {
   return (
     <li>
       <Button
         variant="item"
         size="md"
         onClick={onOpen}
-        aria-label={`Open ${company.name} details`}
+        aria-label={`Otwórz szczegóły firmy ${company.name}`}
         className="items-center px-2 py-2"
       >
         <span className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg shadow-[0px_0px_0px_1px_#232323]">
@@ -39,12 +42,11 @@ export default function ProfileAccount({ company, onOpen }: ProfileAccountProps)
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="truncate">{company.name}</span>
           <span className="caption-style text-subtle truncate">
-            {company.openDeals} open deals · {company.tags.join(", ")}
+            {company.openDeals} otwartych szans · {company.tags.join(", ")}
           </span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-1.5 tabular-nums">
           <span className="flex items-center gap-1">
-            <span className="text-muted-foreground">$</span>
             {formatMoney(company.pipelineValue)}
           </span>
           <SegmentBar percent={company.winProbability} className="w-[60px]" />

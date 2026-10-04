@@ -53,8 +53,8 @@ export default function CommandMenu() {
     <CommandDialog
       open={open}
       onOpenChange={setOpen}
-      title="Search"
-      description="Search companies by name, owner, segment or stage"
+      title="Szukaj"
+      description="Szukaj firm według nazwy, opiekuna, segmentu lub etapu"
       className="max-w-[960px]"
       onCloseAutoFocus={(event) => {
         if (actionRan.current) event.preventDefault();
@@ -66,12 +66,12 @@ export default function CommandMenu() {
         <CommandInput
           value={query}
           onValueChange={setQuery}
-          placeholder="Search companies, owners, stages…"
+          placeholder="Szukaj firm, opiekunów, etapów…"
           trailing={<Kbd>Esc</Kbd>}
         />
         <CommandTableHeader />
         <CommandList>
-          <CommandEmpty>No results for “{query}”</CommandEmpty>
+          <CommandEmpty>Brak wyników dla „{query}”</CommandEmpty>
           <CommandGroup>
             {companies.map((company) => (
               <CommandCompanyRow
@@ -82,16 +82,16 @@ export default function CommandMenu() {
             ))}
           </CommandGroup>
           <CommandSeparator />
-          <CommandGroup heading="Actions">
+          <CommandGroup heading="Działania">
             <CommandItem
               value="new-company"
-              keywords={["New Company", "Add", "Create"]}
+              keywords={["Nowa firma", "Dodaj", "Utwórz"]}
               onSelect={() => run(() => setNewCompanyOpen(true))}
             >
               <span className="bg-muted flex size-6 shrink-0 items-center justify-center rounded-md shadow-[0px_0px_0px_1px_#232323]">
                 <PlusIcon aria-hidden className="text-soft size-3" />
               </span>
-              New Company
+              Nowa firma
             </CommandItem>
           </CommandGroup>
         </CommandList>
@@ -99,11 +99,11 @@ export default function CommandMenu() {
           <span className="flex items-center gap-1.5">
             <Kbd>↑</Kbd>
             <Kbd>↓</Kbd>
-            Navigate
+            Nawiguj
           </span>
           <span className="flex items-center gap-1.5">
             <Kbd>↵</Kbd>
-            Open
+            Otwórz
           </span>
         </CommandFooter>
       </Command>

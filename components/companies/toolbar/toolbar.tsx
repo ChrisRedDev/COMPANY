@@ -39,7 +39,10 @@ export default function CompaniesToolbar() {
       stage,
       activityWindow,
     });
-    downloadCsv(`companies-${TODAY}.csv`, companiesCsvRows(visible));
+    downloadCsv(
+      `ai-evolution-polska-firmy-${TODAY}.csv`,
+      companiesCsvRows(visible),
+    );
   }
 
   return (
@@ -48,25 +51,25 @@ export default function CompaniesToolbar() {
 
       <div className="hidden min-w-0 flex-wrap gap-2 sm:flex">
         <FilterMenu
-          label="Sort by"
+          label="Sortuj według"
           value={sortBy}
           options={SORT_MENU_OPTIONS}
           onChange={(value) => setSortBy(value as SortKey)}
         />
         <FilterMenu
-          label="Filter"
+          label="Opiekun"
           value={owner}
           options={OWNER_OPTIONS}
           onChange={setOwner}
         />
         <FilterMenu
-          label="Stage"
+          label="Etap"
           value={stage}
           options={STAGE_OPTIONS}
           onChange={setStage}
         />
         <FilterMenu
-          label="Last Activity"
+          label="Ostatnia aktywność"
           value={String(activityWindow)}
           options={ACTIVITY_OPTIONS}
           onChange={(value) => setActivityWindow(Number(value))}
@@ -76,7 +79,7 @@ export default function CompaniesToolbar() {
       <div className="flex shrink-0 items-center gap-1">
         <Button variant="secondary" size="sm" onClick={exportCsv}>
           <ShareIcon aria-hidden className="size-3" />
-          Export
+          Eksportuj
         </Button>
         <Button
           variant="primary"
@@ -84,7 +87,7 @@ export default function CompaniesToolbar() {
           onClick={() => setNewCompanyOpen(true)}
         >
           <PlusIcon aria-hidden className="size-3" />
-          New Company
+          Nowa firma
         </Button>
       </div>
     </div>

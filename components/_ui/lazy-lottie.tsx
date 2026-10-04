@@ -212,7 +212,7 @@ function Video({
         type="video/webm"
         media="(max-width: 769px)"
       />
-      Your browser does not support the video tag.
+      Twoja przeglądarka nie obsługuje odtwarzania wideo.
     </video>
   );
 }

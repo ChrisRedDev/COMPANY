@@ -34,11 +34,11 @@ export default function LogoUpload({
   function readFile(file: File | undefined) {
     if (!file) return;
     if (!ACCEPTED.includes(file.type)) {
-      setError("Use a PNG, JPG, WebP or SVG image.");
+      setError("Wybierz obraz w formacie PNG, JPG, WebP lub SVG.");
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError("Keep the image under 2 MB.");
+      setError("Obraz może mieć maksymalnie 2 MB.");
       return;
     }
     const reader = new FileReader();
@@ -78,7 +78,7 @@ export default function LogoUpload({
           <Asset
             type="image"
             src={value}
-            alt="Company logo preview"
+            alt="Podgląd logo firmy"
             width={1}
             height={1}
             fit="contain"
@@ -99,7 +99,7 @@ export default function LogoUpload({
             onClick={() => inputRef.current?.click()}
             aria-describedby={hintId}
           >
-            {value ? "Replace logo" : "Upload logo"}
+            {value ? "Zmień logo" : "Dodaj logo"}
           </Button>
           {value && (
             <Button
@@ -110,7 +110,7 @@ export default function LogoUpload({
                 onChange(null);
               }}
             >
-              Remove
+              Usuń
             </Button>
           )}
         </div>
@@ -123,7 +123,7 @@ export default function LogoUpload({
           )}
         >
           {error ??
-            "PNG, JPG, WebP or SVG up to 2 MB. You can also drop a file here."}
+            "PNG, JPG, WebP lub SVG do 2 MB. Możesz też przeciągnąć plik tutaj."}
         </span>
       </div>
 

@@ -75,7 +75,7 @@ export default function CompaniesTable() {
                               : false
                         }
                         onCheckedChange={toggleAll}
-                        aria-label="Select all companies"
+                        aria-label="Zaznacz wszystkie firmy"
                       />
                       {column.label}
                     </span>
@@ -104,7 +104,7 @@ export default function CompaniesTable() {
                   role="cell"
                   className="caption-style text-muted-foreground col-span-full flex h-[120px] items-center justify-center"
                 >
-                  No companies match the current filters.
+                  Żadna firma nie pasuje do wybranych filtrów.
                 </td>
               </TableRow>
             )}

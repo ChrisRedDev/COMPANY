@@ -97,7 +97,7 @@ export default function NotificationItem({
             )}
           </span>
         </span>
-        {unread && <span className="sr-only">Unread</span>}
+        {unread && <span className="sr-only">Nieprzeczytane</span>}
       </Button>
       {unread && (
         <span

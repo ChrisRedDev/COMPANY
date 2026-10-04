@@ -55,17 +55,17 @@ export default function CompanyDetail() {
         <SheetHeader>
           <div className="flex items-center gap-2">
             <BuildingIcon aria-hidden className="text-icon size-3.5" />
-            <SheetTitle>Companies Detail</SheetTitle>
+            <SheetTitle>Szczegóły firmy</SheetTitle>
           </div>
           <SheetDescription className="sr-only">
-            Account summary, pipeline health, activity and score cards
+            Podsumowanie firmy, kondycja sprzedaży, aktywności i oceny
           </SheetDescription>
           <SheetClose asChild>
             <Button
               variant="ghost"
               size="icon-sm"
               className="-mr-1"
-              aria-label="Close details"
+              aria-label="Zamknij szczegóły"
             >
               <XIcon aria-hidden className="text-foreground size-4" />
             </Button>
@@ -80,7 +80,7 @@ export default function CompanyDetail() {
                   <Asset
                     type="image"
                     src={company.logo}
-                    alt={`${company.name} logo`}
+                    alt={`Logo firmy ${company.name}`}
                     width={1}
                     height={1}
                     fit="contain"
@@ -104,13 +104,13 @@ export default function CompanyDetail() {
               </div>
             </div>
 
-            <DetailSection title="Account summary">
+            <DetailSection title="Opiekun i kontakt">
               <div className="lead-style flex flex-wrap items-center gap-x-4 gap-y-3">
                 <Button
                   variant="ghost"
                   size="none"
                   onClick={() => openProfile(owner.name)}
-                  aria-label={`Open ${owner.name} profile`}
+                  aria-label={`Otwórz profil: ${owner.name}`}
                   className="lead-style text-foreground -mx-1.5 gap-1.5 px-1.5 py-1 font-medium"
                 >
                   <Avatar src={owner.avatar} alt="" />
@@ -127,12 +127,12 @@ export default function CompanyDetail() {
               </div>
             </DetailSection>
 
-            <DetailSection title="Pipeline health">
+            <DetailSection title="Kondycja sprzedaży">
               <PipelineHealth company={company} />
             </DetailSection>
 
             <DetailSection
-              title="Activity trend"
+              title="Trend aktywności"
               action={
                 <FilterMenu
                   value={trendWindow}
@@ -146,7 +146,7 @@ export default function CompanyDetail() {
             </DetailSection>
 
             <DetailSection
-              title="Score card"
+              title="Ocena współpracy"
               className="gap-3 shadow-none"
               action={
                 <FilterMenu
@@ -169,16 +169,16 @@ export default function CompanyDetail() {
 
         <SheetFooter>
           <Button variant="link" size="none" href="#" className="lead-style">
-            Need help? Ask us.
+            Potrzebujesz pomocy? Napisz do nas.
           </Button>
           <div className="flex items-center gap-2">
             <SheetClose asChild>
               <Button variant="subtle" size="sm">
-                Cancel
+                Anuluj
               </Button>
             </SheetClose>
             <Button variant="primary" size="sm" onClick={closeDetail}>
-              Save Update
+              Zapisz zmiany
             </Button>
           </div>
         </SheetFooter>

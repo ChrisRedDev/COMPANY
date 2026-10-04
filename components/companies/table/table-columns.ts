@@ -1,29 +1,29 @@
 export const TABLE_COLUMNS = [
-  { key: "name", label: "Companies", className: "justify-start" },
-  { key: "segment", label: "Segment & Stage", className: "justify-start" },
-  { key: "owner", label: "Account Owner", className: "justify-start" },
+  { key: "name", label: "Firmy", className: "justify-start" },
+  { key: "segment", label: "Segment i etap", className: "justify-start" },
+  { key: "owner", label: "Opiekun firmy", className: "justify-start" },
   {
     key: "openDeals",
-    label: "Open Deals",
+    label: "Otwarte szanse",
     className: "justify-end tabular-nums",
   },
   {
     key: "pipelineValue",
-    label: "Pipeline Value",
+    label: "Wartość szans",
     className: "justify-end tabular-nums",
   },
   {
     key: "winProbability",
-    label: "Win Probability",
+    label: "Szansa wygranej",
     className: "justify-end tabular-nums",
   },
-  { key: "trend", label: "Activity Trend", className: "justify-center" },
+  { key: "trend", label: "Trend aktywności", className: "justify-center" },
   {
     key: "lastInteraction",
-    label: "Last Interaction",
+    label: "Ostatni kontakt",
     className: "justify-start",
   },
-  { key: "action", label: "Action", className: "justify-center" },
+  { key: "action", label: "Działanie", className: "justify-center" },
 ] as const;
 
 export type TableColumnKey = (typeof TABLE_COLUMNS)[number]["key"];

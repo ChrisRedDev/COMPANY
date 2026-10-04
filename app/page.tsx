@@ -1,11 +1,4 @@
-import Sidebar from "@/components/_common/sidebar/sidebar";
-import Companies from "@/components/companies/companies";
-
+import Workspace from "@/components/crm/workspace";
 export default function Home() {
-  return (
-    <main className="flex h-dvh max-w-full overflow-hidden">
-      <Sidebar />
-      <Companies />
-    </main>
-  );
+  return <Workspace />;
 }

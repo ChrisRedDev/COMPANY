@@ -11,9 +11,9 @@ import ActiveDot from "@/public/assets/images/companies/header/active-dot.svg";
 import SearchIcon from "@/public/assets/images/_common/search.svg";
 
 const TABS = [
-  { value: "companies", label: "Companies" },
-  { value: "deals", label: "Deals" },
-  { value: "forecast", label: "Forecast" },
+  { value: "companies", label: "Firmy" },
+  { value: "deals", label: "Szanse sprzedaży" },
+  { value: "forecast", label: "Prognoza" },
 ];
 
 export default function CompaniesHeader() {
@@ -31,15 +31,15 @@ export default function CompaniesHeader() {
             variant="secondary"
             size="icon"
             className="lg:hidden"
-            aria-label="Open navigation"
+            aria-label="Otwórz nawigację"
             onClick={() => setSidebarOpen(true)}
           >
             <MenuIcon aria-hidden className="size-3.5" />
           </Button>
-          <h1 className="truncate">Companies</h1>
+          <h1 className="truncate">Firmy</h1>
           <span className="caption-style bg-muted inline-flex shrink-0 items-center gap-0.5 rounded-full border border-[#363636] py-[3px] pr-[5px] pl-[3px]">
             <ActiveDot aria-hidden className="size-3" />
-            Active
+            Aktywne
           </span>
         </div>
 
@@ -47,7 +47,7 @@ export default function CompaniesHeader() {
           <Button
             variant="secondary"
             size="icon"
-            aria-label="Search"
+            aria-label="Szukaj"
             aria-keyshortcuts="Meta+K Control+K"
             onClick={() => setSearchOpen(true)}
           >
@@ -58,7 +58,7 @@ export default function CompaniesHeader() {
             variant="secondary"
             size="none"
             className="caption-style h-[30px] gap-1.5 py-[5px] pr-[7px] pl-[5px] font-normal"
-            aria-label={`Open profile for ${CURRENT_USER.name}`}
+            aria-label={`Otwórz profil: ${CURRENT_USER.name}`}
             onClick={() => openProfile(CURRENT_USER.name)}
           >
             <Avatar src={CURRENT_USER.avatar} alt="" />

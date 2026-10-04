@@ -24,8 +24,6 @@ import UserPlusIcon from "@/public/assets/images/companies/sidebar/user-plus.svg
 import MessageQuestionIcon from "@/public/assets/images/companies/sidebar/message-question.svg";
 import WalletIcon from "@/public/assets/images/companies/sidebar/wallet.svg";
 
-const BASE_COMPANY_COUNT = 223;
-
 export default function SidebarContent() {
   const companyCount = useCompaniesStore((state) => state.companies.length);
 
@@ -33,53 +31,58 @@ export default function SidebarContent() {
     <div className="flex h-full min-h-0 flex-col">
       <div className="border-sidebar-border bg-sidebar-accent flex shrink-0 items-center gap-2 border-b p-3">
         <Logo aria-hidden className="size-8 shrink-0 overflow-visible" />
-        <div className="flex min-w-0 flex-col gap-1">
-          <span className="lead-style block truncate font-medium tracking-[-0.01em]">
-            Sales CRM
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <span className="block text-[12px] leading-tight font-bold tracking-[0.08em]">
+            AI EVOLUTION
+            <br />
+            <span className="text-[#bca8ff]">POLSKA</span>
           </span>
           <span className="caption-style text-subtle block truncate">
-            Company pipeline
+            CRM · Sprzedaż i relacje
           </span>
         </div>
       </div>
 
       <ScrollArea className="min-h-0 flex-1">
-        <nav aria-label="Primary">
+        <nav aria-label="Nawigacja główna">
           <SidebarSection className="border-sidebar-border border-b">
             <SidebarNavItem
               icon={BuildingIcon}
-              label="Companies"
-              count={BASE_COMPANY_COUNT + companyCount}
+              label="Firmy"
+              count={companyCount}
               active
             />
-            <SidebarNavItem icon={ClipboardIcon} label="Deals Board" />
-            <SidebarNavItem icon={BarChartIcon} label="Forecast" count={9} />
-            <SidebarNavItem icon={ListIcon} label="Activities" />
-            <SidebarNavItem icon={BookClosedIcon} label="Contacts" count={38} />
-            <SidebarNavItem icon={MailIcon} label="Email Sequences" />
+            <SidebarNavItem icon={ClipboardIcon} label="Tablica szans" />
+            <SidebarNavItem icon={BarChartIcon} label="Prognoza" count={9} />
+            <SidebarNavItem icon={ListIcon} label="Aktywności" />
+            <SidebarNavItem icon={BookClosedIcon} label="Kontakty" count={38} />
+            <SidebarNavItem icon={MailIcon} label="Sekwencje e-mail" />
           </SidebarSection>
 
           <SidebarSection
-            title="Team"
+            title="Zespół"
             className="border-sidebar-border border-b"
           >
-            <SidebarNavItem icon={TargetIcon} label="Strategic AEs" />
-            <SidebarNavItem icon={TargetAltIcon} label="Mid Market" />
-            <SidebarNavItem icon={UsersIcon} label="SDR Team" />
+            <SidebarNavItem icon={TargetIcon} label="Klienci strategiczni" />
+            <SidebarNavItem icon={TargetAltIcon} label="Średnie firmy" />
+            <SidebarNavItem icon={UsersIcon} label="Pozyskiwanie klientów" />
           </SidebarSection>
 
           <SidebarSection
-            title="Reporting"
+            title="Raporty"
             className="border-sidebar-border border-b"
           >
-            <SidebarNavItem icon={BarChartAltIcon} label="Q1 Forecast" />
-            <SidebarNavItem icon={AlertTriangleIcon} label="Slipping Deals" />
+            <SidebarNavItem
+              icon={BarChartAltIcon}
+              label="Prognoza na I kwartał"
+            />
+            <SidebarNavItem icon={AlertTriangleIcon} label="Zagrożone szanse" />
           </SidebarSection>
 
-          <SidebarSection title="Pipelines">
-            <SidebarNavItem icon={DotYellow} label="North America" />
-            <SidebarNavItem icon={DotPink} label="EMEA Enterprise" />
-            <SidebarNavItem icon={DotPurple} label="APAC Expansion" />
+          <SidebarSection title="Procesy sprzedaży">
+            <SidebarNavItem icon={DotYellow} label="Polska" />
+            <SidebarNavItem icon={DotPink} label="Duże firmy" />
+            <SidebarNavItem icon={DotPurple} label="Rozwój współpracy" />
           </SidebarSection>
         </nav>
       </ScrollArea>
@@ -87,24 +90,24 @@ export default function SidebarContent() {
       <SidebarSection className="border-sidebar-border shrink-0 border-t border-b">
         <SidebarNavItem
           icon={UserPlusIcon}
-          label="Invite teammates"
+          label="Zaproś do zespołu"
           tone="quiet"
         />
-        <SidebarNavItem icon={MessageQuestionIcon} label="Help" tone="quiet" />
+        <SidebarNavItem icon={MessageQuestionIcon} label="Pomoc" tone="quiet" />
       </SidebarSection>
 
       <div className="border-sidebar-border bg-sidebar-accent flex shrink-0 items-center justify-between gap-2 border-b p-4">
         <div className="flex flex-col gap-2">
           <span className="lead-style block font-medium tracking-[-0.01em]">
-            14 Days
+            14 dni
           </span>
           <span className="caption-style text-subtle block">
-            Left on trials
+            Do końca okresu próbnego
           </span>
         </div>
         <Button variant="muted" size="md">
           <WalletIcon aria-hidden className="size-3.5" />
-          Add Billings
+          Rozliczenia
         </Button>
       </div>
     </div>

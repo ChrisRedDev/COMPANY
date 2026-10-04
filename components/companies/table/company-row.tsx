@@ -64,7 +64,7 @@ export default function CompanyRow({
             checked={selected}
             onCheckedChange={onToggle}
             onClick={stop}
-            aria-label={`Select ${company.name}`}
+            aria-label={`Zaznacz firmę ${company.name}`}
           />
           {company.name}
         </span>
@@ -88,7 +88,7 @@ export default function CompanyRow({
           variant="ghost"
           size="none"
           onClick={onOpenOwner}
-          aria-label={`Open ${owner.name} profile`}
+          aria-label={`Otwórz profil: ${owner.name}`}
           className="text-foreground -mx-1.5 gap-1.5 px-1.5 py-1 font-normal"
         >
           <Avatar src={owner.avatar} alt="" />
@@ -100,7 +100,6 @@ export default function CompanyRow({
       </TableCell>
       <TableCell role="cell" className={cellClass("pipelineValue")}>
         <span className="flex items-center gap-1">
-          <span className="text-muted-foreground">$</span>
           {formatMoney(company.pipelineValue)}
         </span>
       </TableCell>
@@ -131,7 +130,7 @@ export default function CompanyRow({
           variant="ghost"
           size="icon-sm"
           className={cn("text-foreground", active && "bg-white/6")}
-          aria-label={`Open ${company.name} details`}
+          aria-label={`Otwórz szczegóły firmy ${company.name}`}
           onClick={onOpen}
         >
           <DotsIcon aria-hidden className="size-3" />

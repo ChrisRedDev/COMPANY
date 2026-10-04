@@ -38,7 +38,10 @@ export default function Profile() {
         .sort((a, b) => b.pipelineValue - a.pipelineValue)
     : [];
 
-  const openDeals = accounts.reduce((sum, company) => sum + company.openDeals, 0);
+  const openDeals = accounts.reduce(
+    (sum, company) => sum + company.openDeals,
+    0,
+  );
   const pipeline = accounts.reduce(
     (sum, company) => sum + company.pipelineValue,
     0,
@@ -51,10 +54,10 @@ export default function Profile() {
     : 0;
 
   const stats = [
-    { label: "Accounts", value: String(accounts.length) },
-    { label: "Open deals", value: String(openDeals) },
-    { label: "Pipeline", value: `$${formatMoney(pipeline)}` },
-    { label: "Avg. win", value: `${avgWin}%` },
+    { label: "Firmy", value: String(accounts.length) },
+    { label: "Otwarte szanse", value: String(openDeals) },
+    { label: "Wartość szans", value: formatMoney(pipeline) },
+    { label: "Śr. szansa wygranej", value: `${avgWin}%` },
   ];
 
   function showAccounts() {
@@ -71,17 +74,19 @@ export default function Profile() {
         <SheetHeader>
           <div className="flex items-center gap-2">
             <UsersIcon aria-hidden className="text-icon size-3.5" />
-            <SheetTitle>{isCurrentUser ? "My Profile" : "Owner Profile"}</SheetTitle>
+            <SheetTitle>
+              {isCurrentUser ? "Mój profil" : "Profil opiekuna"}
+            </SheetTitle>
           </div>
           <SheetDescription className="sr-only">
-            Contact details, pipeline summary and assigned accounts
+            Dane kontaktowe, podsumowanie sprzedaży i przypisane firmy
           </SheetDescription>
           <SheetClose asChild>
             <Button
               variant="ghost"
               size="icon-sm"
               className="-mr-1"
-              aria-label="Close profile"
+              aria-label="Zamknij profil"
             >
               <XIcon aria-hidden className="text-foreground size-4" />
             </Button>
@@ -104,7 +109,7 @@ export default function Profile() {
               </div>
             </div>
 
-            <DetailSection title="Contact">
+            <DetailSection title="Kontakt">
               <div className="lead-style flex flex-wrap items-center gap-x-4 gap-y-3">
                 <a
                   href={`mailto:${person.email}`}
@@ -123,7 +128,9 @@ export default function Profile() {
               </div>
             </DetailSection>
 
-            <DetailSection title={isCurrentUser ? "Team pipeline" : "Pipeline"}>
+            <DetailSection
+              title={isCurrentUser ? "Wartość szans zespołu" : "Wartość szans"}
+            >
               <div className="grid grid-cols-2 gap-2">
                 {stats.map((stat) => (
                   <div
@@ -142,7 +149,7 @@ export default function Profile() {
             </DetailSection>
 
             <DetailSection
-              title={isCurrentUser ? "Team accounts" : "Accounts"}
+              title={isCurrentUser ? "Firmy zespołu" : "Firmy"}
               className="shadow-none"
             >
               {accounts.length > 0 ? (
@@ -157,7 +164,7 @@ export default function Profile() {
                 </ul>
               ) : (
                 <span className="caption-style text-subtle block">
-                  No accounts assigned yet.
+                  Brak przypisanych firm.
                 </span>
               )}
             </DetailSection>
@@ -167,7 +174,7 @@ export default function Profile() {
         <SheetFooter>
           <SheetClose asChild>
             <Button variant="subtle" size="sm">
-              Close
+              Zamknij
             </Button>
           </SheetClose>
           <Button
@@ -176,7 +183,9 @@ export default function Profile() {
             onClick={showAccounts}
             disabled={accounts.length === 0}
           >
-            {isCurrentUser ? "Show all accounts" : "Filter table by owner"}
+            {isCurrentUser
+              ? "Pokaż wszystkie firmy"
+              : "Filtruj według opiekuna"}
           </Button>
         </SheetFooter>
       </SheetContent>

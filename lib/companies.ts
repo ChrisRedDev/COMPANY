@@ -7,7 +7,12 @@ export type CompanyFilters = {
   activityWindow: number;
 };
 
-export const TODAY = "2026-09-14";
+export const TODAY = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Europe/Warsaw",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date());
 
 export const ALL_OWNERS = "all";
 export const ANY_STAGE = "any";
@@ -48,7 +53,7 @@ export function filterCompanies(
   return filtered.sort((a, b) => {
     switch (sortBy) {
       case "name":
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name, "pl");
       case "lastInteraction":
         return b.lastInteraction.date.localeCompare(a.lastInteraction.date);
       case "openDeals":
@@ -64,14 +69,14 @@ export function filterCompanies(
 export function companiesCsvRows(companies: Company[]) {
   return [
     [
-      "Company",
-      "Segment & Stage",
-      "Account Owner",
-      "Open Deals",
-      "Pipeline Value",
-      "Win Probability (%)",
-      "Last Interaction Date",
-      "Last Interaction",
+      "Firma",
+      "Segment i etap",
+      "Opiekun firmy",
+      "Otwarte szanse",
+      "Wartość szans (PLN)",
+      "Szansa wygranej (%)",
+      "Data ostatniego kontaktu",
+      "Ostatni kontakt",
     ],
     ...companies.map((company) => [
       company.name,
@@ -80,7 +85,7 @@ export function companiesCsvRows(companies: Company[]) {
       company.openDeals,
       company.pipelineValue,
       company.winProbability,
-      company.lastInteraction.date,
+      formatDate(company.lastInteraction.date),
       company.lastInteraction.label,
     ]),
   ];
@@ -121,26 +126,20 @@ export function companyActivity(company: Company) {
 }
 
 export function formatDate(iso: string) {
-  const [, month, day] = iso.split("-").map(Number);
-  const names = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  return `${names[month - 1]} ${day}`;
+  return new Intl.DateTimeFormat("pl-PL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "Europe/Warsaw",
+  }).format(new Date(`${iso}T12:00:00Z`));
 }
 
 export function formatMoney(value: number) {
-  return value.toLocaleString("en-US");
+  return new Intl.NumberFormat("pl-PL", {
+    style: "currency",
+    currency: "PLN",
+    maximumFractionDigits: 0,
+  }).format(value);
 }
 
 export function daysSince(iso: string) {

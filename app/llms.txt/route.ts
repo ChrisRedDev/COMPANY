@@ -18,7 +18,7 @@ export async function GET() {
     "",
     `> ${SITE_DESCRIPTION}`,
     "",
-    "## Pages",
+    "## Strony",
     "",
     ...pages,
     "",

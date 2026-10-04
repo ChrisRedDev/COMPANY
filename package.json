@@ -1,5 +1,5 @@
 {
-  "name": "kargul-starter",
+  "name": "ai-evolution-polska-crm",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +9,9 @@
     "lint": "eslint",
     "extract:avif": "bash scripts/extract_webm_frames.sh",
     "to:avif": "node scripts/to-avif.mjs",
-    "frame:rive": "node scripts/rive-frame.mjs"
+    "frame:rive": "node scripts/rive-frame.mjs",
+    "test": "node tests/crm.test.cjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@rive-app/canvas": "^2.31.0",
@@ -31,6 +33,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
