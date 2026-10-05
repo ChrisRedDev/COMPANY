@@ -1,4 +1,10 @@
 "use client";
+import { isSqlite } from "@/lib/growth/model";
+import Brain from "../local/brain";
+import Connectors from "../local/connectors";
+import Marketing from "../local/marketing";
+import AiAgent from "../local/agent";
+import LocalUnavailable from "../local/unavailable";
 import Image from "next/image";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useCrm } from "@/stores/crm-store";
@@ -53,6 +59,21 @@ const NAV: { id: Section; title: string; description: string }[] = [
     description: "Asystent, który pomaga wrócić do kontaktu.",
   },
   {
+    id: "brain",
+    title: "Company Brain",
+    description: "Wiedza firmy w notatkach Markdown i linkach.",
+  },
+  {
+    id: "connectors",
+    title: "Konektory",
+    description: "Połączenia, importy i stan źródeł danych.",
+  },
+  {
+    id: "ai",
+    title: "AI Brain",
+    description: "Twój agent, model i propozycje do zatwierdzenia.",
+  },
+  {
     id: "settings",
     title: "Ustawienia",
     description: "Poczta, podpis i kopie Twoich danych.",
@@ -60,8 +81,17 @@ const NAV: { id: Section; title: string; description: string }[] = [
 ];
 export default function Workspace({
   cloud,
+  storageBusy,
+  reloadDatabase,
 }: {
-  cloud?: { name: string; readOnly: boolean };
+  cloud?: {
+    id?: string;
+    storage?: "sqlite" | "supabase";
+    name: string;
+    readOnly: boolean;
+  };
+  storageBusy?: boolean;
+  reloadDatabase?: () => void;
 }) {
   const cloudName = cloud?.name;
   const readOnly = cloud?.readOnly;
@@ -182,8 +212,9 @@ export default function Workspace({
         />
         <div>
           <strong>
-            Evolution{cloud && <br />}
-            <span>{cloud ? "Growth OS" : "CRM"}</span>
+            Evolution
+            <br />
+            <span>Growth OS</span>
           </strong>
           <small>AI EVOLUTION POLSKA</small>
         </div>
@@ -225,6 +256,28 @@ export default function Workspace({
             {n.id === "agent" && <span className="crm-mini-badge">AGENT</span>}
           </button>
         ))}
+        <div className="crm-nav-caption">WIEDZA I DANE</div>
+        {NAV.filter((n) => ["brain", "connectors", "ai"].includes(n.id)).map(
+          (n) => (
+            <button
+              key={n.id}
+              aria-label={n.title}
+              className={`crm-nav-item ${section === n.id ? "active" : ""}`}
+              onClick={() => navigate(n.id)}
+            >
+              <Icon
+                name={
+                  n.id === "brain"
+                    ? "companies"
+                    : n.id === "ai"
+                      ? "agent"
+                      : "settings"
+                }
+              />
+              <span>{n.title}</span>
+            </button>
+          ),
+        )}
       </nav>
       <div className="crm-sidebar-bottom">
         <div className="crm-sidebar-promo">
@@ -259,7 +312,9 @@ export default function Workspace({
         <div className="crm-local-label">
           <span />
           {cloud
-            ? "Tryb chmurowy · Supabase"
+            ? isSqlite()
+              ? "Tryb lokalny · SQLite"
+              : "Tryb chmurowy · Supabase"
             : "Tryb lokalny · Twoja przeglądarka"}
         </div>
       </div>
@@ -292,7 +347,11 @@ export default function Workspace({
           <div className="crm-topbar-right">
             <span className="crm-save-status">
               <span />
-              {cloud ? "Baza Supabase" : "Zapis w przeglądarce"}
+              {cloud
+                ? isSqlite()
+                  ? "Baza SQLite"
+                  : "Baza Supabase"
+                : "Zapis w przeglądarce"}
             </span>
             <button
               className="crm-icon-button"
@@ -386,7 +445,37 @@ export default function Workspace({
               </p>
             </div>
           )}
-          {section === "dashboard" && <Dashboard {...props} />}{" "}
+          {section === "dashboard" && (
+            <>
+              {isSqlite() && cloud?.id && (
+                <Marketing
+                  wid={cloud.id}
+                  openConnectors={() => navigate("connectors")}
+                />
+              )}
+              <Dashboard {...props} />
+            </>
+          )}{" "}
+          {["brain", "connectors", "ai"].includes(section) &&
+            (!isSqlite() || !cloud?.id) && <LocalUnavailable />}
+          {section === "brain" && isSqlite() && cloud?.id && (
+            <Brain wid={cloud.id} openAi={() => navigate("ai")} />
+          )}
+          {section === "connectors" && isSqlite() && cloud?.id && (
+            <Connectors
+              wid={cloud.id}
+              mailSettings={() => navigate("settings")}
+              openAi={() => navigate("ai")}
+              openBrain={() => navigate("brain")}
+            />
+          )}
+          {section === "ai" && isSqlite() && cloud?.id && (
+            <AiAgent
+              wid={cloud.id}
+              storageBusy={storageBusy}
+              onApplied={() => reloadDatabase?.()}
+            />
+          )}
           {section === "companies" && <Firms {...props} />}{" "}
           {section === "deals" && <Deals {...props} />}{" "}
           {section === "contacts" && <Contacts {...props} />}{" "}

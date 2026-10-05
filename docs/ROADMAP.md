@@ -20,3 +20,7 @@ Dane biznesowe, podpis i ustawienia zapisują się wyłącznie w localStorage. B
 8. **Raporty i automatyzacje**: daily/weekly/monthly z faktów, dry-run reguł, harmonogram, ograniczenia wykonania.
 
 Po każdej fazie: lint, TypeScript, unit/integration, Playwright, build, dokumentacja i mały logiczny commit. Pełne live API po MVP. Prawdziwy Supabase musi mieć osobną walidację wdrożeniową; test provider nie potwierdza dostępu do produkcji.
+
+## Aktualizacja: lokalna edycja na życzenie użytkownika
+
+Dodano niezależną opcję SQLite z przestrzeniami, Company Brain Markdown i eksportem do Obsidiana, importem kampanii i dashboardem, adapterami odczytu WordPress/PostHog oraz AI Brain (OpenRouter i lokalne CLI). Zadania/notatki agenta wymagają zatwierdzenia. To lokalna implementacja wybranych funkcji, nie zakończenie wszystkich faz ani automatyczna migracja do Supabase. Szczegóły w LOCAL-EDITION.md.

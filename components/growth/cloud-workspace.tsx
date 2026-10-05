@@ -1,4 +1,5 @@
 "use client";
+import { isSqlite } from "@/lib/growth/model";
 import { useEffect, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import Workspace from "../crm/workspace";
@@ -14,13 +15,16 @@ import {
 import { downloadFile } from "@/lib/crm/backup";
 import { Field } from "../crm/ui";
 export default function CloudWorkspace({ user }: { user: User }) {
+  const savedLabel = isSqlite() ? "Zapisano w SQLite" : "Zapisano w Supabase";
   const [spaces, setSpaces] = useState<WorkspaceInfo[]>([]),
     [selected, setSelected] = useState<WorkspaceInfo | null>(null),
     [loaded, setLoaded] = useState(false),
     [loading, setLoading] = useState(false),
     [error, setError] = useState(""),
     [sync, setSync] = useState("Wybierz przestrzeń"),
-    [members, setMembers] = useState(false);
+    [members, setMembers] = useState(false),
+    [createOpen, setCreateOpen] = useState(false),
+    [spacesReady, setSpacesReady] = useState(false);
   const pending =
     sync === "Zmiany oczekują na zapis" ||
     sync === "Zapisywanie…" ||
@@ -28,17 +32,22 @@ export default function CloudWorkspace({ user }: { user: User }) {
   const dirty = useRef(false),
     failure = useRef(false),
     revision = useRef(0);
+  const refresh = useRef<() => Promise<void>>(async () => {});
   useEffect(() => {
     let active = true;
     cloudRequest("")
       .then((r) => {
         if (active) {
           setSpaces(r.workspaces);
+          if (!r.workspaces.length) setCreateOpen(true);
           setSelected(r.workspaces[0] ?? null);
         }
       })
       .catch((e) => {
         if (active) setError(e.message);
+      })
+      .finally(() => {
+        if (active) setSpacesReady(true);
       });
     return () => {
       active = false;
@@ -47,7 +56,8 @@ export default function CloudWorkspace({ user }: { user: User }) {
   useEffect(() => {
     if (!selected) return;
     let active = true,
-      writing = false;
+      writing = false,
+      hydrating = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     queueMicrotask(() => {
       if (active) {
@@ -82,7 +92,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
         });
         if (active) {
           revision.current = result.revision;
-          setSync(dirty.current ? "Zapisywanie…" : "Zapisano w Supabase");
+          setSync(dirty.current ? "Zapisywanie…" : savedLabel);
         }
       } catch (e) {
         if (active) {
@@ -103,9 +113,10 @@ export default function CloudWorkspace({ user }: { user: User }) {
         revision.current = state.revision;
         useCrm.setState({ ...state.data, ...state.settings });
         setLoaded(true);
-        setSync("Zapisano w Supabase");
+        setSync(savedLabel);
         if (canWrite(selected.role))
           unsubscribe = useCrm.subscribe((next, prev) => {
+            if (hydrating) return;
             if (
               JSON.stringify(snapshot(next, 0)) ===
               JSON.stringify(snapshot(prev, 0))
@@ -126,6 +137,34 @@ export default function CloudWorkspace({ user }: { user: User }) {
       .finally(() => {
         if (active) setLoading(false);
       });
+    refresh.current = async () => {
+      if (!active || writing || dirty.current || failure.current) return;
+      setLoading(true);
+      setSync("Wczytywanie…");
+      try {
+        const state = validateSnapshot(
+          await cloudRequest(`/${selected.id}/data`),
+        );
+        if (!active) return;
+        revision.current = state.revision;
+        hydrating = true;
+        try {
+          useCrm.setState({ ...state.data, ...state.settings });
+        } finally {
+          hydrating = false;
+        }
+        setSync(savedLabel);
+      } catch {
+        if (active) {
+          failure.current = true;
+          setError(
+            "Nie udało się odświeżyć CRM po działaniu agenta. Wczytaj dane z bazy.",
+          );
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
     const unload = (event: BeforeUnloadEvent) => {
       if (dirty.current || writing) {
         event.preventDefault();
@@ -139,7 +178,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
       clearTimeout(timer);
       window.removeEventListener("beforeunload", unload);
     };
-  }, [selected]);
+  }, [selected, savedLabel]);
   function backup() {
     downloadFile(
       "growth-os-niezapisane-zmiany.json",
@@ -163,6 +202,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
       });
       const list = await cloudRequest("");
       setSpaces(list.workspaces);
+      setCreateOpen(false);
       setSelected(list.workspaces.find((s: WorkspaceInfo) => s.id === r.id));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Błąd tworzenia.");
@@ -189,7 +229,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
   return (
     <div className="crm flex-col [&_.crm-main]:ml-0! [&_.crm-sidebar]:sticky! [&_.crm-sidebar]:top-0 [&_.crm-sidebar]:h-screen [&_.crm-sidebar]:self-start">
       <header className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white p-4">
-        <strong>Evolution Growth OS</strong>
+        <strong>Evolution Growth OS {isSqlite() && "· lokalnie"}</strong>
         <label className="flex items-center gap-2">
           Przestrzeń
           <select
@@ -215,7 +255,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
         {selected && <span className="crm-muted">Rola: {selected.role}</span>}
         <button
           className="crm-button secondary"
-          disabled={!selected || pending || loading}
+          disabled={!selected || pending || loading || isSqlite()}
           onClick={() => setMembers(true)}
         >
           Zespół
@@ -224,11 +264,22 @@ export default function CloudWorkspace({ user }: { user: User }) {
           className="crm-button secondary"
           disabled={pending || loading}
           onClick={() => void signOut()}
+          hidden={isSqlite()}
         >
           Wyloguj
         </button>
-        <details className="w-full">
-          <summary>Moje konto · nowa przestrzeń</summary>
+        <details className="w-full" open={createOpen}>
+          <summary
+            aria-disabled={!spacesReady}
+            onClick={(e) => {
+              e.preventDefault();
+              if (spacesReady) setCreateOpen((value) => !value);
+            }}
+          >
+            {isSqlite()
+              ? "Nowa przestrzeń firmy"
+              : "Moje konto · nowa przestrzeń"}
+          </summary>
           <p className="crm-muted my-3 break-all">
             {user.email} · UUID: {user.id}
           </p>
@@ -241,7 +292,10 @@ export default function CloudWorkspace({ user }: { user: User }) {
                 placeholder="Nazwa Twojej firmy"
               />
             </Field>
-            <button className="crm-button" disabled={loading || pending}>
+            <button
+              className="crm-button"
+              disabled={!spacesReady || loading || pending}
+            >
               Utwórz przestrzeń
             </button>
           </form>
@@ -283,10 +337,16 @@ export default function CloudWorkspace({ user }: { user: User }) {
         </p>
       )}
       {loaded && selected ? (
-        <div inert={Boolean(error)}>
+        <div inert={Boolean(error) || loading}>
           <Workspace
             key={selected.id}
+            storageBusy={pending || loading}
+            reloadDatabase={() => {
+              void refresh.current();
+            }}
             cloud={{
+              id: selected.id,
+              storage: isSqlite() ? "sqlite" : "supabase",
               name: selected.name,
               readOnly: selected.role === "viewer",
             }}

@@ -1,4 +1,5 @@
 "use client";
+import { isSqlite } from "../growth/model";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 let client: SupabaseClient | undefined;
 export function configured() {
@@ -15,19 +16,22 @@ export function browserSupabase() {
   ));
 }
 export async function cloudRequest(path: string, init: RequestInit = {}) {
-  const {
-    data: { session },
-  } = await browserSupabase().auth.getSession();
-  if (!session) throw Error("Zaloguj się ponownie.");
-  const response = await fetch(`/api/workspaces${path}`, {
-    ...init,
-    cache: "no-store",
-    headers: {
-      ...init.headers,
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.access_token}`,
+  const session = isSqlite()
+    ? null
+    : (await browserSupabase().auth.getSession()).data.session;
+  if (!isSqlite() && !session) throw Error("Zaloguj się ponownie.");
+  const response = await fetch(
+    `${isSqlite() ? "/api/local/workspaces" : "/api/workspaces"}${path}`,
+    {
+      ...init,
+      cache: "no-store",
+      headers: {
+        ...init.headers,
+        "Content-Type": "application/json",
+        ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
+      },
     },
-  });
+  );
   const result = await response.json();
   if (!response.ok)
     throw Error(result.error || "Nie udało się połączyć z bazą.");

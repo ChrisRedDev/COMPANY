@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 export const alt =
-  "Evolution Growth OS od AI Evolution Polska — mniej chaosu, więcej dobrych relacji";
+  "Evolution Growth OS od AI Evolution Polska — lokalny CRM, wiedza firmy i agent AI";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function OpenGraphImage() {
@@ -47,7 +47,7 @@ export default async function OpenGraphImage() {
         </div>
       </div>
       <div style={{ display: "flex", fontSize: 42, marginTop: 65 }}>
-        Mniej chaosu. Więcej dobrych relacji.
+        Twoja firma. Wiedza. Działanie.
       </div>
       <div
         style={{
@@ -57,7 +57,7 @@ export default async function OpenGraphImage() {
           marginTop: 22,
         }}
       >
-        Firmy · Kontakty · Szanse · Poczta · Agent follow-up
+        CRM · Company Brain · Obsidian · Marketing · Agent AI
       </div>
     </div>,
     size,

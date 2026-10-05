@@ -4,7 +4,7 @@ export const SITE_NAME = "Evolution Growth OS · AI Evolution Polska";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 export const SITE_DESCRIPTION =
-  "Evolution Growth OS od AI Evolution Polska. CRM, przestrzenie zespołu i bezpieczny fundament rozwoju lokalnych firm — po polsku.";
+  "Evolution Growth OS od AI Evolution Polska. Lokalny CRM, Company Brain ze strony firmy, wiedza do Obsidiana i agent AI. Sprzedaż, marka i marketing — po polsku.";
 export const DEFAULT_OG_IMAGE = "/opengraph-image";
 
 export function absoluteUrl(path: string) {

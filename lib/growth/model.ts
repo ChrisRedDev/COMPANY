@@ -13,6 +13,8 @@ export type Snapshot = {
   settings: Preferences;
   revision: number;
 };
+export const isSqlite = () => process.env.NEXT_PUBLIC_CRM_MODE === "sqlite";
+export const isDatabase = () => isCloud() || isSqlite();
 export const isCloud = () => process.env.NEXT_PUBLIC_CRM_MODE === "cloud";
 export function canWrite(role: Role) {
   return role !== "viewer";

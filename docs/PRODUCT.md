@@ -1,31 +1,33 @@
-# Evolution CRM — od kontaktu do współpracy
+# Evolution Growth OS — Twoja firma, wiedza i działanie
 
-**Produkt AI Evolution Polska. Mniej chaosu. Więcej dobrych relacji.**
+**Produkt AI Evolution Polska. Lokalny CRM, Company Brain i agent AI dla firm w Polsce.**
 
-Dobra sprzedaż zaczyna się od pamiętania o ludziach: kto pytał o ofertę, czego potrzebuje firma i kiedy warto wrócić do rozmowy. Evolution CRM porządkuje te informacje w jednym spokojnym, jasnym interfejsie. Pomaga małym zespołom, konsultantom i właścicielom firm zobaczyć cały proces oraz zaplanować konkretny kolejny krok.
+Wiedza o firmie często jest rozproszona: oferta na stronie, ustalenia w wiadomościach, kontakty w arkuszu, pomysły w notatkach. Evolution Growth OS zbiera je w jednym jasnym obszarze pracy. Pomaga zobaczyć stan sprzedaży, zachować kontekst marki i przygotować konkretny kolejny krok.
 
-## Jedna przestrzeń na codzienną pracę
+## Firma opisana raz, kontekst na kolejne zadania
 
-Dodajesz firmę, zapisujesz osobę kontaktową i tworzysz szansę sprzedaży. Wartość jest podana w złotych, NIP przechodzi sprawdzenie sumy kontrolnej, a terminy są czytelne po polsku. Szansę przesuwasz po tablicy od pierwszej rozmowy do wygranej współpracy. Pulpit pokazuje aktualne wartości, nie dekoracyjne liczby.
+Podajesz adres strony, wybierasz model i dostajesz szkic Company Brain. Główny dokument obejmuje 34 sekcje: firmę, ofertę, klientów, markę, marketing, źródła i brakujące informacje. Powiązane notatki porządkują ofertę, markę i pomysły marketingowe. Sprawdzasz szkic, uzupełniasz wiedzę właściciela i zapisujesz. Każda kolejna rozmowa z agentem może korzystać z tego kontekstu, w granicach limitu danych opisanych w README.
 
-Zadania domykają codzienny rytm. Podsumowanie spotkania, oferta, rozmowa za dwa dni — każdy krok ma swój termin i firmę. Gdy zadanie jest wykonane, jednym kliknięciem przenosisz je do historii.
+Wiedza pozostaje przenośna: Markdown, foldery i wikilinki. Eksport ZIP otworzysz jako skarbiec Obsidiana. Nie ma automatycznej synchronizacji plików między aplikacjami.
 
-## Wiadomości, które nie giną między narzędziami
+## Od kontaktu do współpracy
 
-Poczta zbiera szkice i historię decyzji. Możesz pisać samodzielnie, skorzystać z szablonu follow-upu lub uruchomić agenta. Po podłączeniu Resend wiadomość można wysłać bezpośrednio z CRM. Alternatywnie otworzysz ją w swoim programie pocztowym.
+Dodajesz firmę, kontakt, szansę sprzedaży i zadanie. Wartość jest w PLN, NIP przechodzi walidację, a terminy są liczone według Europe/Warsaw. Pulpit sprzedaży oraz marketingu pokazuje wartości wynikające z danych, które zapiszesz lub zaimportujesz.
 
-Agent follow-up przypomina o kontakcie poprzez przygotowanie gotowego punktu wyjścia: polskiego szkicu z nazwą firmy, projektem i podpisem. Pomaga, ale nie decyduje za Ciebie. Przed wysyłką sprawdzasz odbiorcę, podstawę kontaktu i treść.
+## Model wybierasz sam
 
-## Zaprojektowany dla Polski i lokalnej pracy
+OpenRouter API udostępnia wybór modeli. Zalogowane lokalne CLI Codex i Claude Code pozwalają korzystać z dostępów własnego konta. Agent analizuje dane wybranej firmy, odpowiada i proponuje zadania lub notatki. Ty sprawdzasz i zatwierdzasz zmianę. Koszty oraz limity zależą od dostawcy.
 
-Polski język obejmuje interfejs, onboarding, formularze oraz komunikaty. Kwoty są w PLN, daty mają format DD.MM.RRRR, a bieżący dzień jest liczony według Europe/Warsaw. CSV używa średnika i UTF-8 z BOM, żeby łatwo otwierać polskie dane w Excelu.
+## Źródła, które mają konkretną rolę
 
-Dane pozostają w przeglądarce i przetrwają odświeżenie. Kopia JSON umożliwia przeniesienie obszaru pracy na inne urządzenie. Krótki onboarding wyjaśnia zarówno możliwości, jak i wymagania podłączenia poczty.
+WordPress importuje publiczne strony do wiedzy firmy. PostHog odczytuje agregaty zdarzeń. CSV kampanii zasila metryki marketingowe. Resend wysyła zatwierdzone szkice; program pocztowy otwiera wiadomość przez mailto. Statusy pokazują konfigurację i wynik odczytu. Żadne z tych połączeń nie oznacza automatycznie kompletnego ani poprawnego trackingu.
 
-## Co obejmuje ta wersja
+## Lokalna baza i opcja zespołowa
 
-Ta wersja jest funkcjonalnym CRM do pracy lokalnej, z trwałym zapisem w przeglądarce i opcjonalnym backendem wysyłki Resend. Nie jest jeszcze wieloosobową platformą: nie ma wspólnej bazy, kont użytkowników, OAuth do Gmaila/Outlooka, odbioru wiadomości, potwierdzeń doręczenia ani agenta działającego w tle.
+Edycja SQLite zapisuje dane w pliku na komputerze serwera. Nie wymaga kont ani osobnego silnika bazy. Kopia całej bazy obejmuje CRM, notatki, kampanie i historię agenta. Opcjonalny Supabase zapewnia konta, role, RLS i wspólny CRM; nowe moduły lokalne czekają na osobną migrację do chmury.
 
-Agent korzysta z reguł i szablonu, bez wywoływania modelu generatywnego. Prawdziwa wysyłka wymaga skonfigurowanego dostawcy, zweryfikowanego nadawcy oraz świadomego zatwierdzenia. Przyjęcie wiadomości przez dostawcę nie oznacza doręczenia.
+## Zakres obecnej wersji
 
-**Evolution CRM pomaga zrobić właściwy następny krok — bez zbędnego hałasu.**
+Generator czyta publiczny HTML strony i do 4 wybranych podstron. Nie przeprowadza pełnego audytu internetu ani weryfikacji konkurentów. Nieznane dane są oznaczone; pomysły wymagają potwierdzenia. Agent działa po kliknięciu, bez harmonogramu, dowolnych poleceń lub samodzielnej publikacji. Ads jest importem CSV, Obsidian eksportem skarbca. Poczta nie synchronizuje skrzynki ani doręczeń.
+
+Konfigurację, koszty, kopie i wszystkie przepływy opisuje [README](../README.md). Kierunki dalszej rozbudowy są w [roadmapie](ROADMAP.md).

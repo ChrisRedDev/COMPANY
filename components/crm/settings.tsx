@@ -1,5 +1,6 @@
 "use client";
-import { isCloud } from "@/lib/growth/model";
+import { isDatabase, isSqlite } from "@/lib/growth/model";
+import { localDownload } from "@/lib/local/client";
 import { useState, useRef } from "react";
 import { useCrm } from "@/stores/crm-store";
 import { today } from "@/lib/crm/model";
@@ -130,6 +131,27 @@ export default function Settings({
         </p>
       </section>
       <div className="crm-settings-stack">
+        {isSqlite() && (
+          <section className="crm-card crm-settings-card">
+            <h3>Lokalna mini baza SQLite</h3>
+            <p>
+              Firmy, CRM, wiedza, importy i historia agenta są zapisane na dysku
+              tego komputera. Kopia SQLite zawiera wszystkie przestrzenie.
+              Klucze API nie są w bazie.
+            </p>
+            <button
+              className="crm-button secondary"
+              onClick={() =>
+                void localDownload(
+                  "/api/local/backup",
+                  "evolution-backup.sqlite",
+                ).catch((e) => notify(e.message))
+              }
+            >
+              Pobierz całą bazę SQLite
+            </button>
+          </section>
+        )}
         <section className="crm-card crm-settings-card">
           <span className="crm-section-icon">
             <Icon name="agent" />
@@ -154,8 +176,8 @@ export default function Settings({
           </span>
           <h3>Twoje dane są u Ciebie</h3>
           <p>
-            {isCloud()
-              ? "Dane tej przestrzeni są zapisywane w Supabase. Import JSON zastępuje wyłącznie dane wybranej przestrzeni. Stan zapisu widzisz nad aplikacją."
+            {isDatabase()
+              ? "Dane tej przestrzeni są zapisywane w bazie serwera (SQLite lub Supabase). Import JSON zastępuje wyłącznie dane wybranej przestrzeni. Stan zapisu widzisz nad aplikacją."
               : "Dane CRM pozostają w tej przeglądarce. Wykonuj kopie, żeby przenieść je na inny komputer lub odzyskać po wyczyszczeniu przeglądarki."}
           </p>
           <div className="crm-inline">

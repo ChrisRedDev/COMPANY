@@ -5,7 +5,7 @@ import Workspace from "../crm/workspace";
 import Auth from "./auth";
 import CloudWorkspace from "./cloud-workspace";
 import { browserSupabase, configured } from "@/lib/supabase/browser";
-import { isCloud } from "@/lib/growth/model";
+import { isCloud, isSqlite } from "@/lib/growth/model";
 export default function GrowthApp() {
   const [user, setUser] = useState<User | null>(null),
     [ready, setReady] = useState(() => !isCloud() || !configured());
@@ -39,6 +39,12 @@ export default function GrowthApp() {
       subscription.unsubscribe();
     };
   }, []);
+  if (isSqlite())
+    return (
+      <CloudWorkspace
+        user={{ id: "local-user", email: "Użytkownik lokalny" } as User}
+      />
+    );
   if (!isCloud()) return <Workspace />;
   if (!configured())
     return (
