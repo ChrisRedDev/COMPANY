@@ -9,6 +9,14 @@ export function mailConfig() {
   };
 }
 export function guardMail(request: Request) {
+  if (process.env.NEXT_PUBLIC_CRM_MODE === "cloud")
+    return Response.json(
+      {
+        error:
+          "Wysyłka w chmurze wymaga integracji poczty przypisanej do przestrzeni. Dostępna w kolejnej fazie.",
+      },
+      { status: 503 },
+    );
   const config = mailConfig();
   const origin = request.headers.get("origin");
   if (origin && origin !== new URL(request.url).origin)

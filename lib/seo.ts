@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
-export const SITE_NAME = "Evolution CRM · AI Evolution Polska";
+export const SITE_NAME = "Evolution Growth OS · AI Evolution Polska";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 export const SITE_DESCRIPTION =
-  "Evolution CRM od AI Evolution Polska. Firmy, kontakty, szanse sprzedaży i follow-upy w jednym spokojnym miejscu — po polsku.";
+  "Evolution Growth OS od AI Evolution Polska. CRM, przestrzenie zespołu i bezpieczny fundament rozwoju lokalnych firm — po polsku.";
 export const DEFAULT_OG_IMAGE = "/opengraph-image";
 
 export function absoluteUrl(path: string) {

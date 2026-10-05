@@ -1,3 +1,4 @@
+import { isCloud } from "@/lib/growth/model";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { parseBackup } from "@/lib/crm/backup";
@@ -74,15 +75,18 @@ export const useCrm = create<State>()(
       name: "ai-evolution-crm-v1",
       version: 1,
       storage: createJSONStorage(() => ({
-        getItem: (key) => localStorage.getItem(key),
+        getItem: (key) => (isCloud() ? null : localStorage.getItem(key)),
         setItem: (key, value) => {
+          if (isCloud()) return;
           try {
             localStorage.setItem(key, value);
           } catch {
             window.dispatchEvent(new Event("crm-storage-error"));
           }
         },
-        removeItem: (key) => localStorage.removeItem(key),
+        removeItem: (key) => {
+          if (!isCloud()) localStorage.removeItem(key);
+        },
       })),
       skipHydration: true,
       merge: (persisted, current) => {

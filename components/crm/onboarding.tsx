@@ -1,4 +1,5 @@
 "use client";
+import { isCloud } from "@/lib/growth/model";
 import { useState } from "react";
 import { Modal, Icon, Badge } from "./ui";
 import type { Section } from "@/lib/crm/model";
@@ -10,8 +11,12 @@ const STEPS = [
     text: "To Twoje miejsce na firmy, kontakty, szanse sprzedaży i kolejne kroki. Krótki przewodnik pokaże, od czego zacząć.",
     bullets: [
       "Polski interfejs, złotówki i lokalne daty.",
-      "Dane startowe są demonstracyjne — możesz je usunąć.",
-      "Zmiany zapisują się w tej przeglądarce.",
+      isCloud()
+        ? "Każda przestrzeń ma osobne dane i role zespołu."
+        : "Dane startowe są demonstracyjne — możesz je usunąć.",
+      isCloud()
+        ? "Zmiany zapisują się w Supabase — sprawdzaj stan synchronizacji."
+        : "Zmiany zapisują się w tej przeglądarce.",
     ],
   },
   {
@@ -29,7 +34,9 @@ const STEPS = [
     icon: "mail",
     label: "POCZTA, KTÓRA JEST POD RĘKĄ",
     title: "Możesz też podpiąć e-maile.",
-    text: "Resend pozwala wysyłać wiadomości z własnej domeny. Gmail lub Outlook możesz otworzyć przez swój program pocztowy.",
+    text: isCloud()
+      ? "W chmurze możesz przygotować szkic lub otworzyć program pocztowy. Bezpośrednia wysyłka wymaga przyszłej integracji poczty przypisanej do przestrzeni."
+      : "Resend pozwala wysyłać wiadomości z własnej domeny. Gmail lub Outlook możesz otworzyć przez swój program pocztowy.",
     bullets: [
       "Do bezpośredniej wysyłki potrzebujesz konfiguracji dostawcy.",
       "Niepodłączona poczta nie wysyła wiadomości.",

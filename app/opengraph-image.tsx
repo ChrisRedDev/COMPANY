@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 export const alt =
-  "Evolution CRM od AI Evolution Polska — mniej chaosu, więcej dobrych relacji";
+  "Evolution Growth OS od AI Evolution Polska — mniej chaosu, więcej dobrych relacji";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export default async function OpenGraphImage() {
@@ -31,7 +31,9 @@ export default async function OpenGraphImage() {
           alt=""
         />
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <span style={{ fontSize: 58, fontWeight: 700 }}>Evolution CRM</span>
+          <span style={{ fontSize: 58, fontWeight: 700 }}>
+            Evolution Growth OS
+          </span>
           <span
             style={{
               fontSize: 19,

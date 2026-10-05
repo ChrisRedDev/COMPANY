@@ -1,4 +1,4 @@
-import Workspace from "@/components/crm/workspace";
+import GrowthApp from "@/components/growth/app";
 export default function Home() {
-  return <Workspace />;
+  return <GrowthApp />;
 }

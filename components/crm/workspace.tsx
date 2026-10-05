@@ -58,7 +58,13 @@ const NAV: { id: Section; title: string; description: string }[] = [
     description: "Poczta, podpis i kopie Twoich danych.",
   },
 ];
-export default function Workspace() {
+export default function Workspace({
+  cloud,
+}: {
+  cloud?: { name: string; readOnly: boolean };
+}) {
+  const cloudName = cloud?.name;
+  const readOnly = cloud?.readOnly;
   const s = useCrm();
   const [ready, setReady] = useState(false);
   const [section, setSection] = useState<Section>("dashboard");
@@ -86,7 +92,7 @@ export default function Workspace() {
   }, []);
   useEffect(() => {
     let active = true;
-    Promise.resolve(useCrm.persist.rehydrate())
+    Promise.resolve(cloudName ? undefined : useCrm.persist.rehydrate())
       .then(() => {
         if (!active) return;
         const current = useCrm.getState();
@@ -99,7 +105,7 @@ export default function Workspace() {
                 "Poprzednia wysyłka nie została potwierdzona. Ponowienie wykorzysta ten sam identyfikator.",
             });
         setReady(true);
-        setOnboarding(!current.onboarded);
+        setOnboarding(!readOnly && !current.onboarded);
       })
       .catch(() => {
         if (active) {
@@ -113,7 +119,7 @@ export default function Workspace() {
       active = false;
       if (timer.current) clearTimeout(timer.current);
     };
-  }, [notify]);
+  }, [notify, cloudName, readOnly]);
   useEffect(() => {
     const storage = () => {
       setStorageWarning(true);
@@ -176,14 +182,15 @@ export default function Workspace() {
         />
         <div>
           <strong>
-            Evolution<span>CRM</span>
+            Evolution{cloud && <br />}
+            <span>{cloud ? "Growth OS" : "CRM"}</span>
           </strong>
           <small>AI EVOLUTION POLSKA</small>
         </div>
       </div>
       <div className="crm-workspace-label">
         <span className="crm-workspace-dot" />
-        Mój obszar pracy
+        {cloud?.name || "Mój obszar pracy"}
         <Icon name="check" size={13} />
       </div>
       <div className="crm-nav-caption">PRZESTRZEŃ SPRZEDAŻY</div>
@@ -251,7 +258,9 @@ export default function Workspace() {
         </button>
         <div className="crm-local-label">
           <span />
-          Tryb lokalny · Twoja przeglądarka
+          {cloud
+            ? "Tryb chmurowy · Supabase"
+            : "Tryb lokalny · Twoja przeglądarka"}
         </div>
       </div>
     </>
@@ -283,7 +292,7 @@ export default function Workspace() {
           <div className="crm-topbar-right">
             <span className="crm-save-status">
               <span />
-              Zapis w przeglądarce
+              {cloud ? "Baza Supabase" : "Zapis w przeglądarce"}
             </span>
             <button
               className="crm-icon-button"
@@ -301,10 +310,10 @@ export default function Workspace() {
             </button>
           </div>
         </header>
-        <main className="crm-content">
+        <main className="crm-content" inert={readOnly}>
           <div className="crm-page-heading">
             <div>
-              <span className="crm-eyebrow">EVOLUTION CRM</span>
+              <span className="crm-eyebrow">EVOLUTION GROWTH OS</span>
               <h1>{current.title}</h1>
               <p>{current.description}</p>
             </div>
@@ -420,7 +429,13 @@ export default function Workspace() {
         <EntityForm
           editor={editor}
           onClose={() => setEditor(null)}
-          onSaved={() => notify("Zmiany zapisane w CRM.")}
+          onSaved={() =>
+            notify(
+              cloud
+                ? "Zmiany wprowadzone. Sprawdź stan synchronizacji."
+                : "Zmiany zapisane w CRM.",
+            )
+          }
         />
       )}{" "}
       {composer && (

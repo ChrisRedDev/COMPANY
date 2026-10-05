@@ -11,11 +11,14 @@
     "to:avif": "node scripts/to-avif.mjs",
     "frame:rive": "node scripts/rive-frame.mjs",
     "test": "node tests/crm.test.cjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:cloud": "playwright test --config playwright.cloud.config.ts",
+    "test:db": "bash tests/integration/run.sh"
   },
   "dependencies": {
     "@rive-app/canvas": "^2.31.0",
     "@rive-app/react-canvas": "^4.31.0",
+    "@supabase/supabase-js": "^2.117.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

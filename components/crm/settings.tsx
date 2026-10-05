@@ -1,4 +1,5 @@
 "use client";
+import { isCloud } from "@/lib/growth/model";
 import { useState, useRef } from "react";
 import { useCrm } from "@/stores/crm-store";
 import { today } from "@/lib/crm/model";
@@ -153,8 +154,9 @@ export default function Settings({
           </span>
           <h3>Twoje dane są u Ciebie</h3>
           <p>
-            Dane CRM pozostają w tej przeglądarce. Wykonuj kopie, żeby przenieść
-            je na inny komputer lub odzyskać po wyczyszczeniu przeglądarki.
+            {isCloud()
+              ? "Dane tej przestrzeni są zapisywane w Supabase. Import JSON zastępuje wyłącznie dane wybranej przestrzeni. Stan zapisu widzisz nad aplikacją."
+              : "Dane CRM pozostają w tej przeglądarce. Wykonuj kopie, żeby przenieść je na inny komputer lub odzyskać po wyczyszczeniu przeglądarki."}
           </p>
           <div className="crm-inline">
             <button
