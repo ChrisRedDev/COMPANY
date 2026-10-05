@@ -1,10 +1,39 @@
+<p align="center">
+  <img src="public/assets/brand/evolution-mark.png" width="88" alt="Logo AI Evolution Polska">
+</p>
+
 # Evolution Growth OS · AI Evolution Polska
 
-**CRM, Lead Hub i obsługa usług, mózg firmy oraz agent AI — lokalnie, po polsku.**
+**Klienci, sprzedaż, wiedza firmy i AI w jednym miejscu — po polsku, na Twoim komputerze.**
 
-Evolution Growth OS pomaga uporządkować sprzedaż i rozwijać firmę z jej własnym kontekstem. Zapisujesz klientów, kontakty, szanse i zadania. Ze strony internetowej tworzysz Company Brain: ofertę, wiedzę o marce oraz propozycje marketingowe z oznaczeniem źródeł i braków. Podłączasz wybrany model AI, analizujesz dane i zatwierdzasz konkretne działania. Wiedzę możesz zabrać ze sobą do Obsidiana.
+Evolution Growth OS to narzędzie dla lokalnych firm usługowych, małych zespołów sprzedaży i właścicieli, którzy chcą uporządkować codzienną pracę. Zapisujesz zapytanie klienta, historię rozmów i ustalenia, planujesz realizację, a później sprawdzasz wyniki. W tej samej aplikacji przechowujesz wiedzę o firmie i korzystasz z wybranego modelu AI.
 
-Jasny interfejs ze szkłem i miękkimi gradientami, interaktywne wykresy, PLN, walidacja NIP, polskie daty i strefa Europe/Warsaw. Produkt **AI Evolution Polska**, wersja **0.4.0**. [Opis produktu](docs/PRODUCT.md) · [Architektura lokalna](docs/LOCAL-EDITION.md) · [Plan rozwoju](docs/ROADMAP.md).
+**Przykład:** klient trafia z reklamy, zostawia formularz i dzwoni. W Lead Hub zapisujesz te kontakty przy jednej osobie, dodajesz ofertę, rezerwację, wykonanie pracy i wpłatę. W Company Brain zbierasz ofertę i zasady komunikacji marki. AI Brain pomaga analizować kontekst oraz proponuje zadania i notatki, które zatwierdzasz przed wykonaniem.
+
+Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.4.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
+
+![Pulpit Evolution Growth OS z wynikami kampanii DEMO](docs/screenshots/local-dashboard.png)
+
+_Działająca aplikacja, lokalny zapis SQLite i zaimportowane dane demonstracyjne. Więcej ekranów znajdziesz w [galerii na końcu README](#screenshoty-aplikacji)._
+
+[Uruchom lokalnie](#szybki-start-na-twoim-komputerze) · [Poznaj moduły](#co-możesz-zrobić-w-aplikacji) · [Podłącz AI](#ai-brain-własny-dostawca-i-model) · [Zobacz screenshoty](#screenshoty-aplikacji) · [Dokumentacja](docs/PRODUCT.md)
+
+## Co możesz zrobić w aplikacji
+
+| Moduł                     | Do czego służy                                                                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.  |
+| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                   |
+| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                  |
+| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                       |
+| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                 |
+| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                       |
+| **AI Brain**              | Wybrany model przez OpenRouter, Codex CLI lub Claude Code; analiza CRM i wiedzy oraz propozycje zadań i notatek.              |
+| **Konektory i poczta**    | Ręczne odczyty WordPress/PostHog, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
+
+**Dwa sposoby pracy:** CRM i sprzedaż albo Firma usługowa. Przełączenie zmienia widoki i zachowuje dane. Lead Hub działa obok dotychczasowego CRM; nie przenosi automatycznie kontaktów ani zleceń między modułami.
+
+**Lokalny zapis nie oznacza, że każde działanie odbywa się offline.** CRM, historia leadów i notatki korzystają z lokalnej bazy. Analiza AI, odczyt strony firmy, konektory i wysyłka przez dostawcę wymagają połączenia oraz odpowiedniej konfiguracji. Zakres funkcji zależy od trybu przechowywania opisanego poniżej.
 
 ## Szybki start na Twoim komputerze
 
@@ -20,11 +49,11 @@ npm run dev:localdb
 Na **tym samym komputerze** otwórz `http://localhost:3000`. Windows: możesz uruchomić `URUCHOM-BAZA.bat`; macOS/Linux: `bash uruchom-baza.sh`. Skrypty instalują zależności i uruchamiają aplikację. Wariant Windows nie był wykonywany w środowisku Linux.
 
 1. Utwórz przestrzeń swojej firmy. Nowy CRM jest pusty.
-2. W onboardingu wybierz **CRM i sprzedaż** lub **Firma usługowa**. Trzy kroki wyjaśnią pracę z danymi i opcjonalne integracje.
-3. W **AI Brain** podłącz dostawcę i wybierz model.
-4. W **Company Brain → Wygeneruj ze strony** przygotuj wiedzę firmy.
-5. Dodaj klientów i zaimportuj dane kampanii w **Konektorach**.
-6. Sprawdź wyniki na **Pulpicie** i poproś agenta o kolejne kroki.
+2. W trzech krokach onboardingu wybierz **CRM i sprzedaż** lub **Firma usługowa**.
+3. Otwórz **Lead Hub → Dodaj przykład DEMO**, aby zobaczyć historię od reklamy do płatności. DEMO jest wyraźnie oznaczone i oddzielone filtrem od rzeczywistych danych.
+4. Dodaj własnego leada, klienta lub firmę. Zapisz kontakt i ustalenia; zaplanuj zadanie albo realizację.
+5. Opcjonalnie podłącz dostawcę i model w **AI Brain**, a potem przygotuj wiedzę w **Company Brain → Wygeneruj ze strony**. Notatki możesz też dodać ręcznie lub zaimportować z Markdown.
+6. Zaimportuj wyniki kampanii w **Konektorach** i sprawdź je na **Pulpicie**. Dostępne wskaźniki wynikają z zapisanych danych.
 
 Serwer uruchamia się tylko na `127.0.0.1`. Zostaw terminal otwarty; `Ctrl+C` zatrzymuje aplikację. Możesz ustawić `CRM_LOCAL_PORT`, gdy port 3000 jest zajęty. `localhost` oznacza komputer przeglądarki: serwer uruchomiony w Codex nie działa na Twoim laptopie. Lokalna edycja nie wymaga Supabase ani konta.
 
@@ -39,10 +68,10 @@ Oba polecenia ustawiają tryb SQLite. Po zmianie kodu lub publicznych env ponów
 
 ## Wybierz miejsce przechowywania danych
 
-| Tryb                                    | Uruchomienie                                       | Dane i funkcje                                                                             |
-| --------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Tryb                                    | Uruchomienie                                       | Dane i funkcje                                                                                       |
+| --------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | **SQLite — zalecany do lokalnej pracy** | `npm run dev:localdb`                              | Plik na komputerze serwera; CRM, Lead Hub, Company Brain, generator, konektory, marketing i AI Brain |
-| **Przeglądarka**                        | `NEXT_PUBLIC_CRM_MODE=local`, `npm run dev`        | Zachowany CRM z localStorage, pocztą i agentem follow-up                                   |
+| **Przeglądarka**                        | `NEXT_PUBLIC_CRM_MODE=local`, `npm run dev`        | Zachowany CRM z localStorage, pocztą i agentem follow-up                                             |
 | **Supabase**                            | Konfiguracja poniżej, `NEXT_PUBLIC_CRM_MODE=cloud` | Konta, przestrzenie, role, wspólny CRM i Lead Hub                                                    |
 
 Nowe moduły wiedzy, konektorów i modeli AI działają obecnie w **SQLite**. Supabase obejmuje CRM i Lead Hub; migracja pozostałych modułów jest w roadmapie. SQLite jest przeznaczone do lokalnej instalacji, bez kont i logowania. Oddzielne przestrzenie porządkują dane firm; nie stanowią ochrony przed innym użytkownikiem tego samego komputera.
@@ -239,6 +268,7 @@ Testy obejmują rezerwacje i kolizje terminów, historię klienta, przełączani
 | Katalog                                                                          | Odpowiedzialność                                          |
 | -------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | `components/crm`, `components/services`, `components/growth`, `components/local` | Interfejs, tryby, formularze, wiedza, konektory i AI      |
+| `components/leads`, `lib/leads`                                                  | Interfejs, domena, zdarzenia i repozytoria Lead Hub       |
 | `lib/local`, `app/api/local`                                                     | SQLite i lokalne endpointy                                |
 | `lib/knowledge`                                                                  | Notatki, bezpieczny odczyt strony, generator, eksport ZIP |
 | `lib/ai`                                                                         | Dostawcy, kontekst i zatwierdzane działania               |
@@ -247,50 +277,77 @@ Testy obejmują rezerwacje i kolizje terminów, historię klienta, przełączani
 | `tests`                                                                          | Testy logiki, bazy i przeglądarki                         |
 | `public/assets/brand`                                                            | Logo AI Evolution Polska                                  |
 
-## Aktualne screenshoty aplikacji
+## Screenshoty aplikacji
 
-Zrzuty wykonano w działającej aplikacji. Dane są demonstracyjne. Ekrany AI i generatora pokazują **dostawcę testowego**, nie odpowiedź z płatnego modelu lub research rzeczywistej firmy.
+Zrzuty pochodzą z działającej aplikacji. Dane są demonstracyjne. Ekrany AI i generatora pokazują **dostawcę testowego**, a nie odpowiedź z płatnego modelu ani research rzeczywistej firmy. Formularze pokazują przykładowe dane; screenshot nie oznacza wysłania wiadomości lub uruchomienia zewnętrznej integracji.
 
-**Pulpit: zaimportowane wyniki kampanii i lokalny zapis SQLite.**
+### Lead Hub — od zapytania do płatności
 
-![Pulpit marketingowy Evolution Growth OS](docs/screenshots/local-dashboard.png)
+Na liście widzisz status, źródło, kampanię, ostatnią aktywność, szacowaną wartość i revenue. Filtry oddzielają DEMO od rzeczywistych leadów.
 
-**Konektory: AI, strona firmy, WordPress, PostHog, importy i poczta z rzeczywistymi stanami konfiguracji.**
+![Lead Hub — lista leadów i dane kampanii](docs/screenshots/lead-hub-list.png)
 
-![Konektory w jasnym interfejsie](docs/screenshots/local-connectors.png)
+<details>
+<summary><strong>Zobacz formularze i pełną historię leada</strong></summary>
 
-**Mózg firmy ze strony: podgląd przed zatwierdzeniem — dane dostawcy testowego.**
+**Dodawanie leada:** kontakt, status, źródło, kampania i wartości w PLN. Dodatkowe pola atrybucji są dostępne po rozwinięciu.
 
-![Generator Company Brain ze źródłami](docs/screenshots/local-brain-generator.png)
+![Lead Hub — dodawanie kontaktu DEMO](docs/screenshots/lead-hub-create.png)
 
-**Company Brain: zapisany dokument, powiązane notatki, foldery i eksport do Obsidiana.**
+**Zapisywanie rozmowy:** rodzaj zdarzenia, źródło, czas, długość rozmowy i ustalenia. Zdarzenie trafia do historii danej osoby.
 
-![Zapisana wiedza firmy](docs/screenshots/local-brain-generated.png)
+![Lead Hub — formularz zdarzenia rozmowy](docs/screenshots/lead-hub-event.png)
 
-**AI Brain: wybrany model, odpowiedź i propozycja do zatwierdzenia — dostawca testowy.**
+**Karta leada:** dane kontaktowe, first/last touch, oferta, realizacja, wpłata i chronologiczna oś kontaktu.
 
-![Okno agenta AI](docs/screenshots/local-agent-test-provider.png)
+![Lead Hub — pełna historia klienta DEMO](docs/screenshots/lead-hub-timeline.png)
 
-**Tryb usługowy: pulpit realizacji i rezerwacji.**
+</details>
 
-![Szklany pulpit firmy usługowej](docs/screenshots/premium-services-dashboard.png)
+### Firma usługowa — plan pracy i historia klienta
 
-**Karta klienta: kontakt, ustalenia i historia współpracy.**
+Pulpit pokazuje stan realizacji, rezerwacje i wartości usług. Karta klienta przechowuje kontakt i historię współpracy.
 
-![Karta klienta i historia realizacji](docs/screenshots/premium-client-history.png)
+![Firma usługowa — pulpit rezerwacji i realizacji](docs/screenshots/premium-services-dashboard.png)
 
-**Prosty onboarding: wybór sposobu pracy w pierwszym z trzech kroków.**
+<details>
+<summary><strong>Zobacz kartę klienta</strong></summary>
 
-![Onboarding Evolution Growth OS](docs/screenshots/premium-onboarding.png)
+![Firma usługowa — kontakt, ustalenia i historia realizacji](docs/screenshots/premium-client-history.png)
 
-**Lead Hub: lista ze źródłami, kampanią, aktywnością i wartością — przykład DEMO.**
+</details>
 
-![Lista Lead Hub](docs/screenshots/lead-hub-list.png)
+### Konektory — stan konfiguracji i ręczne odczyty
 
-**Karta leada: atrybucja, oferta, realizacja, wpłata i chronologiczna oś kontaktu.**
+Panel zbiera integracje AI, strony firmy, WordPress, PostHog, importy kampanii i pocztę. Rozróżnia brak konfiguracji, udany odczyt i błąd.
 
-![Historia leada DEMO](docs/screenshots/lead-hub-timeline.png)
+![Konektory Evolution Growth OS](docs/screenshots/local-connectors.png)
 
-**Lead Hub na telefonie.**
+### Company Brain i AI Brain — wiedza z podglądem przed zapisem
 
-![Mobilna karta leada](docs/screenshots/lead-hub-mobile.png)
+Generator przygotowuje szkic wiedzy firmy, źródła i pytania o braki. Po zatwierdzeniu notatki są dostępne w aplikacji i w eksporcie do Obsidiana.
+
+![Company Brain — podgląd generowanej wiedzy, dostawca testowy](docs/screenshots/local-brain-generator.png)
+
+<details>
+<summary><strong>Zobacz zapisane notatki i okno agenta</strong></summary>
+
+**Zapisana wiedza:** główny dokument, powiązane notatki, foldery i eksport Markdown.
+
+![Company Brain — zapisany dokument i notatki](docs/screenshots/local-brain-generated.png)
+
+**AI Brain:** wybór modelu, odpowiedź oraz konkretna propozycja działania do zatwierdzenia.
+
+![AI Brain — analiza i propozycja, dostawca testowy](docs/screenshots/local-agent-test-provider.png)
+
+</details>
+
+### Onboarding i telefon
+
+Trzy kroki wprowadzają w sposób pracy i opcjonalne integracje. Na telefonie dostępna jest nawigacja, karta leada i formularze.
+
+![Onboarding — wybór sposobu pracy](docs/screenshots/premium-onboarding.png)
+
+<p align="center">
+  <img src="docs/screenshots/lead-hub-mobile.png" width="390" alt="Lead Hub na telefonie — karta klienta DEMO">
+</p>
