@@ -21,6 +21,11 @@ import {
 } from "./views";
 import { Mailbox, Composer, Agent, type MailStatus } from "./mail";
 import Settings from "./settings";
+import ServiceDashboard from "../services/dashboard";
+import ServiceClients from "../services/clients";
+import ServiceJobs from "../services/jobs";
+import JobForm from "../services/job-form";
+import type { Deal } from "@/lib/crm/model";
 import Onboarding from "./onboarding";
 const NAV: { id: Section; title: string; description: string }[] = [
   {
@@ -96,6 +101,30 @@ export default function Workspace({
   const cloudName = cloud?.name;
   const readOnly = cloud?.readOnly;
   const s = useCrm();
+  const serviceMode = s.businessMode === "services";
+  const navigation = NAV.map((n) =>
+    serviceMode && n.id === "companies"
+      ? {
+          ...n,
+          title: "Klienci",
+          description: "Kontakt, ustalenia i historia współpracy.",
+        }
+      : serviceMode && n.id === "deals"
+        ? {
+            ...n,
+            title: "Zlecenia",
+            description: "Zarezerwowane prace, terminy i realizacje.",
+          }
+        : serviceMode && n.id === "dashboard"
+          ? { ...n, description: "Twoi klienci i plan pracy w jednym miejscu." }
+          : n,
+  );
+  const [jobEditor, setJobEditor] = useState<{
+    item?: Deal;
+    companyId?: string;
+  } | null>(null);
+  const openJob = (item?: Deal, companyId?: string) =>
+    setJobEditor({ item, companyId });
   const [ready, setReady] = useState(false);
   const [section, setSection] = useState<Section>("dashboard");
   const [query, setQuery] = useState("");
@@ -115,11 +144,14 @@ export default function Workspace({
   });
   const search = useRef<HTMLInputElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const notify = useCallback((text: string) => {
-    setNotice(text);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setNotice(""), 7000);
-  }, []);
+  const notify = useCallback(
+    (text: string) => {
+      setNotice(text);
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(() => setNotice(""), 7000);
+    },
+    [setNotice],
+  );
   useEffect(() => {
     let active = true;
     Promise.resolve(cloudName ? undefined : useCrm.persist.rehydrate())
@@ -200,7 +232,7 @@ export default function Workspace({
     navigate,
     compose,
   };
-  const current = NAV.find((n) => n.id === section)!;
+  const current = navigation.find((n) => n.id === section)!;
   const nav = (
     <>
       <div className="crm-brand">
@@ -224,9 +256,26 @@ export default function Workspace({
         {cloud?.name || "Mój obszar pracy"}
         <Icon name="check" size={13} />
       </div>
-      <div className="crm-nav-caption">PRZESTRZEŃ SPRZEDAŻY</div>
+      <label className="growth-mode-switch">
+        Sposób pracy
+        <select
+          aria-label="Tryb pracy"
+          value={s.businessMode}
+          disabled={readOnly || storageBusy}
+          onChange={(e) => {
+            s.setBusinessMode(e.target.value as "crm" | "services");
+            navigate("dashboard");
+          }}
+        >
+          <option value="crm">CRM · sprzedaż B2B</option>
+          <option value="services">Firma usługowa</option>
+        </select>
+      </label>
+      <div className="crm-nav-caption">
+        {serviceMode ? "KLIENCI I REALIZACJE" : "PRZESTRZEŃ SPRZEDAŻY"}
+      </div>
       <nav aria-label="Menu główne">
-        {NAV.slice(0, 5).map((n) => (
+        {navigation.slice(0, 5).map((n) => (
           <button
             key={n.id}
             aria-label={n.title}
@@ -243,7 +292,7 @@ export default function Workspace({
           </button>
         ))}
         <div className="crm-nav-caption">KOMUNIKACJA I AUTOMATYZACJA</div>
-        {NAV.slice(5, 7).map((n) => (
+        {navigation.slice(5, 7).map((n) => (
           <button
             key={n.id}
             aria-label={n.title}
@@ -257,8 +306,9 @@ export default function Workspace({
           </button>
         ))}
         <div className="crm-nav-caption">WIEDZA I DANE</div>
-        {NAV.filter((n) => ["brain", "connectors", "ai"].includes(n.id)).map(
-          (n) => (
+        {navigation
+          .filter((n) => ["brain", "connectors", "ai"].includes(n.id))
+          .map((n) => (
             <button
               key={n.id}
               aria-label={n.title}
@@ -276,8 +326,7 @@ export default function Workspace({
               />
               <span>{n.title}</span>
             </button>
-          ),
-        )}
+          ))}
       </nav>
       <div className="crm-sidebar-bottom">
         <div className="crm-sidebar-promo">
@@ -381,7 +430,9 @@ export default function Workspace({
               <input
                 ref={search}
                 aria-label="Szukaj w CRM"
-                placeholder="Szukaj w CRM…"
+                placeholder={
+                  serviceMode ? "Szukaj klientów i prac…" : "Szukaj w CRM…"
+                }
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -406,7 +457,7 @@ export default function Workspace({
                   .map((f) => ({
                     id: f.id,
                     name: f.name,
-                    label: "Firma",
+                    label: serviceMode ? "Klient" : "Firma",
                     open: () => setEditor({ kind: "firm", item: f }),
                   })),
                 ...s.contacts
@@ -428,8 +479,11 @@ export default function Workspace({
                   .map((d) => ({
                     id: d.id,
                     name: d.name,
-                    label: "Szansa",
-                    open: () => setEditor({ kind: "deal", item: d }),
+                    label: d.service ? "Zlecenie" : "Szansa",
+                    open: () =>
+                      d.service
+                        ? openJob(d)
+                        : setEditor({ kind: "deal", item: d }),
                   })),
               ]
                 .slice(0, 10)
@@ -445,7 +499,7 @@ export default function Workspace({
               </p>
             </div>
           )}
-          {section === "dashboard" && (
+          {section === "dashboard" && !serviceMode && (
             <>
               {isSqlite() && cloud?.id && (
                 <Marketing
@@ -456,6 +510,24 @@ export default function Workspace({
               <Dashboard {...props} />
             </>
           )}{" "}
+          {section === "dashboard" && serviceMode && (
+            <>
+              <ServiceDashboard openJob={openJob} navigate={navigate} />
+              {isSqlite() && cloud?.id && (
+                <details className="crm-card mt-6 p-6">
+                  <summary className="cursor-pointer font-semibold">
+                    Wyniki marketingu i kampanii
+                  </summary>
+                  <div className="mt-5">
+                    <Marketing
+                      wid={cloud.id}
+                      openConnectors={() => navigate("connectors")}
+                    />
+                  </div>
+                </details>
+              )}
+            </>
+          )}
           {["brain", "connectors", "ai"].includes(section) &&
             (!isSqlite() || !cloud?.id) && <LocalUnavailable />}
           {section === "brain" && isSqlite() && cloud?.id && (
@@ -476,8 +548,28 @@ export default function Workspace({
               onApplied={() => reloadDatabase?.()}
             />
           )}
-          {section === "companies" && <Firms {...props} />}{" "}
-          {section === "deals" && <Deals {...props} />}{" "}
+          {section === "companies" &&
+            (serviceMode ? (
+              <ServiceClients
+                query={query}
+                edit={(item) => setEditor({ kind: "firm", item })}
+                openJob={openJob}
+                notify={notify}
+              />
+            ) : (
+              <Firms {...props} />
+            ))}{" "}
+          {section === "deals" &&
+            (serviceMode ? (
+              <ServiceJobs
+                query={query}
+                openJob={openJob}
+                notify={notify}
+                openClients={() => navigate("companies")}
+              />
+            ) : (
+              <Deals {...props} />
+            ))}{" "}
           {section === "contacts" && <Contacts {...props} />}{" "}
           {section === "tasks" && <Tasks {...props} />}{" "}
           {section === "mail" && (
@@ -517,6 +609,7 @@ export default function Workspace({
       {editor && (
         <EntityForm
           editor={editor}
+          serviceMode={serviceMode}
           onClose={() => setEditor(null)}
           onSaved={() =>
             notify(
@@ -527,6 +620,15 @@ export default function Workspace({
           }
         />
       )}{" "}
+      {jobEditor && (
+        <JobForm
+          {...jobEditor}
+          close={() => setJobEditor(null)}
+          saved={() =>
+            notify("Zlecenie zapisane. Sprawdź stan synchronizacji.")
+          }
+        />
+      )}
       {composer && (
         <Composer
           {...composer}

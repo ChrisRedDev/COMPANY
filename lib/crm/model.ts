@@ -29,6 +29,9 @@ export type Firm = {
   website: string;
   notes: string;
   created: string;
+  email?: string;
+  phone?: string;
+  address?: string;
 };
 export type Contact = {
   id: string;
@@ -47,6 +50,30 @@ export type Deal = {
   probability: number;
   stage: DealStage;
   closeDate: string;
+  service?: ServiceBooking;
+};
+export const SERVICE_STATUSES = [
+  "booked",
+  "in_progress",
+  "completed",
+  "cancelled",
+] as const;
+export type ServiceStatus = (typeof SERVICE_STATUSES)[number];
+export type BusinessMode = "crm" | "services";
+export type ServiceBooking = {
+  status: ServiceStatus;
+  start: string;
+  end: string;
+  resource: string;
+  location: string;
+  notes: string;
+  history: { at: string; message: string }[];
+};
+export const serviceLabels: Record<ServiceStatus, string> = {
+  booked: "Zarezerwowane",
+  in_progress: "W realizacji",
+  completed: "Zakończone",
+  cancelled: "Anulowane",
 };
 export type Task = {
   id: string;

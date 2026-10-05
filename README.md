@@ -1,10 +1,10 @@
 # Evolution Growth OS · AI Evolution Polska
 
-**Lokalny CRM, mózg firmy i agent AI — w jednej aplikacji, po polsku.**
+**CRM i obsługa usług, mózg firmy oraz agent AI — lokalnie, po polsku.**
 
 Evolution Growth OS pomaga uporządkować sprzedaż i rozwijać firmę z jej własnym kontekstem. Zapisujesz klientów, kontakty, szanse i zadania. Ze strony internetowej tworzysz Company Brain: ofertę, wiedzę o marce oraz propozycje marketingowe z oznaczeniem źródeł i braków. Podłączasz wybrany model AI, analizujesz dane i zatwierdzasz konkretne działania. Wiedzę możesz zabrać ze sobą do Obsidiana.
 
-Jasny interfejs, PLN, walidacja NIP, polskie daty i strefa Europe/Warsaw. Produkt **AI Evolution Polska**, wersja **0.2.0**. [Opis produktu](docs/PRODUCT.md) · [Architektura lokalna](docs/LOCAL-EDITION.md) · [Plan rozwoju](docs/ROADMAP.md).
+Jasny interfejs ze szkłem i miękkimi gradientami, interaktywne wykresy, PLN, walidacja NIP, polskie daty i strefa Europe/Warsaw. Produkt **AI Evolution Polska**, wersja **0.3.0**. [Opis produktu](docs/PRODUCT.md) · [Architektura lokalna](docs/LOCAL-EDITION.md) · [Plan rozwoju](docs/ROADMAP.md).
 
 ## Szybki start na Twoim komputerze
 
@@ -20,7 +20,7 @@ npm run dev:localdb
 Na **tym samym komputerze** otwórz `http://localhost:3000`. Windows: możesz uruchomić `URUCHOM-BAZA.bat`; macOS/Linux: `bash uruchom-baza.sh`. Skrypty instalują zależności i uruchamiają aplikację. Wariant Windows nie był wykonywany w środowisku Linux.
 
 1. Utwórz przestrzeń swojej firmy. Nowy CRM jest pusty.
-2. Przejdź przez krótki onboarding.
+2. W onboardingu wybierz **CRM i sprzedaż** lub **Firma usługowa**. Trzy kroki wyjaśnią pracę z danymi i opcjonalne integracje.
 3. W **AI Brain** podłącz dostawcę i wybierz model.
 4. W **Company Brain → Wygeneruj ze strony** przygotuj wiedzę firmy.
 5. Dodaj klientów i zaimportuj dane kampanii w **Konektorach**.
@@ -46,6 +46,33 @@ Oba polecenia ustawiają tryb SQLite. Po zmianie kodu lub publicznych env ponów
 | **Supabase**                            | Konfiguracja poniżej, `NEXT_PUBLIC_CRM_MODE=cloud` | Konta, przestrzenie, role i wspólny CRM                                                    |
 
 Nowe moduły wiedzy, konektorów i modeli AI działają obecnie w **SQLite**. Supabase obejmuje fundament CRM; migracja pozostałych modułów jest w roadmapie. SQLite jest przeznaczone do lokalnej instalacji, bez kont i logowania. Oddzielne przestrzenie porządkują dane firm; nie stanowią ochrony przed innym użytkownikiem tego samego komputera.
+
+## Dwa sposoby pracy: sprzedaż albo usługi
+
+W lewym menu **Sposób pracy → Firma usługowa** przełączysz aplikację na klientów i realizacje. Ten sam wybór jest w pierwszym kroku onboardingu. Tryb jest zapamiętywany dla przestrzeni firmy w SQLite / Supabase lub dla lokalnego CRM w przeglądarce. Przełączenie zachowuje dane.
+
+| CRM i sprzedaż                              | Firma usługowa                                                |
+| ------------------------------------------- | ------------------------------------------------------------- |
+| Firmy, osoby kontaktowe i szanse sprzedaży  | Klienci prywatni lub firmy, dane kontaktowe, adres i notatki  |
+| Etapy sprzedaży, prognoza i wygrane rozmowy | Zarezerwowane prace, osoba/stanowisko, termin i status        |
+| Wykres etapów: wartość lub liczba szans     | Trend wartości wykonanych usług, statusy i najbliższe terminy |
+| Zadania, e-maile, wiedza i AI               | Zadania, e-maile, wiedza i AI                                 |
+
+**Pierwsza realizacja:** otwórz **Klienci → Dodaj klienta**, wpisz nazwę, kontakt i ustalenia. W **Zleceniach → Zarezerwuj pracę** wybierz klienta, nazwę usługi, początek i koniec, wartość w PLN oraz osobę/stanowisko. Statusy to **Zarezerwowane → W realizacji → Zakończone**, z opcją anulowania. Edycja pozwala zmienić termin, przypisanie i ponownie otworzyć pracę. Dane firmowe klienta są opcjonalne i schowane w rozwijanym bloku.
+
+Dwie aktywne rezerwacje nie mogą nakładać się dla tej samej osoby/stanowiska. Wielkość liter i spacje w nazwie zasobu są ignorowane. Sąsiadujące terminy są dozwolone, a różne zasoby mogą pracować równolegle. Anulowane i zakończone prace nie blokują kalendarza; wznowienie ponownie sprawdza dostępność. Walidacja działa także przy zapisie w bazie i imporcie kopii.
+
+Na karcie klienta znajdziesz wszystkie jego rezerwacje i realizacje. W zleceniu rozwiń **Historię zlecenia**, aby zobaczyć utworzenie, zmiany i statusy (do 200 ostatnich wpisów). Wyszukiwarka otwiera właściwy formularz pracy. Usługi nie są liczone jako szanse w pulpicie B2B. Przełączenie nie zamienia starych szans w rezerwacje.
+
+Terminy wpisujesz jako czas miejscowy **Europe/Warsaw**. To terminarz rezerwacji, bez synchronizacji Google/Outlook i automatycznych przypomnień. Wartość zlecenia oznacza ustaloną wartość usługi; nie potwierdza płatności ani wystawienia faktury.
+
+## Pulpit: statystyki, które można sprawdzić
+
+- **Marketing:** trend leadów, wydatków lub przychodu z CSV; wybór okresu i źródła oraz udział kanałów. Brak importu tworzy lukę zamiast wymyślonego zera. Dłuższe zakresy mają do 30 sumowanych przedziałów.
+- **Sprzedaż:** wykres etapów przełączany między PLN i liczbą szans, prognoza ważona oraz udział wygranych i przegranych w zamkniętych rozmowach.
+- **Usługi:** klienci, aktywne rezerwacje, ich wartość, zakończone realizacje, statusy i plan pracy. Trend 7/30/90 dni liczy aktualnie zakończone prace według daty ich rozpoczęcia. Dni bez realizacji mają wartość zero.
+
+Wskaż punkt wykresu kursorem, dotknięciem lub klawiaturą, aby zobaczyć dokładną wartość. **Dane wykresu** otwierają tabelę liczb. Puste dane pozostają puste. Interfejs działa na telefonie, a efekty szkła mają warianty dla ograniczonej przezroczystości i ruchu.
 
 ## Company Brain: mózg firmy ze strony
 
@@ -144,7 +171,7 @@ Przy konflikcie wersji CRM aplikacja zatrzymuje edycję. Pobierz kopię zmian i 
 
 ## Opcjonalny tryb Supabase
 
-1. Utwórz projekt Supabase i wykonaj [migrację SQL](supabase/migrations/202610050001_growth_foundation.sql) w nowej/testowej bazie. Sprawdź nazwy tabel przed użyciem istniejącego projektu; migracja nie wykonuje się automatycznie.
+1. Utwórz projekt Supabase i wykonaj kolejno [fundament CRM](supabase/migrations/202610050001_growth_foundation.sql) oraz [tryb usługowy](supabase/migrations/202610050002_service_mode.sql) w nowej/testowej bazie. W istniejącej instalacji z fundamentem zastosuj drugą migrację, aby zachować wybór sposobu pracy. Sprawdź nazwy tabel przed użyciem istniejącego projektu; migracja nie wykonuje się automatycznie.
 2. W `.env.local` ustaw:
 
 ```dotenv
@@ -193,18 +220,18 @@ npm run test:localdb
 
 Playwright wymaga Chromium: `npx playwright install chromium` lub `CRM_CHROMIUM_PATH=/ścieżka/do/chromium`. Testy uruchamiają serwery na portach 3000 (CRM), 3001 (cloud UI) i 3002 (SQLite). Nie uruchamiaj kilku instancji Next dev z tym samym `.next/dev` równocześnie. `npm run test:db` dodatkowo wymaga Docker i sprawdza migrację/RLS w jednorazowym Postgres; bootstrap Auth nie jest testem rzeczywistej usługi Supabase Auth.
 
-Testy obejmują walidację, izolację przestrzeni, konflikty, SQLite, kopie, wikilinki, ZIP, import/KPI, adaptery, wybór modelu, zatwierdzanie i generator. Dostawcy API/AI są jawnie mockowani w testach; SQLite i eksporty są rzeczywiste. Generator UI używa dostawcy testowego, a jego atomowy zapis jest sprawdzany osobno na SQLite. Nie wykonano płatnych wywołań AI ani logowania do rzeczywistych kont Supabase, WordPress, PostHog czy Resend w tym środowisku. Live smoke test wymaga własnej konfiguracji użytkownika.
+Testy obejmują rezerwacje i kolizje terminów, historię klienta, przełączanie trybu, onboarding, agregację wykresów, walidację, izolację przestrzeni, konflikty, SQLite, kopie, wikilinki, ZIP, import/KPI, adaptery, wybór modelu, zatwierdzanie i generator. Dostawcy API/AI są jawnie mockowani w testach; SQLite i eksporty są rzeczywiste. Generator UI używa dostawcy testowego, a jego atomowy zapis jest sprawdzany osobno na SQLite. Nie wykonano płatnych wywołań AI ani logowania do rzeczywistych kont Supabase, WordPress, PostHog czy Resend w tym środowisku. Live smoke test wymaga własnej konfiguracji użytkownika.
 
-| Katalog                                                   | Odpowiedzialność                                          |
-| --------------------------------------------------------- | --------------------------------------------------------- |
-| `components/crm`, `components/growth`, `components/local` | Interfejs, tryby, formularze, wiedza, konektory i AI      |
-| `lib/local`, `app/api/local`                              | SQLite i lokalne endpointy                                |
-| `lib/knowledge`                                           | Notatki, bezpieczny odczyt strony, generator, eksport ZIP |
-| `lib/ai`                                                  | Dostawcy, kontekst i zatwierdzane działania               |
-| `lib/integrations`                                        | Adaptery, CSV i metryki                                   |
-| `lib/supabase`, `supabase/migrations`                     | Auth, wspólny CRM i RLS                                   |
-| `tests`                                                   | Testy logiki, bazy i przeglądarki                         |
-| `public/assets/brand`                                     | Logo AI Evolution Polska                                  |
+| Katalog                                                                          | Odpowiedzialność                                          |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `components/crm`, `components/services`, `components/growth`, `components/local` | Interfejs, tryby, formularze, wiedza, konektory i AI      |
+| `lib/local`, `app/api/local`                                                     | SQLite i lokalne endpointy                                |
+| `lib/knowledge`                                                                  | Notatki, bezpieczny odczyt strony, generator, eksport ZIP |
+| `lib/ai`                                                                         | Dostawcy, kontekst i zatwierdzane działania               |
+| `lib/integrations`                                                               | Adaptery, CSV i metryki                                   |
+| `lib/supabase`, `supabase/migrations`                                            | Auth, wspólny CRM i RLS                                   |
+| `tests`                                                                          | Testy logiki, bazy i przeglądarki                         |
+| `public/assets/brand`                                                            | Logo AI Evolution Polska                                  |
 
 ## Aktualne screenshoty aplikacji
 
@@ -229,3 +256,15 @@ Zrzuty wykonano w działającej aplikacji. Dane są demonstracyjne. Ekrany AI i 
 **AI Brain: wybrany model, odpowiedź i propozycja do zatwierdzenia — dostawca testowy.**
 
 ![Okno agenta AI](docs/screenshots/local-agent-test-provider.png)
+
+**Tryb usługowy: pulpit realizacji i rezerwacji.**
+
+![Szklany pulpit firmy usługowej](docs/screenshots/premium-services-dashboard.png)
+
+**Karta klienta: kontakt, ustalenia i historia współpracy.**
+
+![Karta klienta i historia realizacji](docs/screenshots/premium-client-history.png)
+
+**Prosty onboarding: wybór sposobu pracy w pierwszym z trzech kroków.**
+
+![Onboarding Evolution Growth OS](docs/screenshots/premium-onboarding.png)

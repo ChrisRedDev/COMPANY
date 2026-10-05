@@ -7,6 +7,7 @@ export type Preferences = {
   onboarded: boolean;
   sender: string;
   agentEnabled: boolean;
+  businessMode?: "crm" | "services";
 };
 export type Snapshot = {
   data: WorkspaceData;
@@ -34,12 +35,19 @@ export function validateSnapshot(value: unknown): Snapshot {
     typeof v.settings.onboarded !== "boolean" ||
     typeof v.settings.agentEnabled !== "boolean" ||
     typeof v.settings.sender !== "string" ||
-    v.settings.sender.length > 200
+    v.settings.sender.length > 200 ||
+    (v.settings.businessMode !== undefined &&
+      !["crm", "services"].includes(v.settings.businessMode))
   )
     throw Error("Nieprawidłowa wersja lub ustawienia.");
   return {
     data: parseBackup(JSON.stringify({ version: 1, data: v.data })),
-    settings: v.settings,
+    settings: {
+      onboarded: v.settings.onboarded,
+      sender: v.settings.sender,
+      agentEnabled: v.settings.agentEnabled,
+      businessMode: v.settings.businessMode ?? "crm",
+    },
     revision: v.revision,
   };
 }
@@ -53,6 +61,7 @@ export function snapshot(
       onboarded: state.onboarded,
       sender: state.sender,
       agentEnabled: state.agentEnabled,
+      businessMode: state.businessMode ?? "crm",
     },
     data: {
       firms: state.firms,

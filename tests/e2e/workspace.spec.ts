@@ -18,12 +18,9 @@ test("onboarding wyjaśnia pocztę i agenta, a po ukończeniu nie wraca", async 
   await page.getByRole("button", { name: "Dalej", exact: true }).click();
   await page.getByRole("button", { name: "Dalej", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Możesz też podpiąć e-maile." }),
+    page.getByRole("heading", { name: "Możesz też podpiąć e-maile i AI." }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Dalej", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Agent przygotuje. Ty zatwierdzisz." }),
-  ).toBeVisible();
+  await expect(page.getByText(/agent follow-up tworzy szkice/)).toBeVisible();
   await page.getByRole("button", { name: "Zaczynamy" }).click();
   await page.reload();
   await expect(
@@ -132,13 +129,11 @@ test("kopie i eksport zawierają polskie dane, usuwanie działa", async ({
     page.getByRole("heading", { name: "Brak firm w tym widoku" }),
   ).toBeVisible();
   await navigate(page, "Ustawienia");
-  await page
-    .locator('input[type="file"]')
-    .setInputFiles({
-      name: "kopia.json",
-      mimeType: "application/json",
-      buffer: contents,
-    });
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "kopia.json",
+    mimeType: "application/json",
+    buffer: contents,
+  });
   await navigate(page, "Firmy");
   await expect(page.getByText("Nova Studio", { exact: true })).toBeVisible();
 });
@@ -195,4 +190,35 @@ test("błędny zapis przeglądarki nie blokuje uruchomienia CRM", async ({
   await expect(
     page.getByRole("alert").filter({ hasText: "Zapis lokalny wymaga uwagi" }),
   ).toBeVisible();
+});
+test("tryb usługowy w przeglądarce zachowuje rezerwację, także z wartością zero", async ({
+  page,
+}) => {
+  await enter(page);
+  await page.getByLabel("Tryb pracy").selectOption("services");
+  await navigate(page, "Zlecenia");
+  await page
+    .getByRole("button", { name: "Zarezerwuj pracę", exact: true })
+    .click();
+  await page.getByLabel("Nazwa pracy").fill("Konsultacja wstępna");
+  await page.getByLabel("Wartość zlecenia (PLN)").fill("0");
+  await page
+    .getByRole("button", { name: "Zapisz zlecenie", exact: true })
+    .click();
+  await page.reload();
+  await expect(page.getByLabel("Tryb pracy")).toHaveValue("services");
+  await navigate(page, "Zlecenia");
+  await expect(
+    page.getByRole("heading", { name: "Konsultacja wstępna", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Edytuj zlecenie", exact: true })
+    .click();
+  await expect(page.getByLabel("Wartość zlecenia (PLN)")).toHaveValue("0");
+  await page.getByRole("button", { name: "Zamknij", exact: true }).click();
+  await page.getByLabel("Tryb pracy").selectOption("crm");
+  await navigate(page, "Szanse sprzedaży");
+  await expect(
+    page.getByRole("heading", { name: "Konsultacja wstępna", exact: true }),
+  ).toHaveCount(0);
 });

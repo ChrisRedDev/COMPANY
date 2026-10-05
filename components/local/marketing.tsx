@@ -9,6 +9,8 @@ import {
 } from "@/lib/integrations/marketing";
 import { money, today, offsetDate } from "@/lib/crm/model";
 import { Empty } from "../crm/ui";
+import { dailySeries } from "@/lib/crm/analytics";
+import { AreaChart, DonutChart } from "../crm/charts";
 export default function Marketing({
   wid,
   openConnectors,
@@ -21,7 +23,8 @@ export default function Marketing({
     [start, setStart] = useState(offsetDate(-29)),
     [end, setEnd] = useState(today()),
     [source, setSource] = useState("all"),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [chartMetric, setChartMetric] = useState("leads");
   const load = useCallback(
     () =>
       localRequest(wid, "marketing")
@@ -41,7 +44,10 @@ export default function Marketing({
         (source === "all" || r.source === source),
     ),
     m = metrics(filtered),
-    length = Math.floor((Date.parse(to) - Date.parse(from)) / 86400000) + 1;
+    length = Math.max(
+      1,
+      Math.floor((Date.parse(to) - Date.parse(from)) / 86400000) + 1,
+    );
   const previousStart = new Date(Date.parse(from) - length * 86400000)
       .toISOString()
       .slice(0, 10),
@@ -191,6 +197,66 @@ export default function Marketing({
                 <p className="crm-muted">{k.caption}</p>
               </article>
             ))}
+          </div>
+          <div className="growth-analytics-grid">
+            <section className="crm-card p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <span className="crm-eyebrow">TREND W WYBRANYM OKRESIE</span>
+                  <h3 className="text-xl!">
+                    Zobacz, kiedy pojawiają się wyniki
+                  </h3>
+                </div>
+                <select
+                  aria-label="Wskaźnik na wykresie"
+                  value={chartMetric}
+                  onChange={(e) => setChartMetric(e.target.value)}
+                >
+                  <option value="leads">Leady</option>
+                  <option value="spend">Wydatki (PLN)</option>
+                  <option value="revenue">Przychód (PLN)</option>
+                </select>
+              </div>
+              <AreaChart
+                key={chartMetric + from + to + source}
+                points={dailySeries(filtered, from, to, chartMetric)}
+                title={
+                  chartMetric === "leads"
+                    ? "Liczba leadów"
+                    : chartMetric === "spend"
+                      ? "Wydatki (PLN)"
+                      : "Przychód (PLN)"
+                }
+                format={chartMetric === "leads" ? undefined : money}
+              />
+              <p className="crm-muted">
+                Wskaż punkt, aby zobaczyć wartość. Luki oznaczają brak importu.
+                Dłuższe zakresy sumujemy w maksymalnie 30 przedziałach.
+              </p>
+            </section>
+            <section className="crm-card p-6">
+              <span className="crm-eyebrow">SKĄD PRZYCHODZĄ KONTAKTY?</span>
+              <h3 className="mb-5 text-xl!">Leady według kanału</h3>
+              <DonutChart
+                title="leadów"
+                items={SOURCES.filter((s) =>
+                  filtered.some((r) => r.source === s),
+                ).map((s, i) => ({
+                  label: sourceLabels[s],
+                  value: metrics(filtered.filter((r) => r.source === s)).leads,
+                  color: [
+                    "#7356ed",
+                    "#a99aff",
+                    "#24b995",
+                    "#72a7f3",
+                    "#e5a563",
+                  ][i],
+                }))}
+              />
+              <p className="crm-muted mt-5">
+                Udział w imporcie z wybranego okresu i źródła.
+              </p>
+            </section>
           </div>
           <section className="crm-card p-6">
             <h3 className="text-lg!">Kampanie w wybranym okresie</h3>

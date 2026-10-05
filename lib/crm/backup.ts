@@ -5,6 +5,7 @@ import {
   safeWebsite,
   type WorkspaceData,
 } from "./model";
+import { validateBooking, validateSchedule } from "./services";
 function text(v: unknown, max = 1000): v is string {
   return typeof v === "string" && v.length <= max;
 }
@@ -50,6 +51,10 @@ export function parseBackup(source: string): WorkspaceData {
       !text(f.website, 500) ||
       (f.website && safeWebsite(f.website) !== f.website) ||
       !text(f.notes, 5000) ||
+      (f.email !== undefined &&
+        (!text(f.email, 254) || (f.email !== "" && !validEmail(f.email)))) ||
+      (f.phone !== undefined && !text(f.phone, 50)) ||
+      (f.address !== undefined && !text(f.address, 500)) ||
       !date(f.created)
     )
       throw Error("Nieprawidłowe dane firmy.");
@@ -80,6 +85,9 @@ export function parseBackup(source: string): WorkspaceData {
       !date(deal.closeDate)
     )
       throw Error("Nieprawidłowe dane szansy.");
+  for (const deal of deals)
+    if (deal.service !== undefined) validateBooking(deal.service);
+  validateSchedule(deals);
   for (const task of tasks)
     if (
       (task.companyId && !firmIds.has(task.companyId)) ||

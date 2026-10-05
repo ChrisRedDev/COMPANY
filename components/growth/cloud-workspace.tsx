@@ -15,6 +15,7 @@ import {
 import { downloadFile } from "@/lib/crm/backup";
 import { Field } from "../crm/ui";
 export default function CloudWorkspace({ user }: { user: User }) {
+  const selectionKey = `growth-os-space:${isSqlite() ? "sqlite" : "cloud"}:${user.id}`;
   const savedLabel = isSqlite() ? "Zapisano w SQLite" : "Zapisano w Supabase";
   const [spaces, setSpaces] = useState<WorkspaceInfo[]>([]),
     [selected, setSelected] = useState<WorkspaceInfo | null>(null),
@@ -40,7 +41,15 @@ export default function CloudWorkspace({ user }: { user: User }) {
         if (active) {
           setSpaces(r.workspaces);
           if (!r.workspaces.length) setCreateOpen(true);
-          setSelected(r.workspaces[0] ?? null);
+          let previous = "";
+          try {
+            previous = sessionStorage.getItem(selectionKey) || "";
+          } catch {}
+          setSelected(
+            r.workspaces.find((s: WorkspaceInfo) => s.id === previous) ??
+              r.workspaces[0] ??
+              null,
+          );
         }
       })
       .catch((e) => {
@@ -52,9 +61,12 @@ export default function CloudWorkspace({ user }: { user: User }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [selectionKey]);
   useEffect(() => {
     if (!selected) return;
+    try {
+      sessionStorage.setItem(selectionKey, selected.id);
+    } catch {}
     let active = true,
       writing = false,
       hydrating = false;
@@ -77,6 +89,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
       onboarded: false,
       sender: "",
       agentEnabled: false,
+      businessMode: "crm",
     });
     let unsubscribe = () => {};
     const save = async () => {
@@ -178,12 +191,16 @@ export default function CloudWorkspace({ user }: { user: User }) {
       clearTimeout(timer);
       window.removeEventListener("beforeunload", unload);
     };
-  }, [selected, savedLabel]);
+  }, [selected, savedLabel, selectionKey]);
   function backup() {
     downloadFile(
       "growth-os-niezapisane-zmiany.json",
       JSON.stringify(
-        { version: 1, data: snapshot(useCrm.getState(), 0).data },
+        {
+          version: 1,
+          data: snapshot(useCrm.getState(), 0).data,
+          settings: snapshot(useCrm.getState(), 0).settings,
+        },
         null,
         2,
       ),

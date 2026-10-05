@@ -24,10 +24,12 @@ export default function EntityForm({
   editor,
   onClose,
   onSaved,
+  serviceMode = false,
 }: {
   editor: Editor;
   onClose: () => void;
   onSaved: () => void;
+  serviceMode?: boolean;
 }) {
   const s = useCrm();
   const initial = editor.item;
@@ -48,6 +50,9 @@ export default function EntityForm({
           industry: "Usługi",
           website: "",
           notes: "",
+          email: "",
+          phone: "",
+          address: "",
         };
       case "contact":
         return {
@@ -100,7 +105,7 @@ export default function EntityForm({
   }
   function firmField(optional = false) {
     return (
-      <Field label="Firma">
+      <Field label={serviceMode ? "Klient" : "Firma"}>
         <select
           required={!optional}
           value={text("companyId")}
@@ -135,7 +140,13 @@ export default function EntityForm({
         );
       if (text("website") && !safeWebsite(text("website")))
         return setError("Wpisz poprawny adres strony internetowej.");
+      if (text("email") && !validEmail(text("email")))
+        return setError("Wpisz poprawny e-mail klienta.");
       s.saveFirm({
+        ...(initial as Firm),
+        email: text("email"),
+        phone: text("phone"),
+        address: text("address"),
         id: key,
         name: text("name").trim(),
         nip: text("nip").replace(/[\s-]/g, ""),
@@ -179,6 +190,7 @@ export default function EntityForm({
         return setError("Przypisz szansę do firmy.");
       const stage = text("stage") as Deal["stage"];
       s.saveDeal({
+        ...(initial as Deal),
         id: key,
         name: text("name").trim(),
         companyId: text("companyId"),
@@ -202,7 +214,39 @@ export default function EntityForm({
     onSaved();
     onClose();
   }
-  const title = `${initial ? "Edytuj" : "Dodaj"} ${{ firm: "firmę", contact: "kontakt", deal: "szansę sprzedaży", task: "zadanie" }[editor.kind]}`;
+  const companyFields = (
+    <>
+      <div className="crm-form-grid">
+        <Field label="NIP (opcjonalnie)">
+          {input("nip", "text", false, 20)}
+        </Field>
+        <Field label="Miasto">{input("city", "text", false, 100)}</Field>
+      </div>
+      <Field label="Branża">
+        <select
+          value={text("industry")}
+          onChange={(e) => change("industry", e.target.value)}
+        >
+          {[
+            "Usługi",
+            "Marketing",
+            "E-commerce",
+            "Logistyka",
+            "Edukacja",
+            "Technologia",
+            "Produkcja",
+            "Inna",
+          ].map((v) => (
+            <option key={v}>{v}</option>
+          ))}
+        </select>
+      </Field>
+      <Field label="Strona internetowa">
+        {input("website", "text", false, 500)}
+      </Field>
+    </>
+  );
+  const title = `${initial ? "Edytuj" : "Dodaj"} ${{ firm: serviceMode ? "klienta" : "firmę", contact: "kontakt", deal: "szansę sprzedaży", task: "zadanie" }[editor.kind]}`;
   return (
     <Modal title={title} onClose={onClose}>
       <form onSubmit={submit} className="crm-form">
@@ -213,35 +257,36 @@ export default function EntityForm({
         )}
         {editor.kind === "firm" && (
           <>
-            <Field label="Nazwa firmy">{input("name", "text", true)}</Field>
-            <div className="crm-form-grid">
-              <Field label="NIP (opcjonalnie)">
-                {input("nip", "text", false, 20)}
-              </Field>
-              <Field label="Miasto">{input("city", "text", false, 100)}</Field>
-            </div>
-            <Field label="Branża">
-              <select
-                value={text("industry")}
-                onChange={(e) => change("industry", e.target.value)}
-              >
-                {[
-                  "Usługi",
-                  "Marketing",
-                  "E-commerce",
-                  "Logistyka",
-                  "Edukacja",
-                  "Technologia",
-                  "Produkcja",
-                  "Inna",
-                ].map((v) => (
-                  <option key={v}>{v}</option>
-                ))}
-              </select>
+            <Field
+              label={
+                serviceMode ? "Imię i nazwisko / nazwa klienta" : "Nazwa firmy"
+              }
+            >
+              {input("name", "text", true)}
             </Field>
-            <Field label="Strona internetowa">
-              {input("website", "text", false, 500)}
-            </Field>
+            {serviceMode && (
+              <>
+                <div className="crm-form-grid">
+                  <Field label="E-mail klienta">
+                    {input("email", "email", false, 254)}
+                  </Field>
+                  <Field label="Telefon klienta">
+                    {input("phone", "tel", false, 50)}
+                  </Field>
+                </div>
+                <Field label="Adres klienta">
+                  {input("address", "text", false, 500)}
+                </Field>
+              </>
+            )}
+            {serviceMode ? (
+              <details>
+                <summary>Dane firmy (opcjonalnie)</summary>
+                {companyFields}
+              </details>
+            ) : (
+              companyFields
+            )}
             <Field label="Notatki">
               <textarea
                 value={text("notes")}

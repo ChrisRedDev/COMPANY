@@ -76,13 +76,23 @@ export function buildContext(wid: string, prompt: string) {
     revision: s.revision,
     text: JSON.stringify({
       date: today(),
+      businessMode: s.settings.businessMode ?? "crm",
       scope:
         "Importy marketingowe ostatnich 30 dni; CRM i wybrane notatki. Brak potwierdzenia live trackingu.",
       marketing: metrics(rows),
       companies: s.data.firms
         .slice(0, 20)
         .map((f) => ({ id: f.id, name: f.name, industry: f.industry })),
-      deals: s.data.deals.slice(0, 20),
+      deals: s.data.deals
+        .slice(0, 20)
+        .map((d) =>
+          d.service
+            ? {
+                ...d,
+                service: { ...d.service, history: d.service.history.slice(-3) },
+              }
+            : d,
+        ),
       tasks: s.data.tasks.filter((t) => !t.done).slice(0, 20),
       notes,
       recentConversation: history(wid)

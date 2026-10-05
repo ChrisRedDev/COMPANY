@@ -6,6 +6,7 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:3002",
     locale: "pl-PL",
+    timezoneId: "Europe/Warsaw",
     viewport: { width: 1440, height: 1000 },
     launchOptions: process.env.CRM_CHROMIUM_PATH
       ? {

@@ -930,3 +930,186 @@ test("research pobiera tylko publiczny HTML, przypina DNS i ignoruje obce linki"
     else process.env.https_proxy = savedLower;
   }
 });
+const services = load("lib/crm/services.ts"),
+  analytics = load("lib/crm/analytics.ts");
+function booking(change = {}) {
+  return {
+    status: "booked",
+    start: "2026-10-05T09:00",
+    end: "2026-10-05T10:00",
+    resource: "Anna",
+    location: "Warszawa",
+    notes: "",
+    history: [],
+    ...change,
+  };
+}
+function job(id, service, value = 100) {
+  return {
+    id,
+    companyId: "f1",
+    name: id,
+    stage: "Wygrana",
+    probability: 100,
+    closeDate: "2026-10-05",
+    value,
+    service,
+  };
+}
+test("rezerwacje: poprawne daty, przedział i status", () => {
+  assert.equal(services.validLocalDateTime("2026-02-30T10:00"), false);
+  assert.equal(services.validLocalDateTime("2026-10-05T25:00"), false);
+  assert.equal(services.validLocalDateTime("2026-10-05T09:00"), true);
+  for (const invalid of [
+    { end: "2026-10-05T09:00" },
+    { end: "2026-10-05T08:00" },
+    { resource: " " },
+    { status: "unknown" },
+    { history: [{ at: "oops", message: "Zmiana" }] },
+  ])
+    assert.throws(() => services.validateBooking(booking(invalid)));
+});
+test("kalendarz: kolizje, sąsiednie sloty, osobne zasoby i anulowanie", () => {
+  const deals = [job("j1", booking())];
+  assert.equal(
+    services.bookingConflict(
+      deals,
+      booking({ start: "2026-10-05T09:30", resource: " anna " }),
+    ).id,
+    "j1",
+  );
+  assert.equal(
+    services.bookingConflict(
+      deals,
+      booking({ start: "2026-10-05T10:00", end: "2026-10-05T11:00" }),
+    ),
+    undefined,
+  );
+  assert.equal(
+    services.bookingConflict(deals, booking({ resource: "Piotr" })),
+    undefined,
+  );
+  assert.equal(
+    services.bookingConflict(deals, booking({ status: "cancelled" })),
+    undefined,
+  );
+  assert.equal(services.bookingConflict(deals, booking(), "j1"), undefined);
+  assert.throws(
+    () =>
+      services.validateSchedule([
+        ...deals,
+        job("j2", booking({ resource: "ANNA" })),
+      ]),
+    /Nakładające/,
+  );
+  services.validateSchedule([
+    ...deals,
+    job("j2", booking({ status: "completed" })),
+    job("j3", booking({ resource: "Piotr" })),
+  ]);
+});
+test("kopia zachowuje klientów i historię prac; odrzuca nakładające się terminy", () => {
+  const data = model.seedData();
+  data.firms[0] = {
+    ...data.firms[0],
+    email: "anna@example.com",
+    phone: "+48 500 000 000",
+    address: "Warszawa",
+  };
+  data.deals.push(
+    job(
+      "j1",
+      booking({
+        history: [
+          { at: "2026-10-05T09:00:00Z", message: "Utworzono zlecenie" },
+        ],
+      }),
+    ),
+  );
+  const copy = backup.parseBackup(JSON.stringify({ version: 1, data }));
+  assert.equal(
+    copy.deals.at(-1).service.history[0].message,
+    "Utworzono zlecenie",
+  );
+  assert.equal(copy.firms[0].email, "anna@example.com");
+  data.deals.push(job("j2", booking()));
+  assert.throws(
+    () => backup.parseBackup(JSON.stringify({ version: 1, data })),
+    /Nakładające/,
+  );
+});
+test("tryb firmy jest przenoszony w zapisie; starsze kopie otwierają CRM", () => {
+  const base = {
+    data: model.seedData(),
+    settings: { onboarded: true, sender: "Firma", agentEnabled: false },
+    revision: 0,
+  };
+  assert.equal(growth.validateSnapshot(base).settings.businessMode, "crm");
+  assert.equal(
+    growth.validateSnapshot({
+      ...base,
+      settings: { ...base.settings, saveDeal: "unexpected" },
+    }).settings.saveDeal,
+    undefined,
+  );
+  assert.equal(
+    growth.validateSnapshot({
+      ...base,
+      settings: { ...base.settings, businessMode: "services" },
+    }).settings.businessMode,
+    "services",
+  );
+  assert.throws(() =>
+    growth.validateSnapshot({
+      ...base,
+      settings: { ...base.settings, businessMode: "invalid" },
+    }),
+  );
+});
+test("statystyki usług pomijają anulowane rezerwacje i oddzielają zakończone", () => {
+  const totals = services.serviceTotals([
+    job("a", booking(), 200),
+    job("b", booking({ status: "in_progress", resource: "Piotr" }), 300),
+    job("c", booking({ status: "completed" }), 400),
+    job("d", booking({ status: "cancelled" }), 500),
+    { id: "crm", value: 9999 },
+  ]);
+  assert.equal(totals.reservedValue, 500);
+  assert.equal(totals.completedValue, 400);
+  assert.equal(totals.active.length, 2);
+  assert.equal(totals.jobs.length, 4);
+});
+test("wykresy sumują realne dni i zachowują luki oraz zera", () => {
+  const points = analytics.dailySeries(
+    [
+      { date: "2026-10-01", leads: 2 },
+      { date: "2026-10-01", leads: 3 },
+      { date: "2026-10-03", leads: 0 },
+      { date: "2026-09-30", leads: 100 },
+    ],
+    "2026-10-01",
+    "2026-10-03",
+    "leads",
+  );
+  assert.equal(points[0].value, 5);
+  assert.equal(points[1].value, null);
+  assert.equal(points[2].value, 0);
+  const long = analytics.dailySeries(
+    [
+      { date: "2026-10-01", value: 12 },
+      { date: "2026-12-29", value: 8 },
+    ],
+    "2026-10-01",
+    "2026-12-29",
+    "value",
+  );
+  assert.ok(long.length <= 30);
+  assert.equal(
+    long.reduce((sum, p) => sum + (p.value ?? 0), 0),
+    20,
+  );
+  assert.equal(
+    analytics.dailySeries([], "2026-12-01", "2026-10-01", "leads").length,
+    0,
+  );
+});

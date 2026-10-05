@@ -1,6 +1,7 @@
+import { readFile } from "node:fs/promises";
 import { DatabaseSync } from "node:sqlite";
 import { test, expect, type Page } from "@playwright/test";
-async function ready(page: Page) {
+async function ready(page: Page, keepGuide = false) {
   await page.goto("/");
   const formToggle = page.getByText("Nowa przestrzeń firmy", { exact: true });
   await expect(formToggle).toHaveAttribute("aria-disabled", "false");
@@ -17,7 +18,7 @@ async function ready(page: Page) {
   ).toBeVisible();
   const skip = page.getByRole("button", { name: "Pomiń przewodnik" });
   await expect(skip).toBeVisible();
-  await skip.click();
+  if (!keepGuide) await skip.click();
   await expect(
     page.getByText("Zapisano w SQLite", { exact: true }),
   ).toBeVisible();
@@ -122,10 +123,16 @@ test("Import kampanii zasila dashboard; konektory i AI nie udają połączenia",
     name: "ads.csv",
     mimeType: "text/csv",
     buffer: Buffer.from(
-      `date;source;campaign;spend;impressions;clicks;leads;qualified;revenue\n${date};google_ads;Usługi lokalne;200;1000;80;10;6;1200\n`,
+      "date;source;campaign;spend;impressions;clicks;leads;qualified;revenue\n" +
+        Array.from({ length: 30 }, (_, i) => {
+          const day = new Date(date + "T12:00:00Z");
+          day.setUTCDate(day.getUTCDate() - 29 + i);
+          const leads = 3 + (i % 7) + Math.floor(i / 5);
+          return `${day.toISOString().slice(0, 10)};${i % 3 ? "google_ads" : "microsoft_ads"};${i % 3 ? "Usługi lokalne" : "Konsultacje projektowe"};${leads * 20};1000;80;${leads};${Math.floor(leads * 0.6)};${leads * 120}\n`;
+        }).join(""),
     ),
   });
-  await expect(page.getByText(/Zapisano 1 wierszy/)).toBeVisible();
+  await expect(page.getByText(/Zapisano 30 wierszy/)).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Sprawdź odczyt" }).first(),
   ).toBeDisabled();
@@ -133,7 +140,10 @@ test("Import kampanii zasila dashboard; konektory i AI nie udają połączenia",
   await expect(page.getByText("Usługi lokalne", { exact: true })).toBeVisible();
   await expect(page.getByText("6.00×", { exact: true }).first()).toBeVisible();
   if (process.env.UPDATE_LOCAL_SCREENSHOTS)
-    await page.screenshot({ path: "docs/screenshots/local-dashboard.png" });
+    await page.screenshot({
+      path: "docs/screenshots/local-dashboard.png",
+      fullPage: true,
+    });
   await page.getByRole("button", { name: "AI Brain", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Analizuj", exact: true }),
@@ -400,6 +410,201 @@ test("generator strony: podgląd, zatwierdzenie, zapis wiedzy i eksport z dostaw
   await expect(
     page.getByRole("dialog", { name: "Mózg firmy ze strony" }),
   ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});
+test("firma usługowa: onboarding, klienci, terminy, kolizje, historia i trwały tryb", async ({
+  page,
+}) => {
+  await ready(page, true);
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS)
+    await page.screenshot({ path: "docs/screenshots/premium-onboarding.png" });
+  await page.getByRole("radio", { name: /Firma usługowa/ }).click();
+  await page.getByRole("button", { name: "Dalej", exact: true }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: "Klient. Termin. Dobrze wykonana praca.",
+    }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Dalej", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Możesz też podpiąć e-maile i AI." }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Zaczynamy", exact: true }).click();
+  await page.getByRole("button", { name: "Klienci", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Dodaj klienta", exact: true })
+    .first()
+    .click();
+  await page
+    .getByLabel("Imię i nazwisko / nazwa klienta")
+    .fill("Anna Kowalska");
+  await page.getByLabel("E-mail klienta").fill("anna@example.com");
+  await page.getByLabel("Telefon klienta").fill("+48 500 200 300");
+  await page.getByLabel("Adres klienta").fill("Warszawa, ul. Słoneczna 12");
+  await page
+    .getByLabel("Notatki", { exact: true })
+    .fill(
+      "Preferuje kontakt telefoniczny. Projekt wnętrza z naturalnymi materiałami.",
+    );
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Zapisz", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Zlecenia", exact: true }).click();
+  const date = new Date().toLocaleDateString("en-CA", {
+    timeZone: "Europe/Warsaw",
+  });
+  async function fillJob(
+    name: string,
+    start: string,
+    end: string,
+    value: string,
+    resource = "Anna · projekty",
+  ) {
+    await page.getByLabel("Nazwa pracy").fill(name);
+    await page.getByLabel("Początek pracy").fill(start);
+    await page.getByLabel("Koniec pracy").fill(end);
+    await page.getByLabel("Wartość zlecenia (PLN)").fill(value);
+    await page.getByLabel("Osoba / stanowisko").fill(resource);
+  }
+  await page
+    .getByRole("button", { name: "Zarezerwuj pracę", exact: true })
+    .click();
+  await fillJob("Projekt wnętrza", `${date}T09:00`, `${date}T11:00`, "1500");
+  await page
+    .getByRole("button", { name: "Zapisz zlecenie", exact: true })
+    .click();
+  await expect(
+    page.getByText("Zapisano w SQLite", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Zarezerwuj pracę", exact: true })
+    .click();
+  await fillJob(
+    "Konsultacja materiałowa",
+    `${date}T10:00`,
+    `${date}T12:00`,
+    "350",
+  );
+  await page
+    .getByRole("button", { name: "Zapisz zlecenie", exact: true })
+    .click();
+  await expect(page.getByRole("dialog").getByRole("alert")).toContainText(
+    "Ten termin jest zajęty",
+  );
+  await page.getByLabel("Osoba / stanowisko").fill("Piotr · konsultacje");
+  await page
+    .getByRole("button", { name: "Zapisz zlecenie", exact: true })
+    .click();
+  const first = page.getByRole("article").filter({
+    has: page.getByRole("heading", { name: "Projekt wnętrza", exact: true }),
+  });
+  await first
+    .getByRole("button", { name: "Rozpocznij pracę", exact: true })
+    .click();
+  await expect(first.getByText("W realizacji", { exact: true })).toBeVisible();
+  await first
+    .getByRole("button", { name: "Zakończ pracę", exact: true })
+    .click();
+  await page.getByLabel("Filtr zleceń").selectOption("all");
+  await first.getByText("Historia zlecenia (3)", { exact: true }).click();
+  await expect(
+    first.getByText("Status: Zakończone", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Pulpit", exact: true }).click();
+  await page.getByLabel("Okres realizacji").selectOption("7");
+  await expect(
+    page.getByRole("group", { name: "Wartość zakończonych realizacji (PLN)" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: /wszystkich prac:.*Zakończone 1/ }),
+  ).toBeVisible();
+  const message = page.getByRole("button", { name: "Zamknij komunikat" });
+  if (await message.isVisible()) await message.click();
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS)
+    await page.screenshot({
+      path: "docs/screenshots/premium-services-dashboard.png",
+      fullPage: true,
+    });
+  await expect(
+    page.getByText("Zapisano w SQLite", { exact: true }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(page.getByLabel("Tryb pracy")).toHaveValue("services");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.getByRole("button", { name: "Klienci", exact: true }).click();
+  await page.getByRole("button", { name: /Anna Kowalska/ }).click();
+  const profile = page.getByRole("dialog");
+  await expect(
+    profile.getByRole("heading", { name: "Historia współpracy" }),
+  ).toBeVisible();
+  await expect(
+    profile.getByText("Projekt wnętrza", { exact: true }),
+  ).toBeVisible();
+  await expect(profile.getByText("Zakończone", { exact: true })).toBeVisible();
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS)
+    await page.screenshot({
+      path: "docs/screenshots/premium-client-history.png",
+    });
+  await page.getByRole("button", { name: "Zamknij", exact: true }).click();
+  await page.getByRole("button", { name: "Ustawienia", exact: true }).click();
+  const backupReady = page.waitForEvent("download");
+  await page
+    .getByRole("button", { name: "Pobierz kopię JSON", exact: true })
+    .click();
+  const file = await backupReady;
+  const raw = await readFile((await file.path())!, "utf8");
+  const backup = JSON.parse(raw);
+  expect(backup.settings.businessMode).toBe("services");
+  expect(
+    backup.data.deals.find(
+      (d: { name: string }) => d.name === "Projekt wnętrza",
+    ).service.history,
+  ).toHaveLength(3);
+  await page.getByLabel("Tryb pracy").selectOption("crm");
+  await page.getByRole("button", { name: "Ustawienia", exact: true }).click();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles({
+      name: "kopia.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(raw),
+    });
+  await expect(page.getByLabel("Tryb pracy")).toHaveValue("services");
+  await expect(
+    page.getByText("Zapisano w SQLite", { exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("Tryb pracy").selectOption("crm");
+  await page
+    .getByRole("button", { name: "Szanse sprzedaży", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Projekt wnętrza", exact: true }),
+  ).toHaveCount(0);
+  await page.getByLabel("Tryb pracy").selectOption("services");
+  await page.getByRole("button", { name: "Zlecenia", exact: true }).click();
+  await page.getByLabel("Filtr zleceń").selectOption("all");
+  await expect(
+    page.getByRole("heading", { name: "Projekt wnętrza", exact: true }),
+  ).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(
+    page.getByRole("heading", { name: "Zlecenia", exact: true }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page
+    .getByRole("button", { name: "Zarezerwuj pracę", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,

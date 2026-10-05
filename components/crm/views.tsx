@@ -12,6 +12,7 @@ import {
   type Deal,
 } from "@/lib/crm/model";
 import { Icon, Badge, Empty, Modal } from "./ui";
+import { DonutChart } from "./charts";
 import { downloadCsv } from "@/lib/csv";
 import type { Editor } from "./forms";
 export type ViewProps = {
@@ -54,7 +55,10 @@ function ChangeButtons({
 }
 export function Dashboard({ edit, navigate }: ViewProps) {
   const s = useCrm();
-  const active = s.deals.filter(
+  const sales = s.deals.filter((d) => !d.service);
+  const totalSalesValue = sales.reduce((sum, d) => sum + d.value, 0);
+  const [pipelineMetric, setPipelineMetric] = useState("value");
+  const active = sales.filter(
     (d) => !["Wygrana", "Przegrana"].includes(d.stage),
   );
   const value = active.reduce((sum, d) => sum + d.value, 0);
@@ -62,7 +66,7 @@ export function Dashboard({ edit, navigate }: ViewProps) {
     (sum, d) => sum + (d.value * d.probability) / 100,
     0,
   );
-  const won = s.deals.filter((d) => d.stage === "Wygrana");
+  const won = sales.filter((d) => d.stage === "Wygrana");
   const tasks = s.tasks
     .filter((t) => !t.done)
     .sort((a, b) => a.date.localeCompare(b.date));
@@ -118,7 +122,7 @@ export function Dashboard({ edit, navigate }: ViewProps) {
           </div>
         ))}
       </div>
-      <div className="crm-dashboard-grid">
+      <div className="crm-dashboard-grid growth-analytics-grid">
         <section className="crm-card">
           <div className="crm-card-header">
             <div>
@@ -132,16 +136,35 @@ export function Dashboard({ edit, navigate }: ViewProps) {
               Zobacz tablicę <Icon name="arrow" size={16} />
             </button>
           </div>
+          <div className="px-6 pb-3">
+            <select
+              aria-label="Wskaźnik procesu sprzedaży"
+              value={pipelineMetric}
+              onChange={(e) => setPipelineMetric(e.target.value)}
+            >
+              <option value="value">Wartość (PLN)</option>
+              <option value="count">Liczba szans</option>
+            </select>
+          </div>
           <div className="crm-pipeline-chart">
             {DEAL_STAGES.map((stage, i) => {
-              const ds = s.deals.filter((d) => d.stage === stage);
+              const ds = sales.filter((d) => d.stage === stage);
+              const stageValue = ds.reduce((sum, d) => sum + d.value, 0);
+              const share =
+                pipelineMetric === "count"
+                  ? sales.length
+                    ? ds.length / sales.length
+                    : 0
+                  : totalSalesValue
+                    ? stageValue / totalSalesValue
+                    : 0;
               return (
                 <div className="crm-chart-row" key={stage}>
                   <span>{stage}</span>
                   <div className="crm-chart-track">
                     <div
                       style={{
-                        width: `${s.deals.length ? (ds.length / s.deals.length) * 100 : 0}%`,
+                        width: `${share * 100}%`,
                         background: [
                           "#c4b5fd",
                           "#a78bfa",
@@ -152,7 +175,7 @@ export function Dashboard({ edit, navigate }: ViewProps) {
                       }}
                     />
                   </div>
-                  <b>{money(ds.reduce((sum, d) => sum + d.value, 0))}</b>
+                  <b>{money(stageValue)}</b>
                   <small>{ds.length}</small>
                 </div>
               );
@@ -163,52 +186,71 @@ export function Dashboard({ edit, navigate }: ViewProps) {
             <Badge tone="purple">PLN</Badge>
           </div>
         </section>
-        <section className="crm-card">
-          <div className="crm-card-header">
-            <div>
-              <h3>Najbliższe zadania</h3>
-              <p>Małe kroki, które robią różnicę.</p>
-            </div>
-            <button
-              className="crm-text-button"
-              onClick={() => edit({ kind: "task" })}
-            >
-              <Icon name="plus" size={16} />
-              Dodaj
-            </button>
-          </div>
-          {tasks.length ? (
-            tasks.slice(0, 4).map((t) => (
-              <div className="crm-task-preview" key={t.id}>
-                <input
-                  type="checkbox"
-                  aria-label={`Ukończ: ${t.title}`}
-                  checked={t.done}
-                  onChange={() => s.saveTask({ ...t, done: true })}
-                />
-                <div>
-                  <strong>{t.title}</strong>
-                  <small>
-                    {s.firms.find((f) => f.id === t.companyId)?.name ??
-                      "Zadanie własne"}
-                  </small>
-                </div>
-                <Badge tone={t.date < today() ? "red" : "neutral"}>
-                  {t.date === today() ? "Dzisiaj" : dateLabel(t.date)}
-                </Badge>
-              </div>
-            ))
-          ) : (
-            <Empty
-              title="Plan na dziś jest pusty"
-              description="Dodaj zadanie lub chwilę odetchnij."
-            />
-          )}
-          <button className="crm-full-link" onClick={() => navigate("tasks")}>
-            Wszystkie zadania <Icon name="arrow" size={16} />
-          </button>
+        <section className="crm-card p-6">
+          <span className="crm-eyebrow">WYNIK PROCESU SPRZEDAŻY</span>
+          <h3 className="mb-5 text-xl!">Jak kończą się rozmowy?</h3>
+          <DonutChart
+            title="zamkniętych szans"
+            items={[
+              { label: "Wygrane", value: won.length, color: "#24b995" },
+              {
+                label: "Przegrane",
+                value: sales.filter((d) => d.stage === "Przegrana").length,
+                color: "#b3a0ff",
+              },
+            ]}
+          />
+          <p className="crm-muted mt-5">
+            Udział w liczbie zamkniętych szans. Otwarte rozmowy są widoczne w
+            procesie obok.
+          </p>
         </section>
       </div>
+      <section className="crm-card mb-6">
+        <div className="crm-card-header">
+          <div>
+            <h3>Najbliższe zadania</h3>
+            <p>Małe kroki, które robią różnicę.</p>
+          </div>
+          <button
+            className="crm-text-button"
+            onClick={() => edit({ kind: "task" })}
+          >
+            <Icon name="plus" size={16} />
+            Dodaj
+          </button>
+        </div>
+        {tasks.length ? (
+          tasks.slice(0, 4).map((t) => (
+            <div className="crm-task-preview" key={t.id}>
+              <input
+                type="checkbox"
+                aria-label={`Ukończ: ${t.title}`}
+                checked={t.done}
+                onChange={() => s.saveTask({ ...t, done: true })}
+              />
+              <div>
+                <strong>{t.title}</strong>
+                <small>
+                  {s.firms.find((f) => f.id === t.companyId)?.name ??
+                    "Zadanie własne"}
+                </small>
+              </div>
+              <Badge tone={t.date < today() ? "red" : "neutral"}>
+                {t.date === today() ? "Dzisiaj" : dateLabel(t.date)}
+              </Badge>
+            </div>
+          ))
+        ) : (
+          <Empty
+            title="Plan na dziś jest pusty"
+            description="Dodaj zadanie lub chwilę odetchnij."
+          />
+        )}
+        <button className="crm-full-link" onClick={() => navigate("tasks")}>
+          Wszystkie zadania <Icon name="arrow" size={16} />
+        </button>
+      </section>
       <section className="crm-agent-banner">
         <div className="crm-agent-symbol">
           <Icon name="agent" size={28} />
@@ -525,10 +567,12 @@ export function Firms({ query, edit, notify, compose }: ViewProps) {
 export function Deals({ query, edit, notify }: ViewProps) {
   const s = useCrm();
   const [drag, setDrag] = useState<string | null>(null);
-  const visible = s.deals.filter((d) =>
-    `${d.name} ${s.firms.find((f) => f.id === d.companyId)?.name ?? ""}`
-      .toLocaleLowerCase("pl")
-      .includes(query.toLocaleLowerCase("pl")),
+  const visible = s.deals.filter(
+    (d) =>
+      !d.service &&
+      `${d.name} ${s.firms.find((f) => f.id === d.companyId)?.name ?? ""}`
+        .toLocaleLowerCase("pl")
+        .includes(query.toLocaleLowerCase("pl")),
   );
   function move(d: Deal, stage: Deal["stage"]) {
     s.saveDeal({

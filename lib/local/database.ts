@@ -58,7 +58,12 @@ export function createWorkspace(name: string) {
   const state: Snapshot = {
     revision: 0,
     data: { firms: [], contacts: [], deals: [], tasks: [], mails: [] },
-    settings: { onboarded: false, sender: name.trim(), agentEnabled: false },
+    settings: {
+      onboarded: false,
+      sender: name.trim(),
+      agentEnabled: false,
+      businessMode: "crm",
+    },
   };
   transaction(() => {
     database()

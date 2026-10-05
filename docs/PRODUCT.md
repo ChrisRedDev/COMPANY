@@ -1,6 +1,6 @@
 # Evolution Growth OS — Twoja firma, wiedza i działanie
 
-**Produkt AI Evolution Polska. Lokalny CRM, Company Brain i agent AI dla firm w Polsce.**
+**Produkt AI Evolution Polska. Lokalny CRM, obsługa usług, Company Brain i agent AI dla firm w Polsce.**
 
 Wiedza o firmie często jest rozproszona: oferta na stronie, ustalenia w wiadomościach, kontakty w arkuszu, pomysły w notatkach. Evolution Growth OS zbiera je w jednym jasnym obszarze pracy. Pomaga zobaczyć stan sprzedaży, zachować kontekst marki i przygotować konkretny kolejny krok.
 
@@ -13,6 +13,12 @@ Wiedza pozostaje przenośna: Markdown, foldery i wikilinki. Eksport ZIP otworzys
 ## Od kontaktu do współpracy
 
 Dodajesz firmę, kontakt, szansę sprzedaży i zadanie. Wartość jest w PLN, NIP przechodzi walidację, a terminy są liczone według Europe/Warsaw. Pulpit sprzedaży oraz marketingu pokazuje wartości wynikające z danych, które zapiszesz lub zaimportujesz.
+
+## Usługi od pierwszego terminu do historii klienta
+
+Przełączasz sposób pracy na firmę usługową. Zapisujesz kontakt i ustalenia z klientem, rezerwujesz termin oraz przypisujesz osobę lub stanowisko. Aplikacja sprawdza, czy aktywne prace nie nakładają się. Po zakończeniu historia pozostaje na karcie klienta. Pulpit pokazuje najbliższe rezerwacje, ich wartość i wykonane realizacje. Możesz wrócić do widoku sprzedaży B2B, zachowując obie grupy danych.
+
+Jasne szkło, subtelne gradienty i czytelne liczby porządkują widok. Wykresy odpowiadają na wybór okresu oraz wskaźnika; wartości odczytasz także w tabeli. Trzy kroki onboardingu prowadzą przez wybór sposobu pracy, pierwszy zapis i opcjonalne e-maile oraz AI.
 
 ## Model wybierasz sam
 

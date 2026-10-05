@@ -15,6 +15,8 @@ type State = WorkspaceData & {
   onboarded: boolean;
   sender: string;
   agentEnabled: boolean;
+  businessMode: "crm" | "services";
+  setBusinessMode: (mode: "crm" | "services") => void;
   saveFirm: (item: Firm) => void;
   saveContact: (item: Contact) => void;
   saveDeal: (item: Deal) => void;
@@ -43,6 +45,8 @@ export const useCrm = create<State>()(
       onboarded: false,
       sender: "Zespół AI Evolution Polska",
       agentEnabled: false,
+      businessMode: "crm",
+      setBusinessMode: (businessMode) => set({ businessMode }),
       saveFirm: (item) => set((s) => ({ firms: upsert(s.firms, item) })),
       saveContact: (item) =>
         set((s) => ({ contacts: upsert(s.contacts, item) })),
@@ -102,6 +106,7 @@ export const useCrm = create<State>()(
               ? saved.sender
               : current.sender,
           agentEnabled: saved.agentEnabled === true,
+          businessMode: saved.businessMode === "services" ? "services" : "crm",
         };
       },
       onRehydrateStorage: () => (_state, error) => {
@@ -119,6 +124,7 @@ export const useCrm = create<State>()(
         onboarded: s.onboarded,
         sender: s.sender,
         agentEnabled: s.agentEnabled,
+        businessMode: s.businessMode,
       }),
     },
   ),

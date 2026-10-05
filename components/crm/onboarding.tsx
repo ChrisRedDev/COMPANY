@@ -1,120 +1,129 @@
 "use client";
-import { isCloud, isSqlite, isDatabase } from "@/lib/growth/model";
 import { useState } from "react";
+import { useCrm } from "@/stores/crm-store";
+import { isSqlite, isCloud } from "@/lib/growth/model";
 import { Modal, Icon, Badge } from "./ui";
 import type { Section } from "@/lib/crm/model";
-const STEPS = [
-  {
-    icon: "spark",
-    label: "WITAJ W AI EVOLUTION POLSKA",
-    title: "Mniej chaosu. Więcej dobrych relacji.",
-    text: "To Twoje miejsce na firmy, kontakty, szanse sprzedaży i kolejne kroki. Krótki przewodnik pokaże, od czego zacząć.",
-    bullets: [
-      "Polski interfejs, złotówki i lokalne daty.",
-      isDatabase()
-        ? isSqlite()
-          ? "Każda firma ma osobną przestrzeń i dane."
-          : "Każda przestrzeń ma osobne dane i role zespołu."
-        : "Dane startowe są demonstracyjne — możesz je usunąć.",
-      isDatabase()
-        ? isSqlite()
-          ? "Zmiany zapisują się w lokalnym pliku SQLite."
-          : "Zmiany zapisują się w Supabase — sprawdzaj stan synchronizacji."
-        : "Zmiany zapisują się w tej przeglądarce.",
-    ],
-  },
-  {
-    icon: "deals",
-    label: "OD KONTAKTU DO WSPÓŁPRACY",
-    title: "Dodaj firmę. Poznaj osobę. Zapisz szansę.",
-    text: "Firmy porządkują Twoich klientów. Kontakty przechowują dane osób, a szanse pokazują projekty i ich wartość.",
-    bullets: [
-      "Zmień etap na tablicy lub przeciągnij kartę.",
-      "Dodaj zadanie, żeby pamiętać o kolejnym kroku.",
-      "Pulpit liczy prognozę z Twoich danych.",
-    ],
-  },
-  {
-    icon: "mail",
-    label: "POCZTA, KTÓRA JEST POD RĘKĄ",
-    title: "Możesz też podpiąć e-maile.",
-    text: isCloud()
-      ? "W chmurze możesz przygotować szkic lub otworzyć program pocztowy. Bezpośrednia wysyłka wymaga przyszłej integracji poczty przypisanej do przestrzeni."
-      : "Resend pozwala wysyłać wiadomości z własnej domeny. Gmail lub Outlook możesz otworzyć przez swój program pocztowy.",
-    bullets: [
-      "Do bezpośredniej wysyłki potrzebujesz konfiguracji dostawcy.",
-      "Niepodłączona poczta nie wysyła wiadomości.",
-      "CRM nie synchronizuje skrzynki odbiorczej.",
-    ],
-  },
-  {
-    icon: "agent",
-    label: "TWÓJ AGENT FOLLOW-UP",
-    title: "Agent przygotuje. Ty zatwierdzisz.",
-    text: "Włącz agenta, żeby przygotować krótkie follow-upy na podstawie otwartych szans. Edytuj szkic i zatwierdź go w Poczcie.",
-    bullets: [
-      "Agent działa po kliknięciu i korzysta z polskiego szablonu.",
-      "Wysyłka wymaga podłączonej poczty i potwierdzonej podstawy kontaktu.",
-      "Kopie danych pobierzesz w Ustawieniach.",
-    ],
-  },
-  ...(isSqlite()
-    ? [
-        {
-          icon: "file",
-          label: "PAMIĘĆ FIRMY",
-          title: "Ze strony firmy do Company Brain.",
-          text: "W Company Brain podaj link do strony. Wybrany model przygotuje ofertę, kontekst marki i propozycje marketingowe. Sprawdź źródła i zapisz szkic.",
-          bullets: [
-            "Braki danych są oznaczone, a nie zgadywane.",
-            "Uzupełnij wiedzę notatkami i odpowiedziami właściciela.",
-            "Eksport ZIP otworzysz jako skarbiec Obsidiana.",
-          ],
-        },
-        {
-          icon: "spark",
-          label: "AI I TWOJE DANE",
-          title: "Podłącz model. Zapytaj. Zatwierdź zmianę.",
-          text: "W AI Brain podłącz OpenRouter API lub lokalne CLI Codex / Claude Code. Agent analizuje dane bieżącej firmy i proponuje zadania lub notatki.",
-          bullets: [
-            "Subskrypcja ChatGPT działa przez zalogowane Codex CLI.",
-            "W Konektorach zaimportujesz kampanie i podłączysz WordPress lub PostHog.",
-            "Model może zużywać płatne API lub limit subskrypcji.",
-          ],
-        },
-      ]
-    : []),
-];
 export default function Onboarding({
   finish,
 }: {
   finish: (section?: Section) => void;
 }) {
-  const [step, setStep] = useState(0);
-  const item = STEPS[step];
+  const [step, setStep] = useState(0),
+    s = useCrm(),
+    services = s.businessMode === "services";
+  const steps = [
+    {
+      icon: "spark",
+      label: "1 / 3 · TWOJA PRZESTRZEŃ",
+      title: "Jak pracuje Twoja firma?",
+      text: "Wybierz widok dopasowany do codziennej pracy. Możesz zmienić go w dowolnej chwili w menu.",
+      bullets: [],
+    },
+    {
+      icon: services ? "clock" : "deals",
+      label: "2 / 3 · PIERWSZY KROK",
+      title: services
+        ? "Klient. Termin. Dobrze wykonana praca."
+        : "Dodaj firmę. Zapisz kolejny krok.",
+      text: services
+        ? "Dodaj klienta z kontaktem i notatkami. Zarezerwuj usługę, wybierz termin oraz osobę lub stanowisko. Po realizacji zakończ pracę — historia zostanie na karcie klienta."
+        : "Dodaj firmę i osobę kontaktową. Zapisz szansę sprzedaży oraz zadanie z terminem. Pulpit pokaże wyniki Twojej pracy.",
+      bullets: services
+        ? [
+            "Kalendarz sprawdza nakładające się aktywne rezerwacje.",
+            "Zlecenia mają status i historię zmian.",
+            "Wartości są w PLN, terminy według Europe/Warsaw.",
+          ]
+        : [
+            "Przesuwaj szanse po etapach sprzedaży.",
+            "Zaznacz wykonane zadanie, żeby zamknąć kolejny krok.",
+            "Wykresy liczą wartości z Twoich danych.",
+          ],
+    },
+    {
+      icon: "agent",
+      label: "3 / 3 · GDY POTRZEBUJESZ WIĘCEJ",
+      title: "Możesz też podpiąć e-maile i AI.",
+      text: "Poczta pomaga przygotować wiadomość, a agent follow-up tworzy szkice. Po podłączeniu Resend zatwierdzasz wysyłkę samodzielnie.",
+      bullets: [
+        isSqlite()
+          ? "AI Brain: OpenRouter lub zalogowane CLI Codex / Claude Code."
+          : isCloud()
+            ? "W chmurze bezpośrednia wysyłka wymaga integracji dla przestrzeni."
+            : "Program pocztowy otwiera szkic w Twojej aplikacji pocztowej.",
+        isSqlite()
+          ? "Company Brain: podaj stronę firmy i sprawdź wygenerowaną wiedzę."
+          : "Pulpit i kopie działają bez dodatkowych integracji.",
+        "Integracje są opcjonalne. Podłączysz je później; AI może zużywać płatny limit.",
+      ],
+    },
+  ];
+  const item = steps[step];
   return (
-    <Modal title="Jak działa Evolution Growth OS" onClose={() => finish()}>
+    <Modal title="Zacznij z Evolution Growth OS" onClose={() => finish()}>
       <div className="crm-onboarding">
         <div className="crm-onboarding-icon">
-          <Icon name={item.icon} size={40} />
+          <Icon name={item.icon} size={36} />
         </div>
         <Badge tone="purple">{item.label}</Badge>
         <h2>{item.title}</h2>
         <p>{item.text}</p>
-        <ul>
-          {item.bullets.map((b) => (
-            <li key={b}>
-              <Icon name="check" size={17} />
-              {b}
-            </li>
-          ))}
-        </ul>
+        {step === 0 && (
+          <div
+            className="growth-onboarding-choices"
+            role="radiogroup"
+            aria-label="Sposób pracy firmy"
+          >
+            {(
+              [
+                {
+                  mode: "crm",
+                  title: "CRM i sprzedaż",
+                  text: "Firmy, kontakty, szanse sprzedaży i follow-upy.",
+                  icon: "deals",
+                },
+                {
+                  mode: "services",
+                  title: "Firma usługowa",
+                  text: "Klienci, zarezerwowane prace, terminy i historia realizacji.",
+                  icon: "clock",
+                },
+              ] as const
+            ).map((option) => (
+              <button
+                key={option.mode}
+                role="radio"
+                aria-checked={s.businessMode === option.mode}
+                className={`growth-choice ${s.businessMode === option.mode ? "selected" : ""}`}
+                onClick={() => s.setBusinessMode(option.mode)}
+              >
+                <Icon name={option.icon} size={24} />
+                <strong>{option.title}</strong>
+                <small>{option.text}</small>
+                <span>
+                  {s.businessMode === option.mode ? "Wybrano" : "Wybierz"}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+        {item.bullets.length > 0 && (
+          <ul>
+            {item.bullets.map((b) => (
+              <li key={b}>
+                <Icon name="check" size={17} />
+                {b}
+              </li>
+            ))}
+          </ul>
+        )}
         <div
           className="crm-onboarding-progress"
-          aria-label={`Krok ${step + 1} z ${STEPS.length}`}
+          aria-label={`Krok ${step + 1} z 3`}
         >
-          {STEPS.map((_, i) => (
-            <span className={i === step ? "active" : ""} key={i} />
+          {steps.map((_, i) => (
+            <span key={i} className={i === step ? "active" : ""} />
           ))}
         </div>
         <div className="crm-form-actions">
@@ -132,11 +141,9 @@ export default function Onboarding({
           )}
           <button
             className="crm-button"
-            onClick={() =>
-              step < STEPS.length - 1 ? setStep(step + 1) : finish("dashboard")
-            }
+            onClick={() => (step < 2 ? setStep(step + 1) : finish("dashboard"))}
           >
-            {step < STEPS.length - 1 ? "Dalej" : "Zaczynamy"}
+            {step < 2 ? "Dalej" : "Zaczynamy"}
             <Icon name="arrow" size={17} />
           </button>
         </div>

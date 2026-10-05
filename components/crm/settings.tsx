@@ -1,5 +1,10 @@
 "use client";
-import { isDatabase, isSqlite } from "@/lib/growth/model";
+import {
+  isDatabase,
+  isSqlite,
+  snapshot,
+  validateSnapshot,
+} from "@/lib/growth/model";
 import { localDownload } from "@/lib/local/client";
 import { useState, useRef } from "react";
 import { useCrm } from "@/stores/crm-store";
@@ -52,11 +57,19 @@ export default function Settings({
     try {
       if (file.size > 5_000_000)
         throw Error("Kopia może mieć maksymalnie 5 MB.");
-      const data = parseBackup(await file.text());
+      const raw = await file.text();
+      const data = parseBackup(raw);
+      const imported = JSON.parse(raw);
+      const preferences =
+        imported.settings === undefined
+          ? undefined
+          : validateSnapshot({ data, settings: imported.settings, revision: 0 })
+              .settings;
       if (
         confirm("Przywrócenie kopii zastąpi bieżące dane CRM. Kontynuować?")
       ) {
-        s.restore(data);
+        if (preferences) useCrm.setState({ ...data, ...preferences });
+        else s.restore(data);
         notify("Kopia została przywrócona.");
       }
     } catch (error) {
@@ -189,6 +202,7 @@ export default function Settings({
                   JSON.stringify(
                     {
                       version: 1,
+                      settings: snapshot(s, 0).settings,
                       exportedAt: new Date().toISOString(),
                       data: {
                         firms: s.firms,
