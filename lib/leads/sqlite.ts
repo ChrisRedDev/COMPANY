@@ -77,6 +77,9 @@ export function leadDatabase() {
     } catch {}
     throw error;
   }
+  db.function("lead_lower", { deterministic: true }, (v) =>
+    String(v).toLocaleLowerCase("pl"),
+  );
   initialized.add(db);
   return db;
 }
@@ -101,7 +104,7 @@ function conditions(wid: string, f: LeadFilters) {
   }
   if (f.search) {
     sql +=
-      " AND lower(first_name || ' ' || last_name || ' ' || company_name || ' ' || email || ' ' || phone) LIKE ? ESCAPE '\\'";
+      " AND lead_lower(first_name || ' ' || last_name || ' ' || company_name || ' ' || email || ' ' || phone || ' ' || phone_key || ' ' || source || ' ' || campaign || ' ' || keyword) LIKE ? ESCAPE '\\'";
     args.push("%" + f.search.toLowerCase().replace(/[\\%_]/g, "\\$&") + "%");
   }
   return { sql, args };
@@ -114,7 +117,7 @@ export const sqliteLeads: LeadRepository = {
     return {
       leads: d
         .prepare(
-          `SELECT * FROM leads WHERE ${sql} ORDER BY updated_at DESC,id LIMIT 50 OFFSET ?`,
+          `SELECT leads.*,(SELECT max(timestamp) FROM lead_events WHERE lead_events.workspace_id=leads.workspace_id AND lead_events.lead_id=leads.id) AS last_activity_at FROM leads WHERE ${sql} ORDER BY updated_at DESC,id LIMIT 50 OFFSET ?`,
         )
         .all(...args, f.page * 50)
         .map(decode),

@@ -88,6 +88,42 @@ export async function leadHandler(
         previous = current.events.find((e) => e.id === event.id);
       if (
         [
+          "ad_click",
+          "page_view",
+          "form_submit",
+          "phone_call",
+          "whatsapp",
+          "email",
+          "meeting",
+        ].includes(event.event_type)
+      ) {
+        const context = {
+          campaign: current.lead.campaign,
+          medium: current.lead.medium,
+          keyword: current.lead.keyword,
+          landing_page: current.lead.landing_page,
+          ...current.lead.utm,
+        };
+        for (const key of [
+          "campaign",
+          "medium",
+          "keyword",
+          "landing_page",
+          "utm_source",
+          "utm_medium",
+          "utm_campaign",
+          "utm_term",
+          "utm_content",
+        ]) {
+          if (event.metadata[key] === undefined)
+            event.metadata[key] =
+              previous?.metadata[key] ??
+              context[key as keyof typeof context] ??
+              "";
+        }
+      }
+      if (
+        [
           "quote_sent",
           "quote_accepted",
           "job_started",

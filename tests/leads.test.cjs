@@ -334,6 +334,74 @@ test("SQLite/API: lead, duplikaty, status, revenue, idempotencja, izolacja i rol
         .total,
       0,
     );
+    const touch = {
+      id: crypto.randomUUID(),
+      revision: 3,
+      event_type: "phone_call",
+      source: "Telefon",
+      timestamp: "2026-10-04T10:00:00Z",
+      metadata: {},
+    };
+    assert.equal(
+      (await invoke(a, "POST", [first.id, "events"], touch)).status,
+      200,
+    );
+    const historical = await repo.read(a, first.id);
+    assert.equal(historical.touchpoints[0].campaign, "Oferta Warszawa");
+    assert.equal(
+      (
+        await invoke(a, "PUT", [first.id], {
+          ...lead({
+            campaign: "Nowa kampania",
+            status: "qualified",
+            revenue: 300,
+          }),
+          revision: historical.lead.revision,
+        })
+      ).status,
+      200,
+    );
+    assert.equal(
+      (await invoke(a, "POST", [first.id, "events"], touch)).status,
+      200,
+    );
+    const more = {
+      id: crypto.randomUUID(),
+      revision: (await repo.read(a, first.id)).lead.revision,
+      event_type: "email",
+      source: "Email",
+      timestamp: "2026-10-05T14:00:00Z",
+      metadata: {},
+    };
+    assert.equal(
+      (await invoke(a, "POST", [first.id, "events"], more)).status,
+      200,
+    );
+    const preserved = await repo.read(a, first.id);
+    assert.equal(preserved.touchpoints[0].campaign, "Oferta Warszawa");
+    assert.equal(preserved.touchpoints[1].campaign, "Nowa kampania");
+    for (let i = 0; i < 51; i++)
+      assert.equal(
+        (
+          await invoke(
+            b,
+            "POST",
+            [],
+            lead({
+              email: `page${i}@example.com`,
+              phone: "",
+              last_name: "Żółć",
+              campaign: "Kampania testowa",
+            }),
+          )
+        ).status,
+        201,
+      );
+    const query = { search: "żółć", status: "", scope: "real", page: 0 };
+    assert.equal((await repo.list(b, query)).total, 51);
+    assert.equal((await repo.list(b, query)).leads.length, 50);
+    assert.equal((await repo.list(b, { ...query, page: 1 })).leads.length, 1);
+    assert.equal((await repo.list(a, query)).total, 0);
   } finally {
     db.database().close();
     if (prev === undefined) delete process.env.CRM_DATABASE_PATH;

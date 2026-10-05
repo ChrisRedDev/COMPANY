@@ -1,5 +1,6 @@
 "use client";
 import { isSqlite } from "@/lib/growth/model";
+import LeadHub from "../leads/hub";
 import Brain from "../local/brain";
 import Connectors from "../local/connectors";
 import Marketing from "../local/marketing";
@@ -32,6 +33,11 @@ const NAV: { id: Section; title: string; description: string }[] = [
     id: "dashboard",
     title: "Pulpit",
     description: "Twoja sprzedaż w jednym miejscu.",
+  },
+  {
+    id: "leads",
+    title: "Lead Hub",
+    description: "Jeden kontakt, źródła i pełna historia współpracy.",
   },
   {
     id: "companies",
@@ -275,36 +281,51 @@ export default function Workspace({
         {serviceMode ? "KLIENCI I REALIZACJE" : "PRZESTRZEŃ SPRZEDAŻY"}
       </div>
       <nav aria-label="Menu główne">
-        {navigation.slice(0, 5).map((n) => (
-          <button
-            key={n.id}
-            aria-label={n.title}
-            className={`crm-nav-item ${section === n.id ? "active" : ""}`}
-            onClick={() => navigate(n.id)}
-            aria-current={section === n.id ? "page" : undefined}
-          >
-            <Icon name={n.id} />
-            <span>{n.title}</span>
-            {n.id === "companies" && <small>{s.firms.length}</small>}
-            {n.id === "tasks" && (
-              <small>{s.tasks.filter((t) => !t.done).length}</small>
-            )}
-          </button>
-        ))}
+        {navigation
+          .filter((n) =>
+            [
+              "dashboard",
+              "leads",
+              "companies",
+              "deals",
+              "contacts",
+              "tasks",
+            ].includes(n.id),
+          )
+          .map((n) => (
+            <button
+              key={n.id}
+              aria-label={n.title}
+              className={`crm-nav-item ${section === n.id ? "active" : ""}`}
+              onClick={() => navigate(n.id)}
+              aria-current={section === n.id ? "page" : undefined}
+            >
+              <Icon name={n.id === "leads" ? "contacts" : n.id} />
+              <span>{n.title}</span>
+              {n.id === "companies" && <small>{s.firms.length}</small>}
+              {n.id === "tasks" && (
+                <small>{s.tasks.filter((t) => !t.done).length}</small>
+              )}
+            </button>
+          ))}
         <div className="crm-nav-caption">KOMUNIKACJA I AUTOMATYZACJA</div>
-        {navigation.slice(5, 7).map((n) => (
-          <button
-            key={n.id}
-            aria-label={n.title}
-            className={`crm-nav-item ${section === n.id ? "active" : ""}`}
-            onClick={() => navigate(n.id)}
-            aria-current={section === n.id ? "page" : undefined}
-          >
-            <Icon name={n.id} />
-            <span>{n.title}</span>
-            {n.id === "agent" && <span className="crm-mini-badge">AGENT</span>}
-          </button>
-        ))}
+        {navigation
+          .filter((n) => ["mail", "agent"].includes(n.id))
+          .map((n) => (
+            <button
+              key={n.id}
+              aria-label={n.title}
+              className={`crm-nav-item ${section === n.id ? "active" : ""}`}
+              onClick={() => navigate(n.id)}
+              aria-current={section === n.id ? "page" : undefined}
+            >
+              <Icon name={n.id === "leads" ? "contacts" : n.id} />
+              <span>{n.title}</span>
+              {n.id === "agent" && (
+                <span className="crm-mini-badge">AGENT</span>
+              )}
+            </button>
+          ))}
         <div className="crm-nav-caption">WIEDZA I DANE</div>
         {navigation
           .filter((n) => ["brain", "connectors", "ai"].includes(n.id))
@@ -418,7 +439,7 @@ export default function Workspace({
             </button>
           </div>
         </header>
-        <main className="crm-content" inert={readOnly}>
+        <main className="crm-content" inert={readOnly && section !== "leads"}>
           <div className="crm-page-heading">
             <div>
               <span className="crm-eyebrow">EVOLUTION GROWTH OS</span>
@@ -431,7 +452,11 @@ export default function Workspace({
                 ref={search}
                 aria-label="Szukaj w CRM"
                 placeholder={
-                  serviceMode ? "Szukaj klientów i prac…" : "Szukaj w CRM…"
+                  section === "leads"
+                    ? "Szukaj leadów, źródeł i kampanii…"
+                    : serviceMode
+                      ? "Szukaj klientów i prac…"
+                      : "Szukaj w CRM…"
                 }
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -499,6 +524,28 @@ export default function Workspace({
               </p>
             </div>
           )}
+          {section === "leads" &&
+            (cloud?.id ? (
+              <LeadHub
+                wid={cloud.id}
+                query={query}
+                readOnly={!!readOnly}
+                notify={notify}
+              />
+            ) : (
+              <section className="crm-card p-6">
+                <h2>Lead Hub potrzebuje bazy</h2>
+                <p className="mt-4! text-sm leading-relaxed">
+                  Uruchom lokalną edycję SQLite lub skonfiguruj Supabase, aby
+                  zapisywać leady i ich historię. Dotychczasowy CRM pozostaje w
+                  tej przeglądarce.
+                </p>
+                <p className="mt-4! text-sm">
+                  <code>npm run dev:localdb</code> · Instrukcja w README
+                  repozytorium.
+                </p>
+              </section>
+            ))}
           {section === "dashboard" && !serviceMode && (
             <>
               {isSqlite() && cloud?.id && (

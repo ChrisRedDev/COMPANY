@@ -8,6 +8,7 @@ export const DEAL_STAGES = [
 export type DealStage = (typeof DEAL_STAGES)[number];
 export const SECTIONS = [
   "dashboard",
+  "leads",
   "companies",
   "deals",
   "contacts",

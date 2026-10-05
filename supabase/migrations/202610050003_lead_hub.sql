@@ -130,8 +130,8 @@ declare lid text := params->>'id'; result jsonb; t text; k text; q text := coale
  if p<0 or p>100000 or length(q)>200 or scope not in ('all','real','demo') then raise exception 'invalid_filter'; end if;
  with filtered as (
  select * from public.leads where workspace_id=wid and (st='' or status=st) and (scope='all' or is_demo=(scope='demo'))
- and (q='' or strpos(lower(first_name||' '||last_name||' '||company_name||' '||email||' '||phone),lower(q))>0)
- ) select jsonb_build_object('total',(select count(*) from filtered),'leads',(select coalesce(jsonb_agg(payload order by updated_at desc,id),'[]') from (select * from filtered order by updated_at desc,id limit 50 offset p*50) page)) into result;
+ and (q='' or strpos(lower(first_name||' '||last_name||' '||company_name||' '||email||' '||phone||' '||phone_key||' '||source||' '||campaign||' '||keyword),lower(q))>0)
+ ) select jsonb_build_object('total',(select count(*) from filtered),'leads',(select coalesce(jsonb_agg(list_payload order by updated_at desc,id),'[]') from (select filtered.*,payload || jsonb_build_object('last_activity_at',(select max(timestamp) from public.lead_events where workspace_id=wid and lead_id=filtered.id)) as list_payload from filtered order by updated_at desc,id limit 50 offset p*50) page)) into result;
  return result;
 end $$;
 create function public.write_lead_hub(wid uuid,bundle jsonb,expected_revision integer,is_create boolean) returns jsonb

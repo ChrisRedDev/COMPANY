@@ -568,13 +568,11 @@ test("firma usługowa: onboarding, klienci, terminy, kolizje, historia i trwały
   await page.getByLabel("Tryb pracy").selectOption("crm");
   await page.getByRole("button", { name: "Ustawienia", exact: true }).click();
   page.once("dialog", (dialog) => dialog.accept());
-  await page
-    .locator('input[type="file"]')
-    .setInputFiles({
-      name: "kopia.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(raw),
-    });
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "kopia.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(raw),
+  });
   await expect(page.getByLabel("Tryb pracy")).toHaveValue("services");
   await expect(
     page.getByText("Zapisano w SQLite", { exact: true }),
@@ -610,4 +608,233 @@ test("firma usługowa: onboarding, klienci, terminy, kolizje, historia i trwały
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+});
+test("Lead Hub: tworzenie, deduplikacja, zdarzenia, atrybucja, status, revenue i izolacja", async ({
+  page,
+}) => {
+  await ready(page);
+  await page.getByRole("button", { name: "Lead Hub", exact: true }).click();
+  await page.getByRole("button", { name: "Dodaj leada", exact: true }).click();
+  await page.getByLabel("Imię leada", { exact: true }).fill("Łukasz");
+  await page.getByLabel("Nazwisko leada", { exact: true }).fill("Żółć");
+  await page
+    .getByLabel("E-mail leada", { exact: true })
+    .fill("lukasz@example.com");
+  await page.getByLabel("Telefon leada", { exact: true }).fill("500 100 200");
+  await page.getByLabel("Źródło leada", { exact: true }).fill("Google Ads");
+  await page
+    .getByLabel("Kampania leada", { exact: true })
+    .fill("Usługi · Warszawa");
+  await page
+    .getByLabel("Szacowana wartość (PLN)", { exact: true })
+    .fill("280.50");
+  await page.getByRole("button", { name: "Zapisz leada", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Łukasz Żółć", exact: true }),
+  ).toBeVisible();
+  async function addEvent(
+    type: string,
+    source: string,
+    date: string,
+    price?: string,
+  ) {
+    await page
+      .getByRole("button", { name: "Dodaj zdarzenie", exact: true })
+      .click();
+    await page.getByLabel("Rodzaj zdarzenia").selectOption(type);
+    await page.getByLabel("Źródło zdarzenia").fill(source);
+    await page.getByLabel("Data i godzina zdarzenia").fill(date);
+    if (price) await page.getByLabel("Kwota zdarzenia (PLN)").fill(price);
+    await page
+      .getByRole("button", { name: "Zapisz zdarzenie", exact: true })
+      .click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { name: "Oś kontaktu", exact: true }),
+    ).toBeVisible();
+  }
+  await addEvent("phone_call", "Telefon", "2026-10-04T10:24");
+  await addEvent("ad_click", "Google Ads", "2026-10-04T10:21");
+  const attribution = page
+    .getByRole("heading", { name: "Źródła i atrybucja" })
+    .locator("..");
+  await expect(attribution).toContainText("First touch");
+  await expect(attribution).toContainText("Last touch");
+  const events = page
+    .getByRole("list", { name: "Historia kontaktu leada" })
+    .getByRole("listitem");
+  await expect(events.first()).toContainText("Kliknięcie reklamy");
+  await expect(events.nth(1)).toContainText("Rozmowa telefoniczna");
+  await page.getByRole("button", { name: "Edytuj leada", exact: true }).click();
+  await page
+    .getByLabel("Status leada", { exact: true })
+    .selectOption("qualified");
+  await page.getByLabel("Revenue leada (PLN)", { exact: true }).fill("100.50");
+  await page
+    .getByLabel("Notatki leada", { exact: true })
+    .fill("Preferuje wizytę po 16:00.");
+  await page.getByRole("button", { name: "Zapisz leada", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Zmiana statusu", exact: true }),
+  ).toBeVisible();
+  await addEvent("quote_sent", "Firma", "2026-10-04T10:42", "280.50");
+  await addEvent("booking_created", "Firma", "2026-10-04T11:10");
+  await addEvent("job_started", "Firma", "2026-10-04T12:00", "280.50");
+  await addEvent("job_completed", "Firma", "2026-10-04T16:30", "280.50");
+  await addEvent("payment_received", "Klient", "2026-10-04T16:40", "280.50");
+  await expect(
+    page.getByRole("heading", { name: "Wpłaty (1)", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Przegląd leada" }).locator("../.."),
+  ).toContainText("381,00 zł");
+  await page
+    .getByRole("button", { name: "Wróć do leadów", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Dodaj leada", exact: true }).click();
+  await page
+    .getByLabel("E-mail leada", { exact: true })
+    .fill("LUKASZ@EXAMPLE.COM");
+  await page.getByRole("button", { name: "Zapisz leada", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Łukasz Żółć", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Wróć do leadów", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", {
+      name: "Otwórz leada: Łukasz Żółć",
+      exact: true,
+    }),
+  ).toHaveCount(1);
+  await page.getByLabel("Szukaj w CRM").fill("żółć");
+  await expect(
+    page.getByRole("button", {
+      name: "Otwórz leada: Łukasz Żółć",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.getByLabel("Szukaj w CRM").fill("Usługi · Warszawa");
+  await expect(
+    page.getByRole("button", {
+      name: "Otwórz leada: Łukasz Żółć",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.getByLabel("Szukaj w CRM").fill("");
+  const space = await page.getByLabel("Przestrzeń robocza").inputValue();
+  await page.reload();
+  await expect(
+    page.getByText("Zapisano w SQLite", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Lead Hub", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Otwórz leada: Łukasz Żółć", exact: true })
+    .click();
+  const exported = page.waitForEvent("download");
+  await page
+    .getByRole("button", { name: "Pobierz historię JSON", exact: true })
+    .click();
+  const file = await exported,
+    bundle = JSON.parse(await readFile((await file.path())!, "utf8"));
+  expect(bundle.lead.revenue).toBe(381);
+  expect(bundle.payments).toHaveLength(1);
+  expect(bundle.lead.first_touch_source).toBe("Google Ads");
+  expect(bundle.lead.last_touch_source).toBe("Telefon");
+  await ready(page);
+  await page.getByRole("button", { name: "Lead Hub", exact: true }).click();
+  await expect(
+    page.getByRole("button", {
+      name: "Otwórz leada: Łukasz Żółć",
+      exact: true,
+    }),
+  ).toHaveCount(0);
+  const foreign = await page.request.get(
+    `/api/local/workspaces/${await page.getByLabel("Przestrzeń robocza").inputValue()}/leads/${bundle.lead.id}`,
+  );
+  expect(foreign.status()).toBe(404);
+  await page.getByLabel("Przestrzeń robocza").selectOption(space);
+  await page.getByRole("button", { name: "Lead Hub", exact: true }).click();
+  await expect(
+    page.getByRole("button", {
+      name: "Otwórz leada: Łukasz Żółć",
+      exact: true,
+    }),
+  ).toBeVisible();
+});
+test("Lead Hub DEMO: pełna oś czasu, brak duplikatu i mobilna karta", async ({
+  page,
+}) => {
+  await ready(page);
+  await page.getByLabel("Tryb pracy").selectOption("services");
+  await page.getByRole("button", { name: "Lead Hub", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Dodaj przykład DEMO", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Anna Kowalska · DEMO", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Otrzymana płatność", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Oferty (1)", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Prace (1)", exact: true }),
+  ).toBeVisible();
+  const message = page.getByRole("button", { name: "Zamknij komunikat" });
+  if (await message.isVisible()) await message.click();
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS)
+    await page.screenshot({
+      path: "docs/screenshots/lead-hub-timeline.png",
+      fullPage: true,
+    });
+  await page
+    .getByRole("button", { name: "Wróć do leadów", exact: true })
+    .click();
+  await expect(page.getByLabel("Rodzaj danych leadów")).toHaveValue("demo");
+  await expect(
+    page.getByRole("button", {
+      name: "Otwórz leada: Anna Kowalska · DEMO",
+      exact: true,
+    }),
+  ).toHaveCount(1);
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS)
+    await page.screenshot({ path: "docs/screenshots/lead-hub-list.png" });
+  await page
+    .getByRole("button", { name: "Dodaj przykład DEMO", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Wpłaty (1)", exact: true }),
+  ).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page
+    .getByRole("button", { name: "Dodaj zdarzenie", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+  await page.getByRole("button", { name: "Zamknij", exact: true }).click();
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS) {
+    const toast = page.getByRole("button", { name: "Zamknij komunikat" });
+    if (await toast.isVisible()) await toast.click();
+    await page.evaluate(() => {
+      window.scrollTo(0, 0);
+      document.querySelector("main")?.scrollTo(0, 0);
+    });
+    await page.screenshot({
+      path: "docs/screenshots/lead-hub-mobile.png",
+      fullPage: false,
+    });
+  }
 });

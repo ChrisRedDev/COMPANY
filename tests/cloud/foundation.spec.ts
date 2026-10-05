@@ -1,3 +1,4 @@
+import { demoLead } from "../../lib/leads/demo";
 import { test, expect, type Page } from "@playwright/test";
 const ids = [
   "00000000-0000-0000-0000-000000000001",
@@ -76,6 +77,20 @@ async function provider(page: Page, role = "owner") {
             role,
           })),
         },
+      });
+      return;
+    }
+    if (path.includes("/leads")) {
+      const bundle = demoLead(id);
+      const list = !path.split("/")[5];
+      const scope = new URL(request.url()).searchParams.get("scope");
+      await route.fulfill({
+        json: list
+          ? {
+              leads: id === ids[0] && scope !== "real" ? [bundle.lead] : [],
+              total: id === ids[0] && scope !== "real" ? 1 : 0,
+            }
+          : bundle,
       });
       return;
     }
@@ -215,4 +230,37 @@ test("mobilne logowanie i wybór przestrzeni nie wychodzą poza ekran", async ({
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+});
+
+test("Lead Hub viewer może filtrować i czytać historię bez edycji; przestrzenie są rozdzielone", async ({
+  page,
+}) => {
+  await provider(page, "viewer");
+  await login(page);
+  await page.getByRole("button", { name: "Lead Hub", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Dodaj leada", exact: true }),
+  ).toBeDisabled();
+  await page.getByLabel("Rodzaj danych leadów").selectOption("demo");
+  await page
+    .getByRole("button", { name: "Otwórz leada: Anna Kowalska · DEMO" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Wpłaty (1)", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Edytuj leada", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole("button", { name: "Dodaj zdarzenie", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole("button", { name: "Wróć do leadów", exact: true })
+    .click();
+  await page.getByLabel("Przestrzeń robocza").selectOption(ids[1]);
+  await page.getByRole("button", { name: "Lead Hub", exact: true }).click();
+  await page.getByLabel("Rodzaj danych leadów").selectOption("demo");
+  await expect(page.getByRole("button", { name: /Otwórz leada:/ })).toHaveCount(
+    0,
+  );
 });

@@ -93,6 +93,7 @@ export type Lead = LeadInput & {
   updated_at: string;
   revision: number;
   is_demo: boolean;
+  last_activity_at?: string | null;
   crm_links: {
     company_id?: string;
     contact_id?: string;
