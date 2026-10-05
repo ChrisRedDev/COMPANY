@@ -23,17 +23,9 @@ import {
   saveGeneratedBrain,
   latestBrainDraft,
 } from "@/lib/knowledge/generation";
-import {
-  connectionRows,
-  connectionState,
-  marketingRows,
-  importMarketing,
-} from "@/lib/integrations/repository";
-import {
-  adapter,
-  providerConfig,
-  type Provider,
-} from "@/lib/integrations/providers";
+import { marketingRows, importMarketing } from "@/lib/integrations/repository";
+import { integrations, integrationAction } from "@/lib/integrations/service";
+import { IntegrationError } from "@/lib/integrations/http";
 import {
   aiStatus,
   models,
@@ -156,82 +148,14 @@ async function handler(request: Request, context: Context) {
           return json({ count: importMarketing(wid, body.csv) });
         break;
       case "integrations":
-        if (request.method === "GET")
-          return json({
-            states: connectionRows(wid),
-            snapshots: database()
-              .prepare(
-                "SELECT provider,payload FROM provider_data WHERE workspace_id=?",
-              )
-              .all(wid)
-              .map((r) => ({
-                provider: r.provider,
-                payload: JSON.parse(String(r.payload)),
-              })),
-            providers: ["wordpress", "posthog"].map((provider) => ({
-              provider,
-              ...providerConfig(provider as Provider),
-            })),
-          });
-        if (
-          request.method === "POST" &&
-          ["wordpress", "posthog"].includes(String(body.provider))
-        ) {
-          const provider = body.provider as Provider;
-          if (body.action === "disconnect") {
-            connectionState(wid, provider, "disconnected");
-            return json({
-              message:
-                "Wyłączono integrację w tej przestrzeni. Dane pozostają zachowane; sekrety usuń z .env.local, jeśli nie są już potrzebne.",
-            });
-          }
-          if (!["check", "sync"].includes(String(body.action)))
-            return json({ error: "Nieprawidłowa operacja." }, 400);
-          if (
-            body.action === "sync" &&
-            connectionRows(wid).some(
-              (r) => r.provider === provider && r.status === "disconnected",
-            )
-          )
-            return json({ error: "Najpierw połącz integrację ponownie." }, 400);
-          if (!providerConfig(provider).configured)
-            return json(
-              { error: "Uzupełnij konfigurację dostawcy w .env.local." },
-              400,
-            );
+        if (request.method === "GET") return json(integrations(wid));
+        if (request.method === "POST") {
           try {
-            const result = await adapter(provider).read();
-            if (body.action === "sync" && result.documents) {
-              const existing = listDocuments(wid);
-              for (const d of result.documents) {
-                const current = existing.find(
-                  (n) => n.category === "web" && n.title === d.title,
-                );
-                if (!current || current.content !== d.content)
-                  saveDocument(wid, {
-                    ...d,
-                    id: current?.id || "",
-                    category: "web",
-                    revision: current?.revision || 0,
-                  });
-              }
-            }
-            if (body.action === "sync")
-              database()
-                .prepare(
-                  "INSERT INTO provider_data VALUES(?,?,?) ON CONFLICT(workspace_id,provider) DO UPDATE SET payload=excluded.payload",
-                )
-                .run(wid, provider, JSON.stringify(result));
-            connectionState(wid, provider, "checked");
-            return json(result);
-          } catch (error) {
-            connectionState(
-              wid,
-              provider,
-              "error",
-              "Sprawdź konfigurację i dostęp sieci.",
-            );
-            throw error;
+            return json(await integrationAction(wid, body));
+          } catch (e) {
+            if (e instanceof IntegrationError)
+              return json({ error: e.message }, e.status);
+            throw e;
           }
         }
         break;

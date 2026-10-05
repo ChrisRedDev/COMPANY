@@ -1,5 +1,6 @@
 import "server-only";
 import { database, transaction, audit } from "../local/database";
+import { validateResource } from "./model";
 import { parseCsv, type CampaignDay } from "./marketing";
 export function marketingRows(wid: string) {
   return database()
@@ -36,7 +37,7 @@ export function connectionState(
 ) {
   database()
     .prepare(
-      "INSERT INTO connections VALUES(?,?,?,?,?) ON CONFLICT(workspace_id,provider) DO UPDATE SET status=excluded.status,last_sync=excluded.last_sync,error=excluded.error",
+      "INSERT INTO connections VALUES(?,?,?,?,?) ON CONFLICT(workspace_id,provider) DO UPDATE SET status=excluded.status,last_sync=COALESCE(excluded.last_sync,connections.last_sync),error=excluded.error",
     )
     .run(
       wid,
@@ -45,4 +46,43 @@ export function connectionState(
       status === "checked" ? new Date().toISOString() : null,
       error,
     );
+}
+
+export function integrationSettings(wid: string, provider: string) {
+  database().exec(
+    "CREATE TABLE IF NOT EXISTS integration_settings(workspace_id TEXT NOT NULL REFERENCES workspaces(id),provider TEXT NOT NULL,config TEXT NOT NULL,PRIMARY KEY(workspace_id,provider))",
+  );
+  const row = database()
+    .prepare(
+      "SELECT config FROM integration_settings WHERE workspace_id=? AND provider=?",
+    )
+    .get(wid, provider);
+  return row
+    ? (JSON.parse(String(row.config)) as import("./model").Resource)
+    : {};
+}
+export function saveIntegrationSettings(
+  wid: string,
+  provider: import("./model").GoogleProvider,
+  value: unknown,
+) {
+  const resource = validateResource(provider, value);
+  const previous = integrationSettings(wid, provider);
+  if (JSON.stringify(previous) === JSON.stringify(resource)) return resource;
+  transaction(() => {
+    database()
+      .prepare(
+        "INSERT INTO integration_settings VALUES(?,?,?) ON CONFLICT(workspace_id,provider) DO UPDATE SET config=excluded.config",
+      )
+      .run(wid, provider, JSON.stringify(resource));
+    database()
+      .prepare("DELETE FROM provider_data WHERE workspace_id=? AND provider=?")
+      .run(wid, provider);
+    database()
+      .prepare("DELETE FROM connections WHERE workspace_id=? AND provider=?")
+      .run(wid, provider);
+    connectionState(wid, provider, "configured");
+    audit(wid, "integration.configured");
+  });
+  return resource;
 }

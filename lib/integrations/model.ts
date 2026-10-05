@@ -1,0 +1,82 @@
+export const PROVIDERS = [
+  "wordpress",
+  "posthog",
+  "ga4",
+  "search_console",
+] as const;
+export type Provider = (typeof PROVIDERS)[number];
+export const providerLabels: Record<Provider, string> = {
+  wordpress: "WordPress / Elementor",
+  posthog: "PostHog",
+  ga4: "Google Analytics 4",
+  search_console: "Google Search Console",
+};
+export type GoogleProvider = "ga4" | "search_console";
+export type Resource = { propertyId?: string; siteUrl?: string };
+export type GoogleReport = {
+  provider: GoogleProvider;
+  resource: string;
+  from: string;
+  to: string;
+  fetched_at: string;
+  totals: Record<string, number>;
+  daily: { date: string; [metric: string]: number | string }[];
+  breakdown: { label: string; values: Record<string, number> }[];
+  currency?: string;
+  warnings: string[];
+};
+export type IntegrationResult = {
+  summary: string;
+  documents?: { title: string; content: string }[];
+  events?: unknown[][];
+  report?: GoogleReport;
+  synced_at?: string;
+};
+export function validateResource(
+  provider: GoogleProvider,
+  value: unknown,
+): Resource {
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    throw Error("Podaj usługę Google.");
+  const v = value as Record<string, unknown>;
+  if (provider === "ga4") {
+    if (
+      typeof v.propertyId !== "string" ||
+      !/^[1-9][0-9]{0,19}$/.test(v.propertyId.trim())
+    )
+      throw Error(
+        "Podaj numeryczny identyfikator usługi GA4, np. 123456789. To nie identyfikator G-….",
+      );
+    return { propertyId: v.propertyId.trim() };
+  }
+  if (typeof v.siteUrl !== "string" || v.siteUrl.length > 1000)
+    throw Error("Podaj adres usługi Search Console.");
+  const site = v.siteUrl.trim();
+  if (site.startsWith("sc-domain:")) {
+    const domain = site.slice(10);
+    if (
+      !/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i.test(domain)
+    )
+      throw Error("Usługa domenowa ma format sc-domain:twoja-firma.pl.");
+  } else {
+    let url: URL;
+    try {
+      url = new URL(site);
+    } catch {
+      throw Error(
+        "Podaj pełny adres HTTPS usługi, dokładnie jak w Search Console.",
+      );
+    }
+    if (
+      url.protocol !== "https:" ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash
+    )
+      throw Error(
+        "Adres usługi musi być HTTPS bez danych logowania i parametrów.",
+      );
+  }
+  return { siteUrl: site };
+}

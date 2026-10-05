@@ -1,9 +1,36 @@
 import "server-only";
-export type Provider = "wordpress" | "posthog";
-export function providerConfig(provider: Provider) {
+import { googleAuthConfigured } from "./google-auth";
+import { readGoogle } from "./google";
+import {
+  PROVIDERS,
+  type Provider,
+  type Resource,
+  type IntegrationResult,
+} from "./model";
+import { apiJson } from "./http";
+export type { Provider } from "./model";
+export function providerConfig(provider: Provider, resource: Resource = {}) {
+  if (provider === "ga4" || provider === "search_console")
+    return {
+      configured:
+        googleAuthConfigured() &&
+        Boolean(provider === "ga4" ? resource.propertyId : resource.siteUrl),
+      authConfigured: googleAuthConfigured(),
+      resource,
+      required: [
+        "GOOGLE_SERVICE_ACCOUNT_FILE (plik JSON konta usługi)",
+        "lub GOOGLE_OAUTH_CLIENT_ID + GOOGLE_OAUTH_CLIENT_SECRET + GOOGLE_OAUTH_REFRESH_TOKEN",
+        provider === "ga4"
+          ? "Identyfikator usługi GA4 w panelu poniżej"
+          : "Usługa Search Console w panelu poniżej",
+      ],
+    };
   if (provider === "wordpress")
     return {
-      configured: Boolean(process.env.WP_BASE_URL),
+      configured:
+        Boolean(process.env.WP_BASE_URL) &&
+        Boolean(process.env.WP_USERNAME) ===
+          Boolean(process.env.WP_APPLICATION_PASSWORD),
       required: [
         "WP_BASE_URL",
         "WP_USERNAME (opcjonalnie)",
@@ -33,27 +60,21 @@ function baseUrl(value: string) {
     throw Error("Adres integracji musi być HTTPS bez danych logowania.");
   return url;
 }
-async function getJson(url: URL, init: RequestInit) {
-  const r = await fetch(url, {
-    ...init,
-    redirect: "error",
-    signal: AbortSignal.timeout(20000),
-  });
-  if (!r.ok)
-    throw Error(
-      `Dostawca zwrócił HTTP ${r.status}. Sprawdź konfigurację i uprawnienia.`,
-    );
-  return r.json();
+async function getJson<T>(url: URL, init: RequestInit): Promise<T> {
+  return (await apiJson(url, init)) as T;
 }
 export interface IntegrationAdapter {
   provider: Provider;
-  read(): Promise<{
-    summary: string;
-    documents?: { title: string; content: string }[];
-    events?: unknown[];
-  }>;
+  read(): Promise<IntegrationResult>;
 }
-export function adapter(provider: Provider): IntegrationAdapter {
+export function adapter(
+  provider: Provider,
+  resource: Resource = {},
+): IntegrationAdapter {
+  if (!PROVIDERS.includes(provider))
+    throw Error("Nieznany dostawca integracji.");
+  if (provider === "ga4" || provider === "search_console")
+    return { provider, read: () => readGoogle(provider, resource) };
   if (provider === "wordpress")
     return {
       provider,
@@ -65,7 +86,14 @@ export function adapter(provider: Provider): IntegrationAdapter {
           );
         const user = process.env.WP_USERNAME,
           password = process.env.WP_APPLICATION_PASSWORD;
-        const rows = await getJson(url, {
+        const rows = await getJson<
+          {
+            id: number;
+            title?: { rendered?: string };
+            content?: { rendered?: string };
+            link: string;
+          }[]
+        >(url, {
           headers:
             user && password
               ? {
@@ -102,7 +130,7 @@ export function adapter(provider: Provider): IntegrationAdapter {
       if (!["eu.posthog.com", "us.posthog.com"].includes(url.hostname))
         throw Error("Ta wersja obsługuje PostHog Cloud EU/US.");
       url.pathname = `/api/projects/${encodeURIComponent(process.env.POSTHOG_PROJECT_ID || "")}/query/`;
-      const result = await getJson(url, {
+      const result = await getJson<{ results: unknown[][] }>(url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.POSTHOG_PERSONAL_API_KEY}`,
@@ -116,7 +144,20 @@ export function adapter(provider: Provider): IntegrationAdapter {
           },
         }),
       });
-      if (!Array.isArray(result.results))
+      if (
+        !Array.isArray(result.results) ||
+        result.results.length > 20 ||
+        result.results.some(
+          (row) =>
+            !Array.isArray(row) ||
+            row.length !== 2 ||
+            typeof row[0] !== "string" ||
+            row[0].length > 1000 ||
+            typeof row[1] !== "number" ||
+            !Number.isSafeInteger(row[1]) ||
+            row[1] < 0,
+        )
+      )
         throw Error("Nieprawidłowa odpowiedź PostHog.");
       return {
         summary: `Odczytano ${result.results.length} typów zdarzeń z ostatnich 30 dni.`,

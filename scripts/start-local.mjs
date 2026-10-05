@@ -8,6 +8,13 @@ const build = process.argv.includes("--build"),
 const task = spawn(
   process.execPath,
   [
+    ...((process.env.HTTPS_PROXY ||
+      process.env.https_proxy ||
+      process.env.HTTP_PROXY ||
+      process.env.http_proxy) &&
+    process.allowedNodeEnvironmentFlags.has("--use-env-proxy")
+      ? ["--use-env-proxy"]
+      : []),
     "node_modules/next/dist/bin/next",
     build ? "build" : production ? "start" : "dev",
     ...(build

@@ -28,6 +28,7 @@ function load(file, stubs = {}) {
       structuredClone,
       Intl,
       URL,
+      URLSearchParams,
       crypto: globalThis.crypto,
       Response,
       Request,
