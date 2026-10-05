@@ -1,3 +1,5 @@
+import { leadHandler } from "@/lib/leads/http";
+import { sqliteLeads } from "@/lib/leads/sqlite";
 import { randomUUID } from "node:crypto";
 import { readFileSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -87,6 +89,8 @@ async function handler(request: Request, context: Context) {
     const wid = path[1];
     readWorkspace(wid);
     switch (path[2]) {
+      case "leads":
+        return leadHandler(request, wid, path.slice(3), body, sqliteLeads);
       case "data":
         if (request.method === "GET") return json(readWorkspace(wid));
         if (request.method === "PUT")

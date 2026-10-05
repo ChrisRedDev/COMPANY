@@ -10,7 +10,7 @@
     "extract:avif": "bash scripts/extract_webm_frames.sh",
     "to:avif": "node scripts/to-avif.mjs",
     "frame:rive": "node scripts/rive-frame.mjs",
-    "test": "node tests/crm.test.cjs",
+    "test": "node tests/run-unit.cjs",
     "test:e2e": "playwright test",
     "test:cloud": "playwright test --config playwright.cloud.config.ts",
     "test:db": "bash tests/integration/run.sh",
