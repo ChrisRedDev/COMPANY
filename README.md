@@ -1,10 +1,10 @@
 # Evolution Growth OS · AI Evolution Polska
 
-**CRM i obsługa usług, mózg firmy oraz agent AI — lokalnie, po polsku.**
+**CRM, Lead Hub i obsługa usług, mózg firmy oraz agent AI — lokalnie, po polsku.**
 
 Evolution Growth OS pomaga uporządkować sprzedaż i rozwijać firmę z jej własnym kontekstem. Zapisujesz klientów, kontakty, szanse i zadania. Ze strony internetowej tworzysz Company Brain: ofertę, wiedzę o marce oraz propozycje marketingowe z oznaczeniem źródeł i braków. Podłączasz wybrany model AI, analizujesz dane i zatwierdzasz konkretne działania. Wiedzę możesz zabrać ze sobą do Obsidiana.
 
-Jasny interfejs ze szkłem i miękkimi gradientami, interaktywne wykresy, PLN, walidacja NIP, polskie daty i strefa Europe/Warsaw. Produkt **AI Evolution Polska**, wersja **0.3.0**. [Opis produktu](docs/PRODUCT.md) · [Architektura lokalna](docs/LOCAL-EDITION.md) · [Plan rozwoju](docs/ROADMAP.md).
+Jasny interfejs ze szkłem i miękkimi gradientami, interaktywne wykresy, PLN, walidacja NIP, polskie daty i strefa Europe/Warsaw. Produkt **AI Evolution Polska**, wersja **0.4.0**. [Opis produktu](docs/PRODUCT.md) · [Architektura lokalna](docs/LOCAL-EDITION.md) · [Plan rozwoju](docs/ROADMAP.md).
 
 ## Szybki start na Twoim komputerze
 
@@ -41,11 +41,25 @@ Oba polecenia ustawiają tryb SQLite. Po zmianie kodu lub publicznych env ponów
 
 | Tryb                                    | Uruchomienie                                       | Dane i funkcje                                                                             |
 | --------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| **SQLite — zalecany do lokalnej pracy** | `npm run dev:localdb`                              | Plik na komputerze serwera; CRM, Company Brain, generator, konektory, marketing i AI Brain |
+| **SQLite — zalecany do lokalnej pracy** | `npm run dev:localdb`                              | Plik na komputerze serwera; CRM, Lead Hub, Company Brain, generator, konektory, marketing i AI Brain |
 | **Przeglądarka**                        | `NEXT_PUBLIC_CRM_MODE=local`, `npm run dev`        | Zachowany CRM z localStorage, pocztą i agentem follow-up                                   |
-| **Supabase**                            | Konfiguracja poniżej, `NEXT_PUBLIC_CRM_MODE=cloud` | Konta, przestrzenie, role i wspólny CRM                                                    |
+| **Supabase**                            | Konfiguracja poniżej, `NEXT_PUBLIC_CRM_MODE=cloud` | Konta, przestrzenie, role, wspólny CRM i Lead Hub                                                    |
 
-Nowe moduły wiedzy, konektorów i modeli AI działają obecnie w **SQLite**. Supabase obejmuje fundament CRM; migracja pozostałych modułów jest w roadmapie. SQLite jest przeznaczone do lokalnej instalacji, bez kont i logowania. Oddzielne przestrzenie porządkują dane firm; nie stanowią ochrony przed innym użytkownikiem tego samego komputera.
+Nowe moduły wiedzy, konektorów i modeli AI działają obecnie w **SQLite**. Supabase obejmuje CRM i Lead Hub; migracja pozostałych modułów jest w roadmapie. SQLite jest przeznaczone do lokalnej instalacji, bez kont i logowania. Oddzielne przestrzenie porządkują dane firm; nie stanowią ochrony przed innym użytkownikiem tego samego komputera.
+
+## Lead Hub: jedna osoba, źródła i historia współpracy
+
+W menu **Lead Hub** zapiszesz potencjalnego klienta od pierwszego kontaktu do realizacji i wpłaty. Moduł działa w **SQLite i Supabase**, obok istniejącego CRM, w obu sposobach pracy.
+
+1. Kliknij **Dodaj leada**. Wpisz kontakt, źródło, kampanię i szacowaną wartość. Opcjonalnie dodaj UTM, landing page i słowo kluczowe.
+2. Otwórz kartę i wybierz **Dodaj zdarzenie**: rozmowę, formularz, ofertę, rezerwację, realizację albo wpłatę. Podaj rzeczywisty czas i szczegóły.
+3. W **Edytuj leada** aktualizuj status, notatki i dane. Wpłaty zwiększają revenue; pozostałe wartości nie są ponownie liczone jako przychód. Status zmieniasz świadomie, osobno od zdarzeń.
+4. Przeglądaj oś kontaktu, first/last touch, źródła i podstawowe rekordy sprzedaży. Lista ma wyszukiwanie, filtry i strony po 50 pozycji.
+5. **Dodaj przykład DEMO** pokazuje pełny przebieg: reklama → strona → formularz → telefon → kwalifikacja → oferta → rezerwacja → praca → płatność. Jest oznaczony i domyślnie oddzielony od rzeczywistych leadów. Ponowne kliknięcie otwiera ten sam przykład.
+
+E-mail lub telefon rozpoznają istniejący kontakt w danej przestrzeni. Jeśli wskazują dwie różne osoby, zapis zgłasza konflikt zamiast łączyć je automatycznie. Viewer może czytać i filtrować, ale nie zmieniać danych. **Pobierz historię JSON** pobiera JSON karty i historii; pełna kopia SQLite obejmuje cały moduł. Kopia JSON starego CRM nie obejmuje Lead Hub.
+
+To zapisane zdarzenia i fundament sprzedaży: brak automatycznego pobierania z Ads/telefonii, faktur, synchronizacji z kalendarzem zleceń oraz połączenia kosztów kampanii z ROAS. Agent AI nie operuje jeszcze na Lead Hub. [Dane, API, uprawnienia i ograniczenia](docs/LEAD-HUB.md).
 
 ## Dwa sposoby pracy: sprzedaż albo usługi
 
@@ -161,7 +175,7 @@ Dodawaj firmy z NIP, kontakty, szanse z wartością w PLN i zadania. Tablica sza
 
 ## Kopie, przenoszenie i aktualizacja
 
-- **Cała baza SQLite:** w Ustawieniach kliknij **Pobierz całą bazę SQLite**. Spójna kopia zawiera wszystkie przestrzenie, CRM, wiedzę, szkice generatora, kampanie, odczyty i historię agenta. Bez kluczy dostawców.
+- **Cała baza SQLite:** w Ustawieniach kliknij **Pobierz całą bazę SQLite**. Spójna kopia zawiera wszystkie przestrzenie, CRM, Lead Hub, wiedzę, szkice generatora, kampanie, odczyty i historię agenta. Bez kluczy dostawców.
 - **JSON CRM:** obejmuje tylko dane i ustawienia CRM jednej przestrzeni. Umożliwia przeniesienie zachowanego CRM między przeglądarką, SQLite i Supabase.
 - **ZIP Obsidian:** obejmuje zapisane notatki jednej przestrzeni.
 
@@ -171,7 +185,7 @@ Przy konflikcie wersji CRM aplikacja zatrzymuje edycję. Pobierz kopię zmian i 
 
 ## Opcjonalny tryb Supabase
 
-1. Utwórz projekt Supabase i wykonaj kolejno [fundament CRM](supabase/migrations/202610050001_growth_foundation.sql) oraz [tryb usługowy](supabase/migrations/202610050002_service_mode.sql) w nowej/testowej bazie. W istniejącej instalacji z fundamentem zastosuj drugą migrację, aby zachować wybór sposobu pracy. Sprawdź nazwy tabel przed użyciem istniejącego projektu; migracja nie wykonuje się automatycznie.
+1. Utwórz projekt Supabase i wykonaj kolejno [fundament CRM](supabase/migrations/202610050001_growth_foundation.sql), [tryb usługowy](supabase/migrations/202610050002_service_mode.sql) oraz [Lead Hub](supabase/migrations/202610050003_lead_hub.sql) w nowej/testowej bazie. W istniejącej instalacji z fundamentem zastosuj brakujące migracje 002 i 003 w tej kolejności. Sprawdź nazwy tabel przed użyciem istniejącego projektu; migracja nie wykonuje się automatycznie.
 2. W `.env.local` ustaw:
 
 ```dotenv
@@ -268,3 +282,15 @@ Zrzuty wykonano w działającej aplikacji. Dane są demonstracyjne. Ekrany AI i 
 **Prosty onboarding: wybór sposobu pracy w pierwszym z trzech kroków.**
 
 ![Onboarding Evolution Growth OS](docs/screenshots/premium-onboarding.png)
+
+**Lead Hub: lista ze źródłami, kampanią, aktywnością i wartością — przykład DEMO.**
+
+![Lista Lead Hub](docs/screenshots/lead-hub-list.png)
+
+**Karta leada: atrybucja, oferta, realizacja, wpłata i chronologiczna oś kontaktu.**
+
+![Historia leada DEMO](docs/screenshots/lead-hub-timeline.png)
+
+**Lead Hub na telefonie.**
+
+![Mobilna karta leada](docs/screenshots/lead-hub-mobile.png)

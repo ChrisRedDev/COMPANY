@@ -42,3 +42,18 @@ SQLite wymaga loopback i bezpiecznego origin. Supabase używa JWT użytkownika i
 Pełna kopia SQLite obejmuje wszystkie nowe tabele. Kopia JSON CRM obejmuje wyłącznie wcześniejszy CRM, bez Lead Hub. W Supabase należy korzystać z kopii całej bazy projektu. Tryb samej przeglądarki zachowuje CRM; Lead Hub wymaga SQLite lub Supabase.
 
 Nie ma live Ads/telefonii, automatycznego identyfikowania anonimowych wizyt ani multi-touch attribution. Kampanie są przypisane ręcznie lub przez zdarzenia; `campaign_days` pozostaje osobnym importem kosztów. CPL/CPQL/CAC/ROAS wymagają późniejszego, jawnego powiązania zakresów i źródeł. Zdarzenie ręczne nie potwierdza działania zewnętrznego konektora.
+
+## Praca w interfejsie
+
+Otwórz Lead Hub przed sekcją Firmy/Klienci. Dodaj kontakt, otwórz kartę i rejestruj zdarzenia. Status, notatki i revenue bazowe zmienisz przez Edytuj leada; payment_received zwiększa revenue o kwotę wpłaty. Pola kwot przechowują grosze, UI pokazuje PLN. Oś czasu wyświetla Europe/Warsaw; formularz przyjmuje lokalny czas urządzenia i wysyła jednoznaczny timestamp. Historia ma sortowanie i kolejne partie po 50 zdarzeń.
+
+Kampania, medium, landing page, keyword i UTM są utrwalane w momencie zapisu interakcji. Zmiana profilu leada nie przepisuje dawnych interakcji. Lista pokazuje najpóźniejszy czas zdarzenia, a nie czas ostatniej edycji profilu. Filtry rozdzielają dane rzeczywiste i DEMO. Przykład można otwierać wielokrotnie bez nowych wpłat. Eksport pojedynczej karty JSON zawiera wszystkie powiązane rekordy; obecnie nie ma importu tych archiwów. Agent AI korzysta z dotychczasowego CRM i wiedzy, bez narzędzi Lead Hub.
+
+## Weryfikacja wydania 0.4.0
+
+- 39 testów unit/integracyjnych Node: normalizacja tożsamości, konflikty, chronologia, odtworzenie ledgeru, idempotencja, izolacja, rollback, paginacja i polskie wyszukiwanie. Test SQLite/API używa rzeczywistej tymczasowej bazy.
+- Postgres 17 w jednorazowym kontenerze: wszystkie trzy migracje, RLS i uprawnienia owner/marketer/viewer, oddzielenie przestrzeni, konflikty wersji, atomowy zapis, pełny DEMO i transakcje starego CRM.
+- Playwright: 7 testów klasycznego CRM, 5 cloud UI i 9 lokalnej aplikacji. Cloud UI używa jawnego mocka Auth/API; kontrola SQL odbywa się osobno na rzeczywistym Postgres. Lokalne testy Lead Hub obejmują pełną ścieżkę, eksport JSON, odświeżenie, izolację i ekran mobilny.
+- ESLint, TypeScript oraz produkcyjne buildy trybów przeglądarkowego i SQLite zakończyły się poprawnie. Screenshoty pochodzą z działającej aplikacji i przedstawiają DEMO.
+
+Nie wykonano migracji w zewnętrznym projekcie Supabase ani płatnych wywołań usług. Live Ads i telefonia nie należą do tego wydania.

@@ -24,3 +24,9 @@ Po każdej fazie: lint, TypeScript, unit/integration, Playwright, build, dokumen
 ## Aktualizacja: lokalna edycja na życzenie użytkownika
 
 Dodano niezależną opcję SQLite z przestrzeniami, Company Brain Markdown i eksportem do Obsidiana, importem kampanii i dashboardem, adapterami odczytu WordPress/PostHog oraz AI Brain (OpenRouter i lokalne CLI). Zadania/notatki agenta wymagają zatwierdzenia. To lokalna implementacja wybranych funkcji, nie zakończenie wszystkich faz ani automatyczna migracja do Supabase. Szczegóły w LOCAL-EDITION.md.
+
+## Lead Hub · 0.4.0
+
+Dodano moduł pozyskiwania i obsługi leadów obok CRM, dostępny w SQLite i Supabase. Zapisuje kontakt, status, źródła, kampanie, UTM, zdarzenia i touchpoints; chronologicznie wyznacza first/last touch. Deduplikacja wykorzystuje e-mail lub telefon, a konflikty tożsamości i wersji chronią przed przypadkowym nadpisaniem. Oferty, rezerwacje, prace, konwersje i wpłaty stanowią osobny fundament sprzedaży. Demo jest jawnie oznaczone i idempotentne. Lista, karta historii, filtry, eksport JSON i mobilny interfejs zachowują dotychczasowy CRM.
+
+SQLite inicjalizuje nowe tabele przy pierwszym użyciu modułu. Supabase wymaga migracji 003 po 001 i 002; stosuje członkostwo przestrzeni i kontrolę ról. Zapis leada i jego historii jest transakcyjny, z osobną revision, bez zmiany snapshotu CRM. Nie ma automatycznej konwersji do istniejących firm/zleceń, live Ads/telefonii ani połączenia kosztów z atrybucją; te integracje pozostają kolejnym krokiem. Szczegóły: [LEAD-HUB.md](LEAD-HUB.md).

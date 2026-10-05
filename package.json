@@ -1,6 +1,6 @@
 {
   "name": "evolution-growth-os",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -58,5 +58,5 @@
   "engines": {
     "node": ">=24"
   },
-  "description": "Lokalny CRM, rezerwacje usług, Company Brain i agent AI dla polskich firm — AI Evolution Polska"
+  "description": "Lokalny CRM i Lead Hub, rezerwacje usług, Company Brain i agent AI dla polskich firm — AI Evolution Polska"
 }

@@ -10,7 +10,7 @@ Node:sqlite jest wbudowane w Node 24; bez dodatkowego serwera. Baza używa WAL i
 
 AI: OpenRouter REST + models; sesyjny klucz TTL 30 min. CLI dostawcy uruchamiane przez execFile bez shell w tymczasowym folderze; brak system tools/MCP. Narzędzia biznesowe to wyłącznie walidowane propozycje wykonane przez aplikację. Brak testów realnych kont lub płatnych wywołań; kompatybilność konkretnych wersji CLI wymaga smoke testu użytkownika.
 
-Kolejne kroki: pełne Ads OAuth, rozbudowane zdarzenia/tracking health, synchronizacja vault, migracje modułów do Supabase z RLS. Obecny tryb cloud pozostaje z fundamentem CRM.
+Kolejne kroki: pełne Ads OAuth, rozbudowane zdarzenia/tracking health, synchronizacja vault, migracje modułów do Supabase z RLS. Tryb cloud obejmuje CRM oraz Lead Hub.
 
 ## Generator Company Brain
 
@@ -23,3 +23,9 @@ Tabela `brain_generations`: workspace, JSON szkicu/źródeł/zużycia, stan draf
 Główny COMPANY_BRAIN ma priorytet w kontekście agenta (do 12k znaków). Do pięciu notatek łącznie; pozostałe do 2,5k znaków każda, dopasowane do pytania. To ograniczony kontekst, nie pełny system RAG. Oferta/Marka/Marketing są kopiami sekcji z chwili generowania, z odnośnikiem do głównego dokumentu; nie synchronizują edycji automatycznie.
 
 CLI Codex wymaga flag --ignore-user-config, --ignore-rules, --ephemeral, --disable shell_tool i unified_exec, pustego mcp_servers, wyłączonego web_search oraz --output-last-message. Ich dostępność została sprawdzona przez lokalne --help/features; nie wykonano płatnego logowania/analizy. Claude wymaga -p, --tools "", --strict-mcp-config, --mcp-config i --output-format json; binarka nie była dostępna w tym środowisku. Użytkownik weryfikuje aktualne CLI własnego konta przed użyciem.
+
+## Lead Hub · 0.4.0
+
+Dodano moduł pozyskiwania i obsługi leadów obok CRM, dostępny w SQLite i Supabase. Zapisuje kontakt, status, źródła, kampanie, UTM, zdarzenia i touchpoints; chronologicznie wyznacza first/last touch. Deduplikacja wykorzystuje e-mail lub telefon, a konflikty tożsamości i wersji chronią przed przypadkowym nadpisaniem. Oferty, rezerwacje, prace, konwersje i wpłaty stanowią osobny fundament sprzedaży. Demo jest jawnie oznaczone i idempotentne. Lista, karta historii, filtry, eksport JSON i mobilny interfejs zachowują dotychczasowy CRM.
+
+SQLite inicjalizuje nowe tabele przy pierwszym użyciu modułu. Supabase wymaga migracji 003 po 001 i 002; stosuje członkostwo przestrzeni i kontrolę ról. Zapis leada i jego historii jest transakcyjny, z osobną revision, bez zmiany snapshotu CRM. Nie ma automatycznej konwersji do istniejących firm/zleceń, live Ads/telefonii ani połączenia kosztów z atrybucją; te integracje pozostają kolejnym krokiem. Szczegóły: [LEAD-HUB.md](LEAD-HUB.md).

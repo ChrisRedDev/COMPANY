@@ -16,6 +16,10 @@
 
 Tekstowe identyfikatory CRM pozwalają zachować starsze kopie (f1/c1 itd.). Relacje używają złożonych kluczy z workspace_id; rekord jednej przestrzeni nie może wskazać firmy innej przestrzeni. JSONB zachowuje kompatybilność formularzy; docelowe indeksowane kolumny powstają w kolejnych migracjach. Nie dodajemy pustych tabel, które udawałyby działające moduły.
 
+## Wdrożony Lead Hub · 0.4.0
+
+Tabele `leads`, `lead_events`, `touchpoints`, `conversions`, `appointments`, `quotes`, `jobs`, `payments` są dostępne w SQLite i Supabase. Lead Hub używa UUID oraz kluczy z workspace_id. Statusy: new/contacted/qualified/quote/booked/won/lost; normalizowane e-mail i telefon mają unikalność w przestrzeni. Revision jest osobna dla każdego leada. Tabele potomne odwołują się do leada i zdarzenia z tej samej przestrzeni. API zapisuje całość transakcyjnie. Zdarzenia i touchpoints są chronologiczne, a płatności zwiększają revenue. Kontrakt i ograniczenia: [LEAD-HUB.md](LEAD-HUB.md).
+
 ## Docelowy model faz 2–8
 
 Każdy rekord domenowy ma workspace_id i id. Każda relacja domenowa obejmuje workspace_id.

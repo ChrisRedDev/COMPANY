@@ -829,8 +829,10 @@ test("Lead Hub DEMO: pełna oś czasu, brak duplikatu i mobilna karta", async ({
     const toast = page.getByRole("button", { name: "Zamknij komunikat" });
     if (await toast.isVisible()) await toast.click();
     await page.evaluate(() => {
-      window.scrollTo(0, 0);
-      document.querySelector("main")?.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.querySelectorAll("*").forEach((el) => {
+        if (el.scrollTop > 0) el.scrollTo({ top: 0, behavior: "instant" });
+      });
     });
     await page.screenshot({
       path: "docs/screenshots/lead-hub-mobile.png",

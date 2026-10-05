@@ -30,10 +30,16 @@ WordPress importuje publiczne strony do wiedzy firmy. PostHog odczytuje agregaty
 
 ## Lokalna baza i opcja zespołowa
 
-Edycja SQLite zapisuje dane w pliku na komputerze serwera. Nie wymaga kont ani osobnego silnika bazy. Kopia całej bazy obejmuje CRM, notatki, kampanie i historię agenta. Opcjonalny Supabase zapewnia konta, role, RLS i wspólny CRM; nowe moduły lokalne czekają na osobną migrację do chmury.
+Edycja SQLite zapisuje dane w pliku na komputerze serwera. Nie wymaga kont ani osobnego silnika bazy. Kopia całej bazy obejmuje CRM, notatki, kampanie i historię agenta. Opcjonalny Supabase zapewnia konta, role, RLS i wspólny CRM; moduły wiedzy, marketingu i AI czekają na osobną migrację do chmury. Lead Hub działa także w Supabase po migracji 003.
 
 ## Zakres obecnej wersji
 
 Generator czyta publiczny HTML strony i do 4 wybranych podstron. Nie przeprowadza pełnego audytu internetu ani weryfikacji konkurentów. Nieznane dane są oznaczone; pomysły wymagają potwierdzenia. Agent działa po kliknięciu, bez harmonogramu, dowolnych poleceń lub samodzielnej publikacji. Ads jest importem CSV, Obsidian eksportem skarbca. Poczta nie synchronizuje skrzynki ani doręczeń.
 
 Konfigurację, koszty, kopie i wszystkie przepływy opisuje [README](../README.md). Kierunki dalszej rozbudowy są w [roadmapie](ROADMAP.md).
+
+## Lead Hub · 0.4.0
+
+Dodano moduł pozyskiwania i obsługi leadów obok CRM, dostępny w SQLite i Supabase. Zapisuje kontakt, status, źródła, kampanie, UTM, zdarzenia i touchpoints; chronologicznie wyznacza first/last touch. Deduplikacja wykorzystuje e-mail lub telefon, a konflikty tożsamości i wersji chronią przed przypadkowym nadpisaniem. Oferty, rezerwacje, prace, konwersje i wpłaty stanowią osobny fundament sprzedaży. Demo jest jawnie oznaczone i idempotentne. Lista, karta historii, filtry, eksport JSON i mobilny interfejs zachowują dotychczasowy CRM.
+
+SQLite inicjalizuje nowe tabele przy pierwszym użyciu modułu. Supabase wymaga migracji 003 po 001 i 002; stosuje członkostwo przestrzeni i kontrolę ról. Zapis leada i jego historii jest transakcyjny, z osobną revision, bez zmiany snapshotu CRM. Nie ma automatycznej konwersji do istniejących firm/zleceń, live Ads/telefonii ani połączenia kosztów z atrybucją; te integracje pozostają kolejnym krokiem. Szczegóły: [LEAD-HUB.md](LEAD-HUB.md).
