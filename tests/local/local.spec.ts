@@ -840,3 +840,273 @@ test("Lead Hub DEMO: pełna oś czasu, brak duplikatu i mobilna karta", async ({
     });
   }
 });
+
+test("Google konektory: usługi zapisują się w przestrzeni; brak dostępu nie udaje połączenia", async ({
+  page,
+}) => {
+  await ready(page);
+  const first = await page.getByLabel("Przestrzeń robocza").inputValue();
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  const ga = page.getByRole("article").filter({
+    has: page.getByRole("heading", {
+      name: "Google Analytics 4",
+      exact: true,
+    }),
+  });
+  const gsc = page.getByRole("article").filter({
+    has: page.getByRole("heading", {
+      name: "Google Search Console",
+      exact: true,
+    }),
+  });
+  await ga
+    .getByLabel("Identyfikator usługi GA4", { exact: true })
+    .fill("123456789");
+  await ga
+    .getByRole("button", { name: "Zapisz usługę GA4", exact: true })
+    .click();
+  await expect(
+    page.getByText(
+      "Zapisano usługę dla tej przestrzeni. Teraz sprawdź odczyt API.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    ga.getByRole("button", { name: "Sprawdź odczyt", exact: true }),
+  ).toBeDisabled();
+  await expect(
+    ga.getByText("Wymaga konfiguracji", { exact: true }),
+  ).toBeVisible();
+  await gsc
+    .getByLabel("Usługa Search Console", { exact: true })
+    .fill("https://user:secret@example.pl/");
+  await gsc
+    .getByRole("button", { name: "Zapisz usługę Search Console", exact: true })
+    .click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "HTTPS bez danych logowania" }),
+  ).toBeVisible();
+  await gsc
+    .getByLabel("Usługa Search Console", { exact: true })
+    .fill("sc-domain:example.pl");
+  await gsc
+    .getByRole("button", { name: "Zapisz usługę Search Console", exact: true })
+    .click();
+  await expect(
+    page.getByText(
+      "Zapisano usługę dla tej przestrzeni. Teraz sprawdź odczyt API.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  await expect(
+    page.getByLabel("Identyfikator usługi GA4", { exact: true }),
+  ).toHaveValue("123456789");
+  await expect(
+    page.getByLabel("Usługa Search Console", { exact: true }),
+  ).toHaveValue("sc-domain:example.pl");
+  await ready(page);
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  await expect(
+    page.getByLabel("Identyfikator usługi GA4", { exact: true }),
+  ).toHaveValue("");
+  await page.getByLabel("Przestrzeń robocza").selectOption(first);
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  await expect(
+    page.getByLabel("Identyfikator usługi GA4", { exact: true }),
+  ).toHaveValue("123456789");
+});
+
+test("Google raporty: statystyki na Pulpicie, oznaczenie błędu, wyłączenie i telefon — mock API", async ({
+  page,
+}) => {
+  await ready(page);
+  const wid = await page.getByLabel("Przestrzeń robocza").inputValue();
+  const from = "2026-09-04",
+    to = "2026-10-03",
+    fetched_at = "2026-10-05T10:00:00Z";
+  const demoDate = (i: number) =>
+    new Date(Date.parse(from) + i * 86400000).toISOString().slice(0, 10);
+  const reports = [
+    {
+      provider: "ga4",
+      resource: "properties/123456789",
+      from,
+      to,
+      fetched_at,
+      totals: {
+        sessions: 120,
+        totalUsers: 80,
+        screenPageViews: 240,
+        keyEvents: 12,
+        totalRevenue: 900,
+      },
+      daily: Array.from({ length: 30 }, (_, i) => ({
+        date: demoDate(i),
+        sessions: 3 + (i % 3),
+        totalUsers: 2 + (i % 3),
+        screenPageViews: 6 + 2 * (i % 3),
+        keyEvents: i % 5 < 2 ? 1 : 0,
+        totalRevenue: 15 * (i % 5),
+      })),
+      breakdown: [
+        {
+          label: "Organic Search",
+          values: { sessions: 90, keyEvents: 9, totalRevenue: 700 },
+        },
+      ],
+      currency: "PLN",
+      warnings: ["DEMO — jawny mock API Google w teście przeglądarkowym."],
+    },
+    {
+      provider: "search_console",
+      resource: "sc-domain:example.pl",
+      from,
+      to,
+      fetched_at,
+      totals: { clicks: 55, impressions: 1100, ctr: 0.05, position: 3.5 },
+      daily: Array.from({ length: 30 }, (_, i) => ({
+        date: demoDate(i),
+        clicks: i < 5 ? 1 : 2,
+        impressions: i < 10 ? 36 : 37,
+        ctr: (i < 5 ? 1 : 2) / (i < 10 ? 36 : 37),
+        position: 3.5,
+      })),
+      breakdown: [
+        {
+          label: "usługi lokalne Warszawa",
+          values: { clicks: 20, impressions: 400, ctr: 0.05, position: 3.5 },
+        },
+      ],
+      warnings: ["DEMO — jawny mock API Google w teście przeglądarkowym."],
+    },
+  ];
+  let gaStatus = "checked";
+  await page.route("**/api/local/workspaces/*/integrations", async (route) => {
+    if (!new URL(route.request().url()).pathname.includes(wid)) {
+      await route.continue();
+      return;
+    }
+    if (route.request().method() === "POST") {
+      const body = route.request().postDataJSON();
+      if (body.provider === "ga4" && body.action === "sync") {
+        gaStatus = "error";
+        await route.fulfill({
+          status: 403,
+          json: { error: "Google: HTTP 403. Brak uprawnień do usługi." },
+        });
+        return;
+      }
+      if (body.provider === "ga4" && body.action === "disconnect") {
+        gaStatus = "disconnected";
+        await route.fulfill({
+          json: { message: "Wyłączono integrację w przestrzeni." },
+        });
+        return;
+      }
+    }
+    const response = await route.fetch(),
+      data = await response.json();
+    data.states = [
+      {
+        provider: "ga4",
+        status: gaStatus,
+        last_sync: fetched_at,
+        error:
+          gaStatus === "error"
+            ? "Google: HTTP 403. Brak uprawnień do usługi."
+            : null,
+      },
+      { provider: "search_console", status: "checked", last_sync: fetched_at },
+    ];
+    data.snapshots = reports.map((report) => ({
+      provider: report.provider,
+      payload: { summary: "DEMO", report, synced_at: fetched_at },
+    }));
+    data.providers = data.providers.map((p: { provider: string }) =>
+      p.provider === "ga4" || p.provider === "search_console"
+        ? {
+            ...p,
+            configured: true,
+            authConfigured: true,
+            resource:
+              p.provider === "ga4"
+                ? { propertyId: "123456789" }
+                : { siteUrl: "sc-domain:example.pl" },
+          }
+        : p,
+    );
+    await route.fulfill({ json: data });
+  });
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Google Analytics 4", exact: true }),
+  ).toHaveCount(2);
+  await expect(
+    page.getByText("Użytkownicy w okresie", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("900,00 zł", { exact: true })).toBeVisible();
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS) {
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await page.screenshot({
+      path: "docs/screenshots/google-connectors-demo.png",
+      fullPage: true,
+    });
+  }
+  await page.getByRole("button", { name: "Pulpit", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Google Analytics 4", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Google Search Console", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("5%", { exact: true }).first()).toBeVisible();
+  await page
+    .getByText("Zapytania w Google — do 20 pozycji", { exact: true })
+    .click();
+  await expect(
+    page.getByText("usługi lokalne Warszawa", { exact: true }),
+  ).toBeVisible();
+  if (process.env.UPDATE_LOCAL_SCREENSHOTS) {
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+    await page.screenshot({
+      path: "docs/screenshots/google-dashboard-demo.png",
+      fullPage: true,
+    });
+  }
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  const ga = page.getByRole("article").filter({
+    has: page.getByRole("heading", {
+      name: "Google Analytics 4",
+      exact: true,
+    }),
+  });
+  await ga
+    .getByRole("button", { name: "Pobierz statystyki", exact: true })
+    .click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "HTTP 403" }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Ostatnie sprawdzenie zgłosiło błąd. Poniżej pozostaje wcześniejszy zapis raportu.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await ga
+    .getByRole("button", { name: "Wyłącz w przestrzeni", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Google Analytics 4", exact: true }),
+  ).toHaveCount(1);
+  await expect(
+    ga.getByRole("button", { name: "Połącz ponownie", exact: true }),
+  ).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
+});

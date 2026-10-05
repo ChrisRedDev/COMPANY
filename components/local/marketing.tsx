@@ -1,4 +1,5 @@
 "use client";
+import GoogleReports from "../integrations/google-reports";
 import { useCallback, useEffect, useState } from "react";
 import { localRequest } from "@/lib/local/client";
 import {
@@ -75,6 +76,7 @@ export default function Marketing({
   );
   return (
     <div className="mb-7 grid gap-5">
+      <GoogleReports wid={wid} />
       <section className="crm-card p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

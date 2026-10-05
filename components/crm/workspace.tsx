@@ -563,7 +563,7 @@ export default function Workspace({
               {isSqlite() && cloud?.id && (
                 <details className="crm-card mt-6 p-6">
                   <summary className="cursor-pointer font-semibold">
-                    Wyniki marketingu i kampanii
+                    Wyniki marketingu, Google i kampanii
                   </summary>
                   <div className="mt-5">
                     <Marketing

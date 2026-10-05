@@ -3,6 +3,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { localRequest } from "@/lib/local/client";
 import { downloadFile } from "@/lib/crm/backup";
 import { today as currentDate } from "@/lib/crm/model";
+import GoogleSetup from "../integrations/google-setup";
+import { GoogleReportView } from "../integrations/google-reports";
+import {
+  providerLabels,
+  type Provider,
+  type Resource,
+  type GoogleReport,
+} from "@/lib/integrations/model";
 import { Badge } from "../crm/ui";
 type Status = {
   provider: string;
@@ -10,7 +18,13 @@ type Status = {
   last_sync?: string;
   error?: string;
 };
-type Config = { provider: string; configured: boolean; required: string[] };
+type Config = {
+  provider: Provider;
+  configured: boolean;
+  required: string[];
+  authConfigured?: boolean;
+  resource?: Resource;
+};
 export default function Connectors({
   wid,
   mailSettings,
@@ -27,7 +41,10 @@ export default function Connectors({
     [busy, setBusy] = useState(""),
     [message, setMessage] = useState(""),
     [error, setError] = useState(""),
-    [events, setEvents] = useState<unknown[][]>([]);
+    [events, setEvents] = useState<unknown[][]>([]),
+    [reports, setReports] = useState<
+      { report: GoogleReport; stale: boolean }[]
+    >([]);
   const input = useRef<HTMLInputElement>(null);
   const load = useCallback(
     () =>
@@ -38,7 +55,37 @@ export default function Connectors({
           const posthog = r.snapshots?.find(
             (s: { provider: string }) => s.provider === "posthog",
           );
-          if (posthog?.payload.events) setEvents(posthog.payload.events);
+          setEvents(
+            r.states.some(
+              (s: Status) =>
+                s.provider === "posthog" && s.status === "disconnected",
+            )
+              ? []
+              : posthog?.payload.events || [],
+          );
+          setReports(
+            (r.snapshots || [])
+              .filter(
+                (s: { provider: string; payload: { report?: GoogleReport } }) =>
+                  s.payload.report &&
+                  !r.states.some(
+                    (x: Status) =>
+                      x.provider === s.provider && x.status === "disconnected",
+                  ),
+              )
+              .map(
+                (s: {
+                  provider: string;
+                  payload: { report: GoogleReport };
+                }) => ({
+                  report: s.payload.report,
+                  stale: r.states.some(
+                    (x: Status) =>
+                      x.provider === s.provider && x.status === "error",
+                  ),
+                }),
+              ),
+          );
         })
         .catch((e) => setError(e.message)),
     [wid],
@@ -46,14 +93,18 @@ export default function Connectors({
   useEffect(() => {
     void load();
   }, [load]);
-  async function action(provider: string, operation: string) {
+  async function action(
+    provider: string,
+    operation: string,
+    resource?: Resource,
+  ) {
     setBusy(provider);
     setError("");
     setMessage("");
     try {
       const r = await localRequest(wid, "integrations", {
         method: "POST",
-        body: JSON.stringify({ provider, action: operation }),
+        body: JSON.stringify({ provider, action: operation, resource }),
       });
       setMessage(r.summary || r.message);
       if (r.events) setEvents(r.events);
@@ -95,8 +146,16 @@ export default function Connectors({
         </p>
         <div className="mt-5 flex flex-wrap gap-3 text-xs font-medium text-slate-600">
           <span className="rounded-full bg-slate-100 px-3 py-2">
-            {states.filter((s) => s.status === "checked").length} sprawdzonych
-            odczytów API
+            {
+              configs.filter(
+                (c) =>
+                  c.configured &&
+                  states.some(
+                    (s) => s.provider === c.provider && s.status === "checked",
+                  ),
+              ).length
+            }{" "}
+            sprawdzonych odczytów API
           </span>
           <span className="rounded-full bg-violet-50 px-3 py-2 text-violet-700">
             Importy zapisane w SQLite
@@ -150,9 +209,8 @@ export default function Connectors({
         </article>
         {configs.map((c) => {
           const s = states.find((s) => s.provider === c.provider),
-            label =
-              c.provider === "wordpress" ? "WordPress / Elementor" : "PostHog",
-            checked = s?.status === "checked",
+            label = providerLabels[c.provider],
+            checked = c.configured && s?.status === "checked",
             disconnected = s?.status === "disconnected";
           return (
             <article key={c.provider} className="crm-card grid gap-4 p-6">
@@ -165,19 +223,25 @@ export default function Connectors({
                 >
                   {checked
                     ? "Odczyt API sprawdzony"
-                    : disconnected
-                      ? "Wyłączony"
-                      : s?.status === "error"
-                        ? "Błąd"
-                        : c.configured
-                          ? "Gotowy do sprawdzenia"
-                          : "Wymaga konfiguracji"}
+                    : !c.configured
+                      ? "Wymaga konfiguracji"
+                      : disconnected
+                        ? "Wyłączony"
+                        : s?.status === "error"
+                          ? "Błąd"
+                          : c.configured
+                            ? "Gotowy do sprawdzenia"
+                            : "Wymaga konfiguracji"}
                 </Badge>
               </div>
               <p className="crm-muted">
                 {c.provider === "wordpress"
                   ? "Odczyt opublikowanych stron i import treści do Company Brain. Bez publikacji lub zmian w WordPressie."
-                  : "Odczyt liczby zdarzeń z ostatnich 30 dni z PostHog Cloud EU/US. Bez tworzenia własnego session replay."}
+                  : c.provider === "posthog"
+                    ? "Odczyt liczby zdarzeń z ostatnich 30 dni z PostHog Cloud EU/US. Bez tworzenia własnego session replay."
+                    : c.provider === "ga4"
+                      ? "Sesje, użytkownicy, odsłony, kluczowe zdarzenia i przychód z usługi GA4. Zapisany raport pokaże się też na Pulpicie."
+                      : "Kliknięcia, wyświetlenia, CTR, średnia pozycja oraz zapytania z wyszukiwarki Google. Zapisany raport pokaże się też na Pulpicie."}
               </p>
               <details>
                 <summary className="cursor-pointer text-sm text-violet-700">
@@ -190,11 +254,53 @@ export default function Connectors({
                     </li>
                   ))}
                 </ul>
+                {(c.provider === "ga4" || c.provider === "search_console") && (
+                  <p className="crm-muted mt-3">
+                    W Google Cloud włącz Google Analytics Data API i Search
+                    Console API. Utwórz konto usługi, zapisz jego JSON na
+                    komputerze i nadaj adresowi e-mail tego konta dostęp do
+                    Twojej usługi GA4 oraz witryny Search Console. Klucz
+                    wskazujesz w .env.local, a konkretną usługę zapisujesz
+                    poniżej. Możesz też użyć własnego OAuth z tokenem
+                    odświeżania.{" "}
+                    <a
+                      className="text-violet-700 underline"
+                      href="https://github.com/aievolutionpl/CRM-DASHBOARD/blob/main/docs/GOOGLE-INTEGRATIONS.md"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Pełna instrukcja Google
+                    </a>
+                  </p>
+                )}
                 <p className="crm-muted mt-3">
                   Uzupełnij .env.local i zrestartuj serwer. Nie wklejaj kluczy
                   do notatek ani CSV.
                 </p>
               </details>
+              {(c.provider === "ga4" || c.provider === "search_console") && (
+                <>
+                  <p className="crm-muted">
+                    {c.authConfigured
+                      ? "Uwierzytelnienie Google jest skonfigurowane; dostęp potwierdzi dopiero odczyt API."
+                      : "Najpierw skonfiguruj konto usługi Google lub OAuth w .env.local. Szczegóły znajdziesz w instrukcji podłączenia."}
+                  </p>
+                  <GoogleSetup
+                    key={`${wid}:${c.provider}:${JSON.stringify(c.resource)}`}
+                    provider={c.provider}
+                    resource={c.resource || {}}
+                    busy={!!busy}
+                    save={(resource) =>
+                      action(c.provider, "configure", resource)
+                    }
+                  />
+                </>
+              )}
+              {s?.error && (
+                <p role="alert" className="crm-alert error">
+                  {s.error}
+                </p>
+              )}
               {s?.last_sync && (
                 <p className="crm-muted">
                   Ostatni udany odczyt:{" "}
@@ -220,9 +326,11 @@ export default function Connectors({
                 >
                   {c.provider === "wordpress"
                     ? "Importuj strony"
-                    : "Odczytaj zdarzenia"}
+                    : c.provider === "posthog"
+                      ? "Odczytaj zdarzenia"
+                      : "Pobierz statystyki"}
                 </button>
-                {checked && (
+                {s && !disconnected && (
                   <button
                     className="crm-text-button"
                     disabled={!!busy}
@@ -291,6 +399,12 @@ export default function Connectors({
           </button>
         </article>
       </div>
+      {reports.map((r) => (
+        <GoogleReportView
+          key={`${r.report.provider}:${r.report.resource}`}
+          {...r}
+        />
+      ))}
       {!!events.length && (
         <section className="crm-card p-6">
           <h3>Zdarzenia PostHog · ostatnie 30 dni</h3>

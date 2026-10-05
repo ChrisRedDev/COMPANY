@@ -10,7 +10,7 @@ Evolution Growth OS to narzędzie dla lokalnych firm usługowych, małych zespo�
 
 **Przykład:** klient trafia z reklamy, zostawia formularz i dzwoni. W Lead Hub zapisujesz te kontakty przy jednej osobie, dodajesz ofertę, rezerwację, wykonanie pracy i wpłatę. W Company Brain zbierasz ofertę i zasady komunikacji marki. AI Brain pomaga analizować kontekst oraz proponuje zadania i notatki, które zatwierdzasz przed wykonaniem.
 
-Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.4.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
+Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.5.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
 
 ![Pulpit Evolution Growth OS z wynikami kampanii DEMO](docs/screenshots/local-dashboard.png)
 
@@ -20,16 +20,16 @@ _Działająca aplikacja, lokalny zapis SQLite i zaimportowane dane demonstracyjn
 
 ## Co możesz zrobić w aplikacji
 
-| Moduł                     | Do czego służy                                                                                                                |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.  |
-| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                   |
-| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                  |
-| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                       |
-| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                 |
-| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                       |
-| **AI Brain**              | Wybrany model przez OpenRouter, Codex CLI lub Claude Code; analiza CRM i wiedzy oraz propozycje zadań i notatek.              |
-| **Konektory i poczta**    | Ręczne odczyty WordPress/PostHog, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
+| Moduł                     | Do czego służy                                                                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.                         |
+| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                                          |
+| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                                         |
+| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                                              |
+| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                                        |
+| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                                              |
+| **AI Brain**              | Wybrany model przez OpenRouter, Codex CLI lub Claude Code; analiza CRM i wiedzy oraz propozycje zadań i notatek.                                     |
+| **Konektory i poczta**    | Ręczne odczyty GA4, Search Console, WordPress i PostHog, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
 
 **Dwa sposoby pracy:** CRM i sprzedaż albo Firma usługowa. Przełączenie zmienia widoki i zachowuje dane. Lead Hub działa obok dotychczasowego CRM; nie przenosi automatycznie kontaktów ani zleceń między modułami.
 
@@ -176,6 +176,19 @@ CLI działa w folderze tymczasowym: Codex z `--ignore-user-config`, `--ignore-ru
 
 **Koszt:** analiza dopuszcza do 3000 tokenów odpowiedzi, generator do 8000; kontekst wejściowy też podlega rozliczeniu. Zużycie pokazujemy, jeśli dostawca je zwróci. Nie uruchamiamy analiz ani harmonogramów w tle.
 
+## Google Analytics 4 i Search Console
+
+W **Konektorach** możesz zapisać usługę GA4 i witrynę Search Console dla każdej firmy. Odczyt korzysta z oficjalnych API Google. Podłącz własne konto usługi przez plik JSON lub skonfiguruj OAuth z tokenem odświeżania; sama obecność konfiguracji nie potwierdza uprawnień.
+
+1. Włącz Google Analytics Data API i Search Console API w swoim projekcie Google Cloud.
+2. Nadaj kontu usługi dostęp do GA4 oraz witryny Search Console i wskaż jego JSON przez `GOOGLE_SERVICE_ACCOUNT_FILE` w `.env.local`.
+3. Zrestartuj aplikację, otwórz **Konektory**, zapisz numeryczny identyfikator GA4 i dokładny adres usługi Search Console.
+4. Kliknij **Sprawdź odczyt**, potem **Pobierz statystyki**. Zapisane raporty pojawią się także na **Pulpicie**.
+
+GA4 pokazuje sesje, użytkowników za okres, odsłony, kluczowe zdarzenia, przychód w walucie usługi i kanały. Search Console pokazuje kliknięcia, wyświetlenia, CTR, pozycję i zapytania. Raporty obejmują 30 dni; Search Console kończy zakres 3 dni temu ze względu na opóźnienia. Wyniki Google nie są dodawane do leadów z CSV ani wpłat Lead Hub. Google Ads nadal korzysta z importu CSV.
+
+Funkcja działa w **SQLite**, bez automatycznych synchronizacji w tle i bez instalowania trackingu na stronie. [Instrukcja podłączenia, uprawnienia, OAuth i diagnostyka](docs/GOOGLE-INTEGRATIONS.md).
+
 ## Konektory i pulpit marketingowy
 
 Konektory pokazują brak konfiguracji, udany odczyt, datę sprawdzenia, błąd i wyłączenie w przestrzeni. Odczyt jest ręczny. Po zmianie `.env.local` zrestartuj aplikację; plik dotyczy całej instalacji, a zapisane dane są oddzielne dla firm. „Odczyt API sprawdzony” potwierdza żądanie do API, nie poprawność trackingu.
@@ -183,6 +196,8 @@ Konektory pokazują brak konfiguracji, udany odczyt, datę sprawdzenia, błąd i
 | Integracja                                   | Konfiguracja                                                                                | Działające operacje                                                                                                 |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | **WordPress / Elementor**                    | `WP_BASE_URL=https://twoja-strona.pl`; opcjonalnie `WP_USERNAME`, `WP_APPLICATION_PASSWORD` | Sprawdzenie API i import pierwszych 100 opublikowanych stron do folderu `web`; bez publikacji i zmian w Elementorze |
+| **Google Analytics 4**                       | Plik konta usługi lub własny OAuth; identyfikator GA4 zapisany w panelu                     | Odczyt danych za 30 dni, kanały, lokalny zapis i wykresy na Pulpicie                                                |
+| **Google Search Console**                    | To samo uwierzytelnienie Google; osobna usługa witryny w panelu                             | Dane skuteczności Web, trend dzienny, CTR, pozycja i do 20 zapytań                                                  |
 | **PostHog Cloud EU/US**                      | `POSTHOG_HOST`, `POSTHOG_PROJECT_ID`, `POSTHOG_PERSONAL_API_KEY`                            | Liczba zdarzeń według typu z ostatnich 30 dni; ręczny odczyt zapisuje wynik lokalnie                                |
 | **Google Ads / Microsoft Ads i inne kanały** | Plik CSV według szablonu z Konektorów                                                       | Import dziennych wyników i aktualizacja tych samych dat, kampanii oraz źródeł; bez live OAuth                       |
 | **Resend**                                   | `RESEND_API_KEY`, `CRM_MAIL_FROM`, `CRM_MAIL_ACCESS_TOKEN`                                  | Test odczytu domen i wysyłka zatwierdzonych szkiców                                                                 |
@@ -319,9 +334,22 @@ Pulpit pokazuje stan realizacji, rezerwacje i wartości usług. Karta klienta pr
 
 ### Konektory — stan konfiguracji i ręczne odczyty
 
-Panel zbiera integracje AI, strony firmy, WordPress, PostHog, importy kampanii i pocztę. Rozróżnia brak konfiguracji, udany odczyt i błąd.
+Panel zbiera integracje AI, strony firmy, GA4, Search Console, WordPress, PostHog, importy kampanii i pocztę. Rozróżnia brak konfiguracji, udany odczyt i błąd.
 
 ![Konektory Evolution Growth OS](docs/screenshots/local-connectors.png)
+
+### Raporty Google — GA4 i Search Console
+
+Konektory mają osobny wybór usługi i stan odczytu. Pulpit pokazuje metryki i wykresy dwóch źródeł. **Poniższe screenshoty używają jawnego mocka API Google i danych DEMO**, nie raportów z konta użytkownika.
+
+![Konektory Google — konfiguracja i raporty testowe](docs/screenshots/google-connectors-demo.png)
+
+<details>
+<summary><strong>Zobacz pulpit z raportami Google</strong></summary>
+
+![Pulpit — GA4 i Search Console, dane testowe](docs/screenshots/google-dashboard-demo.png)
+
+</details>
 
 ### Company Brain i AI Brain — wiedza z podglądem przed zapisem
 
