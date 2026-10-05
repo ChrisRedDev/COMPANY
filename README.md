@@ -1,4 +1,61 @@
-# Evolution CRM · AI Evolution Polska
+# Evolution Growth OS · AI Evolution Polska
+
+
+**System operacyjny rozwoju lokalnej firmy.** Docelowo łączy leady, marketing, tracking i wiedzę firmy. Obecna wersja wdraża **Fazę 1**: działający CRM oraz fundament Supabase Auth, przestrzeni, ról i bazy. Moduły Ads, Tracking, Company Brain i AI Brain są kolejnymi fazami, opisanymi w [roadmapie](docs/ROADMAP.md). Nie pokazujemy fikcyjnych integracji jako połączonych.
+
+![Przestrzeń Growth OS — dane dostawcy testowego](docs/screenshots/growth-workspace.png)
+
+## Dwa tryby pracy
+
+- `NEXT_PUBLIC_CRM_MODE=local` — zachowany lokalny CRM, działa bez Supabase.
+- `NEXT_PUBLIC_CRM_MODE=cloud` — konto Supabase, osobne przestrzenie i baza Postgres. Dane CRM nie są zapisywane w localStorage; sesją logowania zarządza Supabase SDK.
+
+### Uruchomienie trybu chmurowego
+
+1. Utwórz lub wybierz projekt Supabase. `.mcp.json` nie konfiguruje aplikacji.
+2. Wykonaj [migrację SQL](supabase/migrations/202610050001_growth_foundation.sql) w nowym projekcie/testowej bazie. Nazwy tabel sprawdź przed wdrożeniem do istniejącej bazy. Migracja nie jest automatycznie wykonywana przy starcie aplikacji.
+3. W `.env.local` ustaw:
+
+```dotenv
+NEXT_PUBLIC_CRM_MODE=cloud
+NEXT_PUBLIC_SUPABASE_URL=https://twoj-projekt.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=twoj-publiczny-klucz
+```
+
+4. W Supabase Auth włącz e-mail/hasło, ustaw Site URL oraz Redirect URLs na adres aplikacji. Włącz potwierdzanie adresów e-mail. Nigdy nie używaj `service_role` jako klucza publicznego.
+5. Zrestartuj `npm run dev`. Dla produkcji ustaw zmienne **przed** `npm run build` (Next.js utrwala publiczne env w bundlu).
+6. Załóż i potwierdź konto, zaloguj się, utwórz przestrzeń. Nowa przestrzeń ma pusty CRM.
+7. W panelu Zespół właściciel może dodać istniejącego użytkownika poprzez UUID i rolę. UUID użytkownik widzi w „Moje konto”. Zaproszenia e-mail nie są jeszcze wdrożone.
+
+Role: **owner** zarządza członkami; **admin** i **marketer** zapisują CRM; **viewer** ma odczyt. RLS i funkcje SQL sprawdzają uprawnienia niezależnie od interfejsu. Admin/owner mają odczyt audytu w bazie. Nie można zdegradować ostatniego właściciela.
+
+### Migracja lokalnych danych
+
+Najpierw w trybie lokalnym pobierz kopię JSON w Ustawieniach. Przejdź do trybu chmurowego, utwórz/wybierz przestrzeń i przywróć kopię w Ustawieniach. Potwierdź zastąpienie danych, zaczekaj na **„Zapisano w Supabase”**. Import zachowuje identyfikatory i relacje; nie przenosi sekretów. Nie usuwa oryginalnego localStorage. Przełączenie przestrzeni nie przenosi danych pomiędzy firmami.
+
+Zapis jest transakcyjny i wersjonowany. Przy błędzie lub konflikcie edycja zostaje zatrzymana. Pobierz kopię zmian i wczytaj aktualne dane z bazy. Nie zamykaj karty przy niezapisanych zmianach. Ta faza używa atomowego zapisu zestawu CRM, odpowiedniego dla małych przestrzeni; kolejne fazy przejdą do operacji na rekordach i realtime.
+
+**Poczta:** chmura zachowuje szkice i otwieranie programu pocztowego. Bezpośrednia wysyłka przez globalny Resend jest wyłączona do wdrożenia sekretów i uprawnień per workspace.
+
+## Weryfikacja fundamentu
+
+```bash
+npm run lint
+npx tsc --noEmit
+npm test
+npm run build
+npm run test:e2e
+npm run test:cloud
+npm run test:db
+```
+
+Playwright wymaga Chromium (`npx playwright install chromium` lub `CRM_CHROMIUM_PATH`). `test:cloud` uruchamia osobny serwer developerski na porcie 3001 z jawnym test provider; weryfikuje UI logowania, cache, role, konflikty i mobile. Nie łączy się z rzeczywistym Supabase. `test:db` wymaga Docker, tworzy jednorazowy Postgres 17, wykonuje migrację i sprawdza RLS, uprawnienia, transakcje, konflikty i audit log; sprząta kontener. Bootstrap Auth jest lokalnym odpowiednikiem auth.uid(), nie testem usługi Supabase Auth.
+
+**Stan walidacji live:** brak konfiguracji rzeczywistego Supabase w środowisku. Migracja nie została wykonana w projekcie z `.mcp.json`. Pełny smoke test wdrożenia obejmuje potwierdzenie e-maila, dwa konta, dwie przestrzenie, import, odświeżenie i bezpośredni test dostępu z JWT.
+
+Architektura: [ARCHITECTURE](docs/ARCHITECTURE.md) · model: [DATA-MODEL](docs/DATA-MODEL.md) · plan: [ROADMAP](docs/ROADMAP.md).
+
+## Zachowany CRM lokalny
 
 **Mniej chaosu. Więcej dobrych relacji.**
 
@@ -35,12 +92,12 @@ Pierwsze uruchomienie pokazuje cztery krótkie kroki: organizacja CRM, firmy i s
 
 ## Jak przechowywane są dane
 
-CRM jest aplikacją do pracy lokalnej, dla jednego obszaru pracy w przeglądarce. Zustand zapisuje firmy, kontakty, szanse, zadania, wiadomości, podpis i ustawienia agenta w **localStorage**. Odświeżenie strony zachowuje zapisane dane. Przeglądarki, profile i urządzenia mają osobne zbiory danych.
+W trybie `local` CRM jest aplikacją do pracy lokalnej, dla jednego obszaru pracy w przeglądarce. Zustand zapisuje firmy, kontakty, szanse, zadania, wiadomości, podpis i ustawienia agenta w **localStorage**. Odświeżenie strony zachowuje zapisane dane. Przeglądarki, profile i urządzenia mają osobne zbiory danych.
 
 - Pierwszy start zawiera **przykładowe firmy i fikcyjne kontakty** z adresami `example.com`. W Ustawieniach można je usunąć.
 - Wyczyszczenie danych przeglądarki usuwa także zapis CRM. Regularnie pobieraj **kopię JSON**; import zastępuje bieżący zestaw po zatwierdzeniu i walidacji.
 - Kopia zawiera dane kontaktowe i treści wiadomości. Nie zawiera kluczy API ani tokenu sesji poczty.
-- Aplikacja nie ma kont użytkowników, współdzielonej bazy, synchronizacji między urządzeniami ani logowania. Publiczne wdrożenie nie czyni jej wieloosobowym SaaS-em.
+- Tryb lokalny nie ma kont użytkowników, współdzielonej bazy, synchronizacji między urządzeniami ani logowania. Publiczne wdrożenie nie czyni jej wieloosobowym SaaS-em.
 
 ## Szybkie uruchomienie na komputerze
 

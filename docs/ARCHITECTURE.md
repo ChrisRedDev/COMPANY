@@ -10,7 +10,7 @@ Tryb serwera wybiera `NEXT_PUBLIC_CRM_MODE=cloud`. W chmurze brak env powoduje c
 
 Każda przestrzeń ma osobne rekordy i revision. Atomowa funkcja zapisuje zestaw CRM, ustawienia i audit log w transakcji. Optymistyczna kontrola revision odrzuca nadpisanie zmian innego urządzenia. Klient szereguje zapisy i zatrzymuje edycję przy błędzie. Przełączenie przestrzeni czyści cache; nie przenosi danych poprzedniej firmy. Początkowy zapis do bazy jest pusty; dane lokalne importuje się świadomie z kopii JSON.
 
-Role: viewer odczyt; marketer operacyjny zapis CRM; admin zarządzanie członkami poza owner; owner zarządzanie przestrzenią i rolami. Zmiany ról wymagają właściciela; nie można odebrać roli ostatniemu ownerowi. RLS sprawdza członkostwo po auth.uid(), nie po zaufanym workspace_id z formularza.
+Role: viewer odczyt; marketer operacyjny zapis CRM; admin operacyjny zapis i odczyt audytu; owner zarządzanie przestrzenią i rolami. Zmiany ról wymagają właściciela; nie można odebrać roli ostatniemu ownerowi. RLS sprawdza członkostwo po auth.uid(), nie po zaufanym workspace_id z formularza.
 
 ## Granice fazy
 

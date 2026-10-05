@@ -255,3 +255,157 @@ test("endpoint nie wysyła do odbiorców demonstracyjnych", async () => {
   assert.equal(result.status, 400);
   assert.equal(called, false);
 });
+const growth = load("lib/growth/model.ts");
+test("Growth OS waliduje zapis i zachowuje identyfikatory migracji", () => {
+  const state = {
+    ...model.seedData(),
+    onboarded: true,
+    sender: "Firma",
+    agentEnabled: false,
+  };
+  const result = growth.validateSnapshot(growth.snapshot(state, 2));
+  assert.equal(result.revision, 2);
+  assert.equal(result.data.firms[0].id, "f1");
+  assert.throws(() => growth.validateSnapshot({ ...result, revision: -1 }));
+  assert.throws(() =>
+    growth.validateSnapshot({
+      ...result,
+      settings: { ...result.settings, sender: "x".repeat(201) },
+    }),
+  );
+  assert.equal(growth.canWrite("viewer"), false);
+  for (const role of ["owner", "admin", "marketer"])
+    assert.equal(growth.canWrite(role), true);
+});
+test("Cloud API odrzuca brak logowania, obce origin i nieważną sesję", async () => {
+  const old = {
+    mode: process.env.NEXT_PUBLIC_CRM_MODE,
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  };
+  process.env.NEXT_PUBLIC_CRM_MODE = "cloud";
+  process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.invalid";
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "public-test";
+  let called = false;
+  const api = load("lib/supabase/server.ts", {
+    "@supabase/supabase-js": {
+      createClient: (_url, _key, options) => {
+        called = true;
+        assert.equal(options.global.headers.Authorization, "Bearer test");
+        return {
+          auth: { getUser: async () => ({ data: { user: null }, error: {} }) },
+        };
+      },
+    },
+  });
+  try {
+    assert.equal(
+      (await api.authenticated(new Request("http://localhost/api/workspaces")))
+        .status,
+      401,
+    );
+    assert.equal(called, false);
+    assert.equal(
+      (
+        await api.authenticated(
+          new Request("http://localhost/api/workspaces", {
+            headers: {
+              origin: "https://evil.invalid",
+              authorization: "Bearer test",
+            },
+          }),
+        )
+      ).status,
+      403,
+    );
+    assert.equal(called, false);
+    assert.equal(
+      (
+        await api.authenticated(
+          new Request("http://localhost/api/workspaces", {
+            headers: { authorization: "Bearer test" },
+          }),
+        )
+      ).status,
+      401,
+    );
+    assert.equal(called, true);
+    assert.equal(api.databaseError({ code: "40001" }).status, 409);
+    assert.equal(api.databaseError({ code: "42501" }).status, 403);
+  } finally {
+    for (const [k, v] of Object.entries({
+      NEXT_PUBLIC_CRM_MODE: old.mode,
+      NEXT_PUBLIC_SUPABASE_URL: old.url,
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: old.key,
+    })) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+});
+test("Zapis workspace przekazuje JWT/RLS, UUID i oczekiwaną wersję do transakcji", async () => {
+  let args;
+  const api = load("app/api/workspaces/[id]/data/route.ts", {
+    "@/lib/growth/model": growth,
+    "@/lib/supabase/server": {
+      authenticated: async () => ({
+        db: {
+          rpc: async (name, payload) => {
+            args = { name, payload };
+            return { data: 3, error: null };
+          },
+        },
+      }),
+      readBody: async (r) => r.json(),
+      databaseError: () =>
+        Response.json({ error: "conflict" }, { status: 409 }),
+    },
+  });
+  const wid = "00000000-0000-0000-0000-000000000001",
+    state = growth.snapshot(
+      {
+        ...model.seedData(),
+        onboarded: false,
+        sender: "Firma",
+        agentEnabled: false,
+      },
+      2,
+    );
+  const result = await api.PUT(
+    new Request("http://localhost", {
+      method: "PUT",
+      body: JSON.stringify(state),
+    }),
+    { params: Promise.resolve({ id: wid }) },
+  );
+  assert.equal(result.status, 200);
+  assert.equal(args.name, "save_workspace");
+  assert.equal(args.payload.wid, wid);
+  assert.equal(args.payload.expected_revision, 2);
+  const bad = await api.PUT(
+    new Request("http://localhost", {
+      method: "PUT",
+      body: JSON.stringify({ ...state, revision: -1 }),
+    }),
+    { params: Promise.resolve({ id: wid }) },
+  );
+  assert.equal(bad.status, 400);
+  const badId = await api.GET(new Request("http://localhost"), {
+    params: Promise.resolve({ id: "f1" }),
+  });
+  assert.equal(badId.status, 400);
+});
+test("Globalny klucz Resend nie daje dostępu do wysyłki z workspace", () => {
+  const previous = process.env.NEXT_PUBLIC_CRM_MODE;
+  process.env.NEXT_PUBLIC_CRM_MODE = "cloud";
+  try {
+    const server = load("lib/crm/mail-server.ts");
+    assert.equal(
+      server.guardMail(new Request("http://localhost/api/mail/send")).status,
+      503,
+    );
+  } finally {
+    if (previous === undefined) delete process.env.NEXT_PUBLIC_CRM_MODE;
+    else process.env.NEXT_PUBLIC_CRM_MODE = previous;
+  }
+});
