@@ -17,23 +17,23 @@ export default function Onboarding({
       icon: "spark",
       label: "1 / 3 · TWOJA PRZESTRZEŃ",
       title: "Jak pracuje Twoja firma?",
-      text: "Wybierz widok dopasowany do codziennej pracy. Możesz zmienić go w dowolnej chwili w menu.",
+      text: "Choose widok dopasowany do codziennej pracy. Możesz zmienić go w dowolnej chwili w menu.",
       bullets: [],
     },
     {
       icon: services ? "clock" : "deals",
       label: "2 / 3 · PIERWSZY KROK",
       title: services
-        ? "Klient. Termin. Dobrze wykonana praca."
-        : "Dodaj firmę. Zapisz kolejny krok.",
+        ? "Customer. Due date. Dobrze wykonana praca."
+        : "Dodaj firmę. Save kolejny krok.",
       text: services
-        ? "Dodaj klienta z kontaktem i notatkami. Zarezerwuj usługę, wybierz termin oraz osobę lub stanowisko. Po realizacji zakończ pracę — historia zostanie na karcie klienta."
-        : "Dodaj firmę i osobę kontaktową. Zapisz szansę sprzedaży oraz zadanie z terminem. Pulpit pokaże wyniki Twojej pracy.",
+        ? "Add customer z kontaktem i notatkami. Zarezerwuj usługę, wybierz termin oraz osobę lub stanowisko. Po realizacji zakończ pracę — historia zostanie na karcie klienta."
+        : "Dodaj firmę i osobę kontaktową. Save szansę sprzedaży oraz zadanie z terminem. Owner overview pokaże wyniki Twojej pracy.",
       bullets: services
         ? [
             "Kalendarz sprawdza nakładające się aktywne rezerwacje.",
-            "Zlecenia mają status i historię zmian.",
-            "Wartości są w PLN, terminy według Europe/Warsaw.",
+            "Jobs mają status i historię zmian.",
+            "Wartości są w PLN, terminy według Europe/London.",
           ]
         : [
             "Przesuwaj szanse po etapach sprzedaży.",
@@ -45,7 +45,7 @@ export default function Onboarding({
       icon: "agent",
       label: "3 / 3 · GDY POTRZEBUJESZ WIĘCEJ",
       title: "Możesz też podpiąć e-maile i AI.",
-      text: "Poczta pomaga przygotować wiadomość, a agent follow-up tworzy szkice. Po podłączeniu Resend zatwierdzasz wysyłkę samodzielnie.",
+      text: "Email pomaga przygotować wiadomość, a agent follow-up tworzy szkice. Po podłączeniu Resend zatwierdzasz wysyłkę samodzielnie.",
       bullets: [
         isSqlite()
           ? "AI Brain: OpenRouter lub zalogowane CLI Codex / Claude Code."
@@ -54,14 +54,14 @@ export default function Onboarding({
             : "Program pocztowy otwiera szkic w Twojej aplikacji pocztowej.",
         isSqlite()
           ? "Company Brain: podaj stronę firmy i sprawdź wygenerowaną wiedzę."
-          : "Pulpit i kopie działają bez dodatkowych integracji.",
+          : "Owner overview i kopie działają bez dodatkowych integracji.",
         "Integracje są opcjonalne. Podłączysz je później; AI może zużywać płatny limit.",
       ],
     },
   ];
   const item = steps[step];
   return (
-    <Modal title="Zacznij z Evolution Growth OS" onClose={() => finish()}>
+    <Modal title="Zacznij z Local Plumbing Services Growth OS" onClose={() => finish()}>
       <div className="crm-onboarding">
         <div className="crm-onboarding-icon">
           <Icon name={item.icon} size={36} />
@@ -73,20 +73,20 @@ export default function Onboarding({
           <div
             className="growth-onboarding-choices"
             role="radiogroup"
-            aria-label="Sposób pracy firmy"
+            aria-label="Workflow firmy"
           >
             {(
               [
                 {
                   mode: "crm",
                   title: "CRM i sprzedaż",
-                  text: "Firmy, kontakty, szanse sprzedaży i follow-upy.",
+                  text: "Customers, kontakty, szanse sprzedaży i follow-upy.",
                   icon: "deals",
                 },
                 {
                   mode: "services",
-                  title: "Firma usługowa",
-                  text: "Klienci, zarezerwowane prace, terminy i historia realizacji.",
+                  title: "Plumbing services",
+                  text: "Customers, zarezerwowane prace, terminy i historia realizacji.",
                   icon: "clock",
                 },
               ] as const
@@ -102,7 +102,7 @@ export default function Onboarding({
                 <strong>{option.title}</strong>
                 <small>{option.text}</small>
                 <span>
-                  {s.businessMode === option.mode ? "Wybrano" : "Wybierz"}
+                  {s.businessMode === option.mode ? "Wybrano" : "Choose"}
                 </span>
               </button>
             ))}

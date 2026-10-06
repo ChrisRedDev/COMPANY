@@ -13,8 +13,8 @@ test("NIP sprawdza sumę kontrolną i dopuszcza pole opcjonalne", () => {
   assert.equal(model.validNip(""), true);
 });
 test("PLN i daty są formatowane po polsku", () => {
-  assert.match(model.money(123000), /123\s000\s?zł/);
-  assert.equal(model.dateLabel("2026-03-12"), "12.03.2026");
+  assert.match(model.money(123000), /£123,000/);
+  assert.equal(model.dateLabel("2026-03-12"), "12/03/2026");
 });
 test("adres strony dopuszcza tylko HTTP i HTTPS", () => {
   assert.equal(model.safeWebsite("example.com"), "https://example.com/");
@@ -555,6 +555,7 @@ test("SQLite i agent: izolacja, konflikty, zatwierdzenie, brak duplikatu i rollb
   } finally {
     if (previous === undefined) delete process.env.CRM_DATABASE_PATH;
     else process.env.CRM_DATABASE_PATH = previous;
+    require("./helpers/load-ts.cjs").closeTestDatabases(folder);
     fs.rmSync(folder, { recursive: true, force: true });
   }
 });
@@ -818,6 +819,7 @@ test("generator: źródła, 34 sekcje, szkic bez zmian, atomowy zapis i Obsidian
   } finally {
     if (previous === undefined) delete process.env.CRM_DATABASE_PATH;
     else process.env.CRM_DATABASE_PATH = previous;
+    require("./helpers/load-ts.cjs").closeTestDatabases(folder);
     fs.rmSync(folder, { recursive: true, force: true });
   }
 });

@@ -35,27 +35,27 @@ const kindInfo: Record<ReportKind, { icon: string; text: string }> = {
   },
   activity: {
     icon: "tasks",
-    text: "Zadania, wiadomości, nowe firmy i zaległości.",
+    text: "Tasks, wiadomości, nowe firmy i zaległości.",
   },
   services: {
     icon: "clock",
-    text: "Zlecenia, realizacje, przychód i obłożenie zasobów.",
+    text: "Jobs, realizacje, przychód i obłożenie zasobów.",
   },
 };
 const count = (v: number) =>
-  new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 1 }).format(v);
+  new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 }).format(v);
 const when = (iso: string) =>
-  new Intl.DateTimeFormat("pl-PL", {
+  new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
     month: "short",
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "Europe/Warsaw",
+    timeZone: "Europe/London",
   }).format(new Date(iso));
 const sourceLabel = {
   manual: "Ręcznie",
-  job: "Harmonogram",
-  agent: "Agent AI",
+  job: "Schedule",
+  agent: "AI assistant",
 };
 
 function ReportView({
@@ -90,7 +90,7 @@ function ReportView({
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <span className="text-[11px] font-bold tracking-[1.6px] text-violet-200 uppercase">
-              Evolution Growth OS · {sourceLabel[report.source]} ·{" "}
+              Local Plumbing Services Growth OS · {sourceLabel[report.source]} ·{" "}
               {when(report.created)}
             </span>
             <h2 className="mt-2 text-2xl! font-bold text-white!">{r.title}</h2>
@@ -130,7 +130,7 @@ function ReportView({
               CSV
             </button>
             <button
-              aria-label="Usuń raport"
+              aria-label="Delete raport"
               className="rounded-xl border border-white/25 bg-white/10 px-2.5 py-2 text-white hover:bg-rose-500/40"
               onClick={onDelete}
             >
@@ -197,7 +197,7 @@ function ReportView({
               ))}
               {!canSummarize && (
                 <li className="mt-1 text-xs text-slate-500">
-                  Podłącz model AI w sekcji Agent AI, aby otrzymać opisowe
+                  Podłącz model AI w sekcji AI assistant, aby otrzymać opisowe
                   podsumowanie.
                 </li>
               )}
@@ -403,7 +403,7 @@ export default function Reports({
             disabled={readOnly}
             onClick={generate}
           >
-            <Icon name="spark" size={16} /> Generuj raport
+            <Icon name="spark" size={16} /> Generate report
           </button>
         </div>
       </section>
@@ -453,8 +453,8 @@ export default function Reports({
           </span>
           <h3 className="text-lg!">Brak raportów</h3>
           <p className="max-w-md text-sm text-slate-500">
-            Wybierz rodzaj i okres, a raport z KPI, porównaniem do poprzedniego
-            okresu, wykresami i rekomendacjami powstanie w sekundę. Agent AI
+            Choose rodzaj i okres, a raport z KPI, porównaniem do poprzedniego
+            okresu, wykresami i rekomendacjami powstanie w sekundę. AI assistant
             dopisze podsumowanie zarządcze.
           </p>
         </section>

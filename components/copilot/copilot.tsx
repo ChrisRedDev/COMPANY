@@ -20,12 +20,12 @@ import Markdown from "../local/markdown";
 
 type Status = Awaited<ReturnType<typeof agentStatus>>;
 const QUICK = [
-  "Co powinienem zrobić dzisiaj?",
-  "Pokaż ryzyka w sprzedaży",
-  "Przygotuj szkice follow-up do najważniejszych szans",
-  "Wygeneruj raport zarządczy za ostatnie 30 dni",
-  "Zaplanuj codzienny briefing o 8:00",
-  "Przeanalizuj lejek i prognozę",
+  "Give me today’s plumbing briefing",
+  "Where are we wasting advertising budget?",
+  "Which leads need follow-up?",
+  "Which campaigns could we scale?",
+  "Check tracking discrepancies",
+  "Review keyword and search-term candidates",
 ];
 const providerInfo: Record<
   CopilotProvider,
@@ -33,33 +33,33 @@ const providerInfo: Record<
 > = {
   builtin: {
     icon: "spark",
-    text: "Działa od razu i offline. Reguły eksperckie dla CRM, raportów i harmonogramu.",
-    tag: "Bez konfiguracji",
+    text: "Ready to use. Evidence-based rules for enquiries, advertising, tracking and follow-up.",
+    tag: "Ready to use",
   },
   openrouter: {
     icon: "agent",
-    text: "GPT, Claude, Gemini, Llama, DeepSeek — setki modeli przez jeden klucz.",
-    tag: "Klucz API",
+    text: "Models from OpenAI, Anthropic and other providers through one API key.",
+    tag: "API key",
   },
   openai: {
     icon: "agent",
-    text: "Modele ChatGPT (GPT-4o, GPT-5) przez klucz z platform.openai.com.",
-    tag: "Klucz API",
+    text: "OpenAI models through an API key from platform.openai.com.",
+    tag: "API key",
   },
   local: {
     icon: "settings",
-    text: "Ollama lub LM Studio na Twoim komputerze. Dane nie opuszczają firmy.",
+    text: "Ollama or LM Studio on your computer.",
     tag: "LOCAL_AI_BASE_URL",
   },
   codex: {
     icon: "agent",
-    text: "Twoja subskrypcja ChatGPT Plus/Pro przez zalogowany Codex CLI (codex login).",
-    tag: "Subskrypcja",
+    text: "Signed-in Codex CLI on this computer.",
+    tag: "Subscription",
   },
   claude: {
     icon: "agent",
-    text: "Plan Claude Pro/Max przez zalogowany Claude Code CLI.",
-    tag: "Subskrypcja",
+    text: "Signed-in Claude Code CLI on this computer.",
+    tag: "Subscription",
   },
 };
 
@@ -68,23 +68,23 @@ function ready(
   status: Status | null,
   keys: Partial<Record<string, string>>,
 ) {
-  if (p === "builtin") return { ok: true, label: "Gotowy" };
-  if (!status) return { ok: false, label: "Sprawdzanie…" };
+  if (p === "builtin") return { ok: true, label: "Ready" };
+  if (!status) return { ok: false, label: "Checking…" };
   if (p === "openrouter" || p === "openai")
     return keys[p]
-      ? { ok: true, label: "Twój klucz" }
+      ? { ok: true, label: "Your API key" }
       : status.server[p]
-        ? { ok: true, label: "Klucz serwera" }
-        : { ok: false, label: "Podaj klucz" };
+        ? { ok: true, label: "Server API key" }
+        : { ok: false, label: "Enter API key" };
   if (p === "local")
     return status.server.local
-      ? { ok: true, label: "Połączony" }
-      : { ok: false, label: "Ustaw adres" };
-  if (!status.localhost) return { ok: false, label: "Tylko lokalnie" };
-  if (!status.cli.enabled) return { ok: false, label: "Włącz CLI" };
+      ? { ok: true, label: "Connected" }
+      : { ok: false, label: "Configure URL" };
+  if (!status.localhost) return { ok: false, label: "Local only" };
+  if (!status.cli.enabled) return { ok: false, label: "Enable CLI" };
   return status.cli[p]
-    ? { ok: true, label: "Zalogowany CLI" }
-    : { ok: false, label: "Brak CLI" };
+    ? { ok: true, label: "Signed-in CLI" }
+    : { ok: false, label: "CLI unavailable" };
 }
 
 function ActionCard({
@@ -121,7 +121,7 @@ function ActionCard({
           {item.action.type === "draft_email" && (
             <details className="mt-2">
               <summary className="cursor-pointer text-xs text-violet-700">
-                Podgląd treści
+                Preview content
               </summary>
               <pre className="mt-1 text-xs break-words whitespace-pre-wrap text-slate-600">
                 {item.action.body}
@@ -137,7 +137,7 @@ function ActionCard({
             </span>
           )}
           {item.status === "rejected" && (
-            <span className="mt-1 block text-xs text-slate-500">Odrzucono</span>
+            <span className="mt-1 block text-xs text-slate-500">Dismissed</span>
           )}
         </div>
         {item.status === "pending" && (
@@ -147,13 +147,13 @@ function ActionCard({
               disabled={readOnly}
               onClick={() => decideAction(message.id, item.id, true)}
             >
-              Wykonaj
+              Apply action
             </button>
             <button
               className="crm-button secondary px-2.5! py-1.5! text-xs!"
               onClick={() => decideAction(message.id, item.id, false)}
             >
-              <span className="sr-only">Odrzuć</span>
+              <span className="sr-only">Dismiss</span>
               <Icon name="close" size={14} />
             </button>
           </div>
@@ -232,25 +232,25 @@ export default function Copilot({
   const state = ready(provider, status, agent.keys);
   async function loadModels() {
     if (!["openrouter", "openai", "local"].includes(provider)) return;
-    setInfo("Pobieranie listy modeli…");
+    setInfo("Loading models…");
     try {
       const list = await agentModels(
         provider as "openrouter" | "openai" | "local",
       );
       setModels(list);
       setInfo(
-        `Dostępnych modeli: ${list.length}. Wybierz z listy lub wpisz identyfikator.`,
+        `Available models: ${list.length}. Choose from the list or enter a model ID.`,
       );
     } catch (e) {
-      setInfo(e instanceof Error ? e.message : "Nie udało się pobrać modeli.");
+      setInfo(e instanceof Error ? e.message : "Could not load models.");
     }
   }
   const engine = (
     <section className="crm-card min-w-0 p-5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div>
-          <span className="crm-eyebrow">SILNIK AI</span>
-          <h3 className="mt-1 text-base!">Wybierz model agenta</h3>
+          <span className="crm-eyebrow">AI ENGINE</span>
+          <h3 className="mt-1 text-base!">Choose an assistant model</h3>
         </div>
         <span
           className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${state.ok ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
@@ -259,7 +259,7 @@ export default function Copilot({
           {state.label}
         </span>
       </div>
-      <div className="grid gap-2" role="radiogroup" aria-label="Dostawca AI">
+      <div className="grid gap-2" role="radiogroup" aria-label="Provider AI">
         {COPILOT_PROVIDERS.map((p) => {
           const r = ready(p, status, agent.keys);
           return (
@@ -304,7 +304,7 @@ export default function Copilot({
             label="Model"
             hint={
               provider === "codex"
-                ? "Wpisz default, aby użyć modelu z konta ChatGPT."
+                ? "Enter default to use the account’s configured model."
                 : undefined
             }
           >
@@ -329,13 +329,13 @@ export default function Copilot({
               <Field
                 label={
                   provider === "openrouter"
-                    ? "Klucz OpenRouter (sk-or-…)"
-                    : "Klucz OpenAI (sk-…)"
+                    ? "OpenRouter API key (sk-or-…)"
+                    : "OpenAI API key (sk-…)"
                 }
                 hint={
                   status?.server[provider]
-                    ? "Serwer ma własny klucz — pole jest opcjonalne."
-                    : "Klucz trafia tylko do Twojego serwera Growth OS i dostawcy AI."
+                    ? "Server API key configured; this field is optional."
+                    : "The key is sent to your Growth OS server and the selected AI provider."
                 }
               >
                 <input
@@ -345,8 +345,8 @@ export default function Copilot({
                   onChange={(e) => agent.setKey(provider, e.target.value)}
                   placeholder={
                     status?.server[provider]
-                      ? "Użyj klucza serwera"
-                      : "Wklej klucz API"
+                      ? "Use server API key"
+                      : "Paste API key"
                   }
                 />
               </Field>
@@ -359,7 +359,7 @@ export default function Copilot({
                     agent.setSettings({ remember: e.target.checked })
                   }
                 />
-                Zapamiętaj klucz na tym urządzeniu
+                Remember API key on this device
               </label>
             </>
           )}
@@ -368,27 +368,27 @@ export default function Copilot({
               className="crm-button secondary"
               onClick={() => void loadModels()}
             >
-              Pobierz listę modeli
+              Load models
             </button>
           )}
           {(provider === "codex" || provider === "claude") && (
             <p className="rounded-xl bg-slate-50 p-3 text-[11px] leading-relaxed text-slate-600">
-              Uruchom lokalnie z <code>LOCAL_AI_CLI_ENABLED=1</code>, zainstaluj
-              i zaloguj CLI:{" "}
+              Run locally with <code>LOCAL_AI_CLI_ENABLED=1</code>, install
+              and sign in to the CLI:{" "}
               <code>
                 {provider === "codex"
                   ? "npm i -g @openai/codex && codex login"
                   : "npm i -g @anthropic-ai/claude-code && claude"}
               </code>
-              . CLI działa bez narzędzi i dostępu do plików.
+              . CLI runs without tools or file access.
             </p>
           )}
           {provider === "local" && !status?.server.local && (
             <p className="rounded-xl bg-slate-50 p-3 text-[11px] leading-relaxed text-slate-600">
-              Dodaj do <code>.env.local</code>:{" "}
+              Add to <code>.env.local</code>:{" "}
               <code>LOCAL_AI_BASE_URL=http://127.0.0.1:11434/v1</code> (Ollama)
-              lub <code>http://127.0.0.1:1234/v1</code> (LM Studio) i zrestartuj
-              aplikację.
+              or <code>http://127.0.0.1:1234/v1</code> (LM Studio) and restart
+              the application.
             </p>
           )}
           {info && <p className="text-xs text-slate-500">{info}</p>}
@@ -398,7 +398,7 @@ export default function Copilot({
         <span>
           <strong className="block text-sm">Autopilot</strong>
           <span className="text-[11px] text-slate-500">
-            Agent sam wykonuje akcje: zadania, szanse, szkice, raporty.
+            Apply proposed CRM tasks, opportunities, drafts and reports automatically.
           </span>
         </span>
         <input
@@ -416,9 +416,9 @@ export default function Copilot({
       <div className="grid min-w-0 gap-4">
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: "Rozmowy", value: messages.length, icon: "agent" },
-            { label: "Czeka na decyzję", value: pending.length, icon: "clock" },
-            { label: "Wykonane akcje", value: executed, icon: "check" },
+            { label: "Conversations", value: messages.length, icon: "agent" },
+            { label: "Awaiting review", value: pending.length, icon: "clock" },
+            { label: "Applied actions", value: executed, icon: "check" },
           ].map((x) => (
             <div key={x.label} className="crm-card flex items-center gap-3 p-4">
               <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-violet-50 text-violet-700">
@@ -446,7 +446,7 @@ export default function Copilot({
               </span>
               <span className="min-w-0">
                 <strong className="block truncate text-sm">
-                  Evolution Agent
+                  Plumbing assistant
                 </strong>
                 <span className="block truncate text-xs text-slate-500">
                   {copilotLabels[provider]} · {model}
@@ -465,19 +465,19 @@ export default function Copilot({
                     )
                   }
                 >
-                  Wykonaj wszystkie ({pending.length})
+                  Apply all actions ({pending.length})
                 </button>
               )}
               <button
                 className="crm-button secondary px-3! py-1.5! text-xs! xl:hidden"
                 onClick={() => setEngineOpen((v) => !v)}
               >
-                Silnik AI
+                AI engine
               </button>
               {messages.length > 0 && (
                 <button
                   className="crm-icon-button"
-                  aria-label="Wyczyść rozmowę"
+                  aria-label="Clear conversation"
                   onClick={() => agent.clear()}
                 >
                   <Icon name="trash" size={16} />
@@ -498,7 +498,7 @@ export default function Copilot({
                     <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-gradient-to-br from-violet-600 to-indigo-600 px-4 py-3 text-sm text-white shadow-md">
                       {m.source === "job" && (
                         <span className="mb-1 block text-[10px] font-bold tracking-wider text-violet-200 uppercase">
-                          Harmonogram
+                          Schedule
                         </span>
                       )}
                       <p className="break-words whitespace-pre-wrap">
@@ -512,7 +512,7 @@ export default function Copilot({
                       <div className="min-w-0 flex-1">
                         <p className="mb-1 text-xs text-slate-400">
                           {copilotLabels[m.provider]} · {m.model} ·{" "}
-                          {new Intl.DateTimeFormat("pl-PL", {
+                          {new Intl.DateTimeFormat("en-GB", {
                             hour: "2-digit",
                             minute: "2-digit",
                             day: "2-digit",
@@ -528,8 +528,8 @@ export default function Copilot({
                         </div>
                         {m.rejected && (
                           <p className="mt-2 text-xs text-amber-700">
-                            Pominięto {m.rejected.length} nieprawidłowe
-                            propozycje: {m.rejected.join("; ")}
+                            Skipped {m.rejected.length} invalid proposals:{" "}
+                            {m.rejected.join("; ")}
                           </p>
                         )}
                         {m.actions.length > 0 && (
@@ -565,7 +565,7 @@ export default function Copilot({
                         />
                       ))}
                     </span>
-                    Agent analizuje dane…
+                    Reviewing workspace data…
                   </div>
                 )}
                 <div ref={end} />
@@ -576,16 +576,17 @@ export default function Copilot({
                   <Icon name="spark" size={30} />
                 </span>
                 <h3 className="mt-4 text-lg!">
-                  Agent, który obsługuje CRM za Ciebie
+                  Your daily plumbing growth assistant
                 </h3>
                 <p className="mt-2! max-w-lg text-sm leading-relaxed text-slate-500">
-                  Dodaje zadania, firmy, kontakty i szanse, aktualizuje etapy,
-                  pisze szkice maili, generuje raporty i planuje automatyzacje.
-                  Każdą akcję zatwierdzasz — albo włączasz autopilota.
+                  Review enquiries, advertising spend and tracking. Prepare
+                  follow-up tasks, email drafts, reports and scheduled briefings.
+                  Review proposed CRM actions or enable autopilot for those
+                  actions.
                 </p>
                 {busy && (
                   <p className="mt-4 text-sm text-violet-700">
-                    Agent analizuje dane…
+                    Reviewing workspace data…
                   </p>
                 )}
               </div>
@@ -613,7 +614,7 @@ export default function Copilot({
               }}
             >
               <textarea
-                aria-label="Wiadomość do agenta"
+                aria-label="Message to assistant"
                 rows={2}
                 maxLength={4000}
                 value={prompt}
@@ -629,7 +630,7 @@ export default function Copilot({
                       e.currentTarget.form?.requestSubmit();
                   }
                 }}
-                placeholder="Np. „Dodaj firmę Acme z Poznania i szansę 20 000 zł na etapie Oferta” — Enter wysyła"
+                placeholder="Ask about today’s leads, budget, campaigns or tracking — Enter to send"
                 className="min-h-0! flex-1 resize-none border-0! bg-transparent! p-2! shadow-none! focus:outline-none"
               />
               <button
@@ -637,7 +638,7 @@ export default function Copilot({
                 disabled={busy || !prompt.trim()}
               >
                 {busy ? "…" : <Icon name="arrow" size={18} />}
-                <span className="sr-only">Wyślij</span>
+                <span className="sr-only">Send</span>
               </button>
             </form>
           </div>

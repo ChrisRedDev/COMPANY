@@ -113,7 +113,7 @@ export function addEvent(original: LeadBundle, event: LeadEvent): LeadBundle {
         ...common,
         status: "sent",
         amount: price,
-        currency: "PLN",
+        currency: b.lead.currency ?? "PLN",
         created_at: event.timestamp,
         updated_at: event.timestamp,
       });
@@ -127,7 +127,7 @@ export function addEvent(original: LeadBundle, event: LeadEvent): LeadBundle {
           ...common,
           status: "accepted",
           amount: price,
-          currency: "PLN",
+          currency: b.lead.currency ?? "PLN",
           created_at: event.timestamp,
           updated_at: event.timestamp,
         });
@@ -158,7 +158,7 @@ export function addEvent(original: LeadBundle, event: LeadEvent): LeadBundle {
           ...common,
           status,
           amount: price,
-          currency: "PLN",
+          currency: b.lead.currency ?? "PLN",
           created_at: event.timestamp,
           updated_at: event.timestamp,
         });
@@ -167,7 +167,7 @@ export function addEvent(original: LeadBundle, event: LeadEvent): LeadBundle {
       b.payments.push({
         ...common,
         amount: amount(m.amount),
-        currency: "PLN",
+        currency: b.lead.currency ?? "PLN",
         status: "received",
         timestamp: event.timestamp,
       });
@@ -191,7 +191,7 @@ export function addEvent(original: LeadBundle, event: LeadEvent): LeadBundle {
         ...common,
         kind,
         value: ["job", "payment", "quote"].includes(kind) ? price : 0,
-        currency: "PLN",
+        currency: b.lead.currency ?? "PLN",
         timestamp: event.timestamp,
       });
   }
@@ -200,6 +200,11 @@ export function addEvent(original: LeadBundle, event: LeadEvent): LeadBundle {
   return b;
 }
 export function updateLead(original: LeadBundle, input: LeadInput): LeadBundle {
+  if (
+    (original.lead.currency ?? "PLN") !== (input.currency ?? "PLN") &&
+    (original.events.length || original.lead.revenue)
+  )
+    throw Error("Currency cannot change after lead history has been recorded.");
   let b: LeadBundle = {
     ...structuredClone(original),
     lead: {

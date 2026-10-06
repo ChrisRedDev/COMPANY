@@ -43,7 +43,7 @@ export default function Jobs({
   function change(d: Deal, status: ServiceStatus) {
     const next = { ...d.service!, status };
     if (bookingConflict(s.deals, next, d.id)) {
-      notify("Termin zajęty. Zmień datę lub osobę przed wznowieniem zlecenia.");
+      notify("Due date zajęty. Zmień datę lub osobę przed wznowieniem zlecenia.");
       return;
     }
     s.saveDeal({
@@ -87,7 +87,7 @@ export default function Jobs({
           onClick={() => (s.firms.length ? openJob() : openClients())}
         >
           <Icon name="plus" />
-          {s.firms.length ? "Zarezerwuj pracę" : "Dodaj klienta"}
+          {s.firms.length ? "Zarezerwuj pracę" : "Add customer"}
         </button>
       </div>
       {!jobs.length && (
@@ -96,7 +96,7 @@ export default function Jobs({
             title="Miejsce na kolejną realizację"
             description={
               s.firms.length
-                ? "Wybierz klienta, usługę i termin. Zakończone prace pozostaną w historii."
+                ? "Choose klienta, usługę i termin. Completed prace pozostaną w historii."
                 : "Najpierw dodaj klienta z kontaktem. Potem zarezerwuj dla niego pracę."
             }
             action={
@@ -149,7 +149,7 @@ export default function Jobs({
           )}
           <div className="mt-5 flex flex-wrap gap-2">
             <button className="crm-button secondary" onClick={() => openJob(d)}>
-              Edytuj zlecenie
+              Edit zlecenie
             </button>
             {d.service!.status === "booked" && (
               <button
@@ -171,7 +171,7 @@ export default function Jobs({
                   className="crm-text-button"
                   onClick={() => change(d, "cancelled")}
                 >
-                  Anuluj rezerwację
+                  Cancel rezerwację
                 </button>
               </>
             )}
@@ -184,8 +184,8 @@ export default function Jobs({
               {[...d.service!.history].reverse().map((event, i) => (
                 <li key={i}>
                   <time>
-                    {new Date(event.at).toLocaleString("pl-PL", {
-                      timeZone: "Europe/Warsaw",
+                    {new Date(event.at).toLocaleString("en-GB", {
+                      timeZone: "Europe/London",
                     })}
                   </time>
                   <p>{event.message}</p>

@@ -21,7 +21,7 @@ export default function Brain({
   const [documents, setDocuments] = useState<Document[]>([]),
     [selected, setSelected] = useState<Document | null>(null),
     [query, setQuery] = useState(""),
-    [folder, setFolder] = useState("all"),
+    [folder, setCategory] = useState("all"),
     [editor, setEditor] = useState<{ note?: Document } | null>(null),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
@@ -34,10 +34,17 @@ export default function Brain({
       setSelected((current) =>
         current
           ? r.documents.find((d: Document) => d.id === current.id) || null
-          : null,
+          : (r.documents.find(
+              (d: Document) =>
+                d.title === "Local Plumbing Services COMPANY BRAIN",
+            ) ??
+            r.documents[0] ??
+            null),
       );
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Błąd odczytu.");
+      setError(
+        e instanceof Error ? e.message : "Could not load company knowledge.",
+      );
     }
   }, [wid]);
   useEffect(() => {
@@ -59,10 +66,10 @@ export default function Brain({
     setBusy(true);
     setError("");
     try {
-      if (files.length > 100) throw Error("Importuj do 100 notatek na raz.");
+      if (files.length > 100) throw Error("Import up to 100 notes at a time.");
       for (const file of Array.from(files)) {
         if (!/\.md$/i.test(file.name) || file.size > 200000)
-          throw Error("Wybierz pliki .md do 200 KB.");
+          throw Error("Choose pliki .md do 200 KB.");
         const content = await file.text(),
           title = file.name.replace(/\.md$/i, "");
         const current = documents.find(
@@ -72,7 +79,7 @@ export default function Brain({
         );
         if (current)
           throw Error(
-            `Notatka „${title}” już istnieje. Edytuj ją lub zmień nazwę pliku.`,
+            `Note “${title}” already exists. Edit it or rename the import file.`,
           );
         await localRequest(wid, "brain", {
           method: "POST",
@@ -86,7 +93,7 @@ export default function Brain({
         });
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Błąd importu.");
+      setError(e instanceof Error ? e.message : "Import failed.");
     } finally {
       setBusy(false);
       if (upload.current) upload.current.value = "";
@@ -94,7 +101,7 @@ export default function Brain({
     }
   }
   async function remove() {
-    if (!selected || !confirm(`Usunąć notatkę „${selected.title}”?`)) return;
+    if (!selected || !confirm(`Delete note „${selected.title}”?`)) return;
     try {
       await localRequest(wid, "brain", {
         method: "DELETE",
@@ -103,7 +110,7 @@ export default function Brain({
       setSelected(null);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Błąd usuwania.");
+      setError(e instanceof Error ? e.message : "Could not delete note.");
     }
   }
   const backlinks = selected
@@ -122,22 +129,22 @@ export default function Brain({
       <section className="crm-card p-6">
         <div className="flex flex-wrap justify-between gap-4">
           <div>
-            <span className="crm-eyebrow">COMPANY BRAIN · NA TWOIM DYSKU</span>
-            <h2>Wiedza, która zostaje w firmie.</h2>
+            <span className="crm-eyebrow">COMPANY BRAIN · STORED LOCALLY</span>
+            <h2>Your company’s source of context.</h2>
             <p className="crm-muted">
-              Notatki Markdown, powiązania i eksport skarbca do Obsidiana.
+              Company notes, linked knowledge and Obsidian export.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button className="crm-button" onClick={() => setGenerator(true)}>
-              Wygeneruj ze strony
+              Generate from website
             </button>
             <button
               className="crm-button secondary"
               disabled={busy}
               onClick={() => upload.current?.click()}
             >
-              Importuj .md
+              Import .md
             </button>
             <button
               className="crm-button secondary"
@@ -149,10 +156,10 @@ export default function Brain({
                 ).catch((e) => setError(e.message))
               }
             >
-              Eksport do Obsidiana
+              Export Obsidian vault
             </button>
             <button className="crm-button" onClick={() => setEditor({})}>
-              Nowa notatka
+              New note
             </button>
           </div>
         </div>
@@ -173,19 +180,19 @@ export default function Brain({
       <div className="grid gap-5 lg:grid-cols-[minmax(15em,1fr)_minmax(0,2fr)]">
         <aside className="crm-card p-5">
           <input
-            aria-label="Szukaj w wiedzy"
-            placeholder="Szukaj w notatkach…"
+            aria-label="Search company knowledge"
+            placeholder="Search company knowledge…"
             className="w-full"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
           <select
-            aria-label="Filtr folderu"
+            aria-label="Knowledge category"
             className="my-3 w-full"
             value={folder}
-            onChange={(e) => setFolder(e.target.value)}
+            onChange={(e) => setCategory(e.target.value)}
           >
-            <option value="all">Wszystkie foldery</option>
+            <option value="all">All folders</option>
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
                 {categoryLabels[c]}
@@ -203,9 +210,7 @@ export default function Brain({
                 <small>{categoryLabels[d.category]}</small>
               </button>
             ))}
-            {!filtered.length && (
-              <p className="crm-muted">Nie znaleziono notatek.</p>
-            )}
+            {!filtered.length && <p className="crm-muted">No notes found.</p>}
           </div>
         </aside>
         <section className="crm-card p-6">
@@ -215,7 +220,7 @@ export default function Brain({
                 <div>
                   <h2>{selected.title}</h2>
                   <p className="crm-muted">
-                    {categoryLabels[selected.category]} · wersja{" "}
+                    {categoryLabels[selected.category]} · revision{" "}
                     {selected.revision}
                   </p>
                 </div>
@@ -224,11 +229,11 @@ export default function Brain({
                     className="crm-button secondary"
                     onClick={() => setEditor({ note: selected })}
                   >
-                    Edytuj notatkę
+                    Edit note
                   </button>
                   <button
                     className="crm-icon-button danger"
-                    aria-label="Usuń notatkę"
+                    aria-label="Delete note"
                     onClick={() => void remove()}
                   >
                     <Icon name="trash" />
@@ -241,7 +246,7 @@ export default function Brain({
                 open={setSelected}
               />
               <div className="mt-8 border-t border-slate-100 pt-4">
-                <h3>Linki przychodzące</h3>
+                <h3>Backlinks</h3>
                 {backlinks.length ? (
                   backlinks.map((d) => (
                     <button
@@ -254,7 +259,7 @@ export default function Brain({
                   ))
                 ) : (
                   <p className="crm-muted">
-                    Inne notatki mogą wskazywać na tę przez [[{selected.title}
+                    Other notes can link here using [[{selected.title}
                     ]].
                   </p>
                 )}
@@ -264,13 +269,13 @@ export default function Brain({
             <Empty
               title={
                 documents.length
-                  ? "Wybierz notatkę"
-                  : "Zbuduj pamięć swojej firmy"
+                  ? "Select a note"
+                  : "Build your company knowledge"
               }
-              description="Zapisz ofertę, zasady komunikacji, procesy i lokalizacje. Dane są w SQLite; eksport ZIP otworzysz jako skarbiec Obsidiana."
+              description="Save services, processes, locations and communication guidance. Export a ZIP vault for Obsidian."
               action={
                 <button className="crm-button" onClick={() => setEditor({})}>
-                  Dodaj pierwszą notatkę
+                  Add your first note
                 </button>
               }
             />

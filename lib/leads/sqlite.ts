@@ -39,6 +39,12 @@ export const LEAD_COLUMNS = [
   "keyword",
   "utm",
   "crm_links",
+  "postcode",
+  "service",
+  "urgency",
+  "channel",
+  "problem",
+  "currency",
 ] as const;
 const extra: Record<(typeof CHILD_TABLES)[number], string> = {
   lead_events:
@@ -62,9 +68,43 @@ export function leadDatabase() {
     (k) =>
       `${k} ${["estimated_value", "revenue"].includes(k) ? "REAL" : ["revision", "is_demo"].includes(k) ? "INTEGER" : "TEXT"} NOT NULL`,
   ).join(",");
+  const schema = db
+    .prepare(
+      "SELECT sql FROM sqlite_master WHERE type='table' AND name='leads'",
+    )
+    .get();
+  if (schema && !String(schema.sql).includes("'paid'")) {
+    const oldColumns = LEAD_COLUMNS.filter(
+      (k) =>
+        ![
+          "postcode",
+          "service",
+          "urgency",
+          "channel",
+          "problem",
+          "currency",
+        ].includes(k),
+    );
+    // SQLite cannot alter a CHECK constraint. Keep children referencing the same
+    // final table name and verify all foreign keys before committing the swap.
+    db.exec("PRAGMA foreign_keys=OFF; BEGIN IMMEDIATE;");
+    try {
+      db.exec(`CREATE TABLE leads_plumbing(${fields},PRIMARY KEY(workspace_id,id),FOREIGN KEY(workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,CHECK(status IN ('new','contacted','qualified','quote','booked','in_progress','completed','paid','won','lost')),CHECK(estimated_value>=0 AND revenue>=0));
+        INSERT INTO leads_plumbing SELECT ${oldColumns.join(",")},'','','','','','PLN' FROM leads;
+        DROP TABLE leads; ALTER TABLE leads_plumbing RENAME TO leads;`);
+      if (db.prepare("PRAGMA foreign_key_check").all().length)
+        throw Error("Lead migration failed foreign-key validation.");
+      db.exec("COMMIT");
+    } catch (error) {
+      db.exec("ROLLBACK");
+      throw error;
+    } finally {
+      db.exec("PRAGMA foreign_keys=ON");
+    }
+  }
   try {
     db.exec(`BEGIN IMMEDIATE;
- CREATE TABLE IF NOT EXISTS leads(${fields},PRIMARY KEY(workspace_id,id),FOREIGN KEY(workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,CHECK(status IN ('new','contacted','qualified','quote','booked','won','lost')),CHECK(estimated_value>=0 AND revenue>=0));
+ CREATE TABLE IF NOT EXISTS leads(${fields},PRIMARY KEY(workspace_id,id),FOREIGN KEY(workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,CHECK(status IN ('new','contacted','qualified','quote','booked','in_progress','completed','paid','won','lost')),CHECK(estimated_value>=0 AND revenue>=0));
  CREATE UNIQUE INDEX IF NOT EXISTS lead_email_identity ON leads(workspace_id,email_key) WHERE email_key<>'';
  CREATE UNIQUE INDEX IF NOT EXISTS lead_phone_identity ON leads(workspace_id,phone_key) WHERE phone_key<>'';
  CREATE INDEX IF NOT EXISTS lead_updated ON leads(workspace_id,updated_at DESC,id);
@@ -198,7 +238,7 @@ export const sqliteLeads: LeadRepository = {
           ? JSON.stringify(b.lead[k])
           : k === "is_demo"
             ? Number(b.lead[k])
-            : b.lead[k],
+            : (b.lead[k] ?? (k === "currency" ? "PLN" : "")),
       );
       d.prepare(
         `INSERT INTO leads(${LEAD_COLUMNS.join(",")}) VALUES(${LEAD_COLUMNS.map(() => "?").join(",")}) ON CONFLICT(workspace_id,id) DO UPDATE SET ${LEAD_COLUMNS.filter(

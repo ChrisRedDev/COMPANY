@@ -5,6 +5,12 @@ import { dirname, resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 import { validateSnapshot, type Snapshot } from "../growth/model";
 let db: DatabaseSync | undefined;
+export function closeDatabase() {
+  if (db) {
+    db.close();
+    db = undefined;
+  }
+}
 export function databasePath() {
   return resolve(
     /* turbopackIgnore: true */ process.env.CRM_DATABASE_PATH ||

@@ -131,7 +131,7 @@ export default function Settings({
           disabled={busy || !token || !status.configured}
           onClick={() => void check()}
         >
-          {busy ? "Sprawdzanie…" : "Sprawdź połączenie"}
+          {busy ? "Checking…" : "Sprawdź połączenie"}
         </button>
         {status.error && (
           <p className="crm-error" role="alert">
@@ -148,7 +148,7 @@ export default function Settings({
           <section className="crm-card crm-settings-card">
             <h3>Lokalna mini baza SQLite</h3>
             <p>
-              Firmy, CRM, wiedza, importy i historia agenta są zapisane na dysku
+              Customers, CRM, wiedza, importy i historia agenta są zapisane na dysku
               tego komputera. Kopia SQLite zawiera wszystkie przestrzenie.
               Klucze API nie są w bazie.
             </p>

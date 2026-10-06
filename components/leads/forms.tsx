@@ -11,6 +11,7 @@ import {
   type LeadInput,
   type EventType,
 } from "@/lib/leads/model";
+import { SERVICES } from "@/lib/plumbing/model";
 import { Modal, Field } from "../crm/ui";
 export function LeadForm({
   wid,
@@ -26,7 +27,7 @@ export function LeadForm({
   const [id] = useState(() => lead?.id ?? crypto.randomUUID());
   const [draft, setDraft] = useState<LeadInput>(() =>
     lead
-      ? parseLead(lead)
+      ? parseLead({ ...lead, currency: lead.currency ?? "PLN" })
       : {
           first_name: "",
           last_name: "",
@@ -43,6 +44,12 @@ export function LeadForm({
           landing_page: "",
           keyword: "",
           utm: {},
+          postcode: "",
+          service: "",
+          urgency: "planned",
+          channel: "call",
+          problem: "",
+          currency: "GBP",
         },
   );
   const [busy, setBusy] = useState(false),
@@ -59,7 +66,7 @@ export function LeadForm({
       <input
         type={type}
         maxLength={maxLength}
-        value={String(draft[key])}
+        value={String(draft[key] ?? "")}
         onChange={(e) =>
           change(
             key,
@@ -85,14 +92,14 @@ export function LeadForm({
       );
       saved(result.lead, result.duplicate);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Nie udało się zapisać leada.");
+      setError(e instanceof Error ? e.message : "Could not save enquiry.");
     } finally {
       setBusy(false);
     }
   }
   return (
     <Modal
-      title={lead ? "Edytuj leada" : "Dodaj leada"}
+      title={lead ? "Edit enquiry" : "Add enquiry"}
       onClose={() => !busy && close()}
     >
       <form className="crm-form" onSubmit={save}>
@@ -103,21 +110,68 @@ export function LeadForm({
         )}
         <fieldset disabled={busy} className="grid min-w-0 gap-4 border-0 p-0">
           <p className="text-sm leading-relaxed text-slate-600">
-            Wystarczy nazwa lub kontakt. Ten sam e-mail albo telefon wskaże
-            istniejącego leada.
+            Enter a name or contact. Matching phone/email details open the
+            existing enquiry.
           </p>
           <div className="crm-form-grid">
-            {input("first_name", "Imię leada", "text", 100)}
-            {input("last_name", "Nazwisko leada", "text", 100)}
+            {input("first_name", "First name", "text", 100)}
+            {input("last_name", "Last name", "text", 100)}
           </div>
-          {input("company_name", "Firma leada (opcjonalnie)")}
           <div className="crm-form-grid">
-            {input("email", "E-mail leada", "email", 254)}
-            {input("phone", "Telefon leada", "tel", 50)}
+            {input("postcode", "UK postcode", "text", 10)}
+            <Field label="Service">
+              <select
+                value={draft.service ?? ""}
+                onChange={(e) => change("service", e.target.value)}
+              >
+                <option value="">Choose service</option>
+                {SERVICES.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            </Field>
           </div>
-          <Field label="Status leada">
+          <div className="crm-form-grid">
+            <Field label="Contact channel">
+              <select
+                value={draft.channel ?? "call"}
+                onChange={(e) => change("channel", e.target.value)}
+              >
+                {[
+                  "call",
+                  "form",
+                  "whatsapp",
+                  "website",
+                  "email",
+                  "referral",
+                ].map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Urgency">
+              <select
+                value={draft.urgency ?? "planned"}
+                onChange={(e) => change("urgency", e.target.value)}
+              >
+                <option value="emergency">Emergency</option>
+                <option value="same_day">Same day request</option>
+                <option value="planned">Planned work</option>
+              </select>
+            </Field>
+          </div>
+          {input("problem", "Plumbing problem", "text", 2000)}
+          {input("company_name", "Company (optional)")}
+          <div className="crm-form-grid">
+            {input("email", "Customer email", "email", 254)}
+            {input("phone", "Caller phone", "tel", 50)}
+          </div>
+          <Field label="Stage">
             <select
               value={draft.status}
+              disabled={Boolean(lead)}
               onChange={(e) => change("status", e.target.value)}
             >
               {LEAD_STATUSES.map((s) => (
@@ -128,25 +182,32 @@ export function LeadForm({
             </select>
           </Field>
           <div className="crm-form-grid">
-            {input("source", "Źródło leada", "text", 100)}
-            {input("campaign", "Kampania leada")}
+            {input("source", "Acquisition source", "text", 100)}
+            {input("campaign", "Acquisition campaign")}
           </div>
           <div className="crm-form-grid">
-            {input("estimated_value", "Szacowana wartość (PLN)", "number")}
-            {input("revenue", "Revenue leada (PLN)", "number")}
+            {input("estimated_value", "Estimated quote value (GBP)", "number")}
+            <Field label="Received revenue">
+              <output>
+                {new Intl.NumberFormat("en-GB", {
+                  style: "currency",
+                  currency: draft.currency ?? "GBP",
+                }).format(draft.revenue)}
+              </output>
+            </Field>
           </div>
           <p className="text-sm leading-relaxed text-slate-600">
-            Revenue to zapisana wartość przychodu. Otrzymane płatności ją
-            zwiększają; możesz też uzupełnić ją ręcznie.
+            Received revenue is measured from payment events. Use Add event or
+            the Paid stage to record money received.
           </p>
           <details className="rounded-xl border border-slate-200/70 p-4">
             <summary className="cursor-pointer font-medium">
-              Źródła i UTM (opcjonalnie)
+              Attribution & UTM (optional)
             </summary>
             <div className="mt-4 grid gap-4">
-              {input("medium", "Medium leada", "text", 100)}
-              {input("keyword", "Słowo kluczowe leada", "text", 500)}
-              {input("landing_page", "Landing page leada", "text", 1000)}
+              {input("medium", "Acquisition medium", "text", 100)}
+              {input("keyword", "Keyword", "text", 500)}
+              {input("landing_page", "Landing page", "text", 1000)}
               {[
                 "utm_source",
                 "utm_medium",
@@ -169,7 +230,7 @@ export function LeadForm({
               ))}
             </div>
           </details>
-          <Field label="Notatki leada">
+          <Field label="Customer notes">
             <textarea
               rows={4}
               maxLength={5000}
@@ -185,10 +246,10 @@ export function LeadForm({
             className="crm-button secondary"
             onClick={close}
           >
-            Anuluj
+            Cancel
           </button>
           <button disabled={busy} className="crm-button" type="submit">
-            {busy ? "Zapisywanie…" : "Zapisz leada"}
+            {busy ? "Saving…" : "Save enquiry"}
           </button>
         </div>
       </form>
@@ -214,7 +275,7 @@ export function EventForm({
 }) {
   const [id] = useState(() => crypto.randomUUID());
   const [type, setType] = useState<EventType>("phone_call"),
-    [source, setSource] = useState("Telefon"),
+    [source, setSource] = useState("Phone"),
     [date, setDate] = useState(localNow),
     [note, setNote] = useState(""),
     [campaign, setCampaign] = useState(lead.campaign),
@@ -222,6 +283,8 @@ export function EventForm({
     [landing, setLanding] = useState(lead.landing_page),
     [form, setForm] = useState(""),
     [duration, setDuration] = useState(""),
+    [outcome, setOutcome] = useState("answered"),
+    [called, setCalled] = useState("07392 234913"),
     [value, setValue] = useState(String(lead.estimated_value)),
     [scheduled, setScheduled] = useState(""),
     [busy, setBusy] = useState(false),
@@ -259,7 +322,15 @@ export function EventForm({
       if (type === "form_submit" && form) metadata.form_name = form;
       if (type === "phone_call" && duration !== "")
         metadata.call_duration = Number(duration);
-      if (financial) metadata.amount = Number(value);
+      if (type === "phone_call") {
+        metadata.call_outcome = outcome;
+        metadata.called_number = called;
+        if (outcome === "missed") metadata.call_duration = 0;
+      }
+      if (financial) {
+        metadata.amount = Number(value);
+        metadata.currency = lead.currency ?? "PLN";
+      }
       if (type === "booking_created" && scheduled)
         metadata.scheduled_at = new Date(scheduled).toISOString();
       const result = await cloudRequest(`/${wid}/leads/${lead.id}/events`, {
@@ -275,15 +346,13 @@ export function EventForm({
       });
       saved(result.lead);
     } catch (e) {
-      setError(
-        e instanceof Error ? e.message : "Nie udało się zapisać zdarzenia.",
-      );
+      setError(e instanceof Error ? e.message : "Could not save event.");
     } finally {
       setBusy(false);
     }
   }
   return (
-    <Modal title="Dodaj zdarzenie" onClose={() => !busy && close()}>
+    <Modal title="Add event" onClose={() => !busy && close()}>
       <form className="crm-form" onSubmit={save}>
         {error && (
           <p role="alert" className="crm-alert error">
@@ -291,7 +360,7 @@ export function EventForm({
           </p>
         )}
         <fieldset disabled={busy} className="grid min-w-0 gap-4 border-0 p-0">
-          <Field label="Rodzaj zdarzenia">
+          <Field label="Event type">
             <select
               value={type}
               onChange={(e) => setType(e.target.value as EventType)}
@@ -308,7 +377,7 @@ export function EventForm({
               ))}
             </select>
           </Field>
-          <Field label="Źródło zdarzenia">
+          <Field label="Event source">
             <input
               required
               maxLength={100}
@@ -316,7 +385,7 @@ export function EventForm({
               onChange={(e) => setSource(e.target.value)}
             />
           </Field>
-          <Field label="Data i godzina zdarzenia">
+          <Field label="Event time">
             <input
               required
               type="datetime-local"
@@ -325,10 +394,10 @@ export function EventForm({
             />
           </Field>
           <p className="text-sm leading-relaxed text-slate-600">
-            Wpisz czas urządzenia. Oś czasu pokazuje godziny w Europe/Warsaw.
+            Enter your device time. The timeline displays Europe/London time.
           </p>
           {financial && (
-            <Field label="Kwota zdarzenia (PLN)">
+            <Field label={`Event amount (${lead.currency ?? "PLN"})`}>
               <input
                 type="number"
                 required
@@ -342,12 +411,31 @@ export function EventForm({
           )}
           {type === "payment_received" && (
             <p className="crm-alert">
-              Otrzymana płatność zwiększy revenue leada o podaną kwotę. Dodaj ją
-              tylko raz.
+              This records money actually received. Enter the payment once.
             </p>
           )}
           {type === "phone_call" && (
-            <Field label="Czas rozmowy (sekundy)">
+            <div className="crm-form-grid">
+              <Field label="Call outcome">
+                <select
+                  value={outcome}
+                  onChange={(e) => setOutcome(e.target.value)}
+                >
+                  <option value="answered">Answered</option>
+                  <option value="missed">Missed</option>
+                </select>
+              </Field>
+              <Field label="Number dialled">
+                <input
+                  value={called}
+                  onChange={(e) => setCalled(e.target.value)}
+                  maxLength={50}
+                />
+              </Field>
+            </div>
+          )}
+          {type === "phone_call" && (
+            <Field label="Call duration (seconds)">
               <input
                 type="number"
                 min="0"
@@ -359,7 +447,7 @@ export function EventForm({
             </Field>
           )}
           {type === "form_submit" && (
-            <Field label="Nazwa formularza">
+            <Field label="Form name">
               <input
                 maxLength={200}
                 value={form}
@@ -368,7 +456,7 @@ export function EventForm({
             </Field>
           )}
           {type === "booking_created" && (
-            <Field label="Umówiony termin (opcjonalnie)">
+            <Field label="Booked time (optional)">
               <input
                 type="datetime-local"
                 value={scheduled}
@@ -387,24 +475,24 @@ export function EventForm({
           ].includes(type) && (
             <details className="rounded-xl border border-slate-200/70 p-4">
               <summary className="cursor-pointer font-medium">
-                Kampania i strona (opcjonalnie)
+                Campaign and page (optional)
               </summary>
               <div className="mt-4 grid gap-4">
-                <Field label="Kampania zdarzenia">
+                <Field label="Event campaign">
                   <input
                     maxLength={200}
                     value={campaign}
                     onChange={(e) => setCampaign(e.target.value)}
                   />
                 </Field>
-                <Field label="Słowo kluczowe zdarzenia">
+                <Field label="Event keyword">
                   <input
                     maxLength={500}
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
                   />
                 </Field>
-                <Field label="Landing page zdarzenia">
+                <Field label="Event landing page">
                   <input
                     maxLength={1000}
                     value={landing}
@@ -412,13 +500,13 @@ export function EventForm({
                   />
                 </Field>
                 <p className="text-sm text-slate-600">
-                  UTM pochodzą z zapisanej karty leada. Uzupełnij je w edycji
-                  leada, jeśli są znane.
+                  UTM values come from the saved enquiry. Edit the lead to add
+                  known attribution values.
                 </p>
               </div>
             </details>
           )}
-          <Field label="Opis zdarzenia">
+          <Field label="Event note">
             <textarea
               rows={4}
               maxLength={5000}
@@ -434,10 +522,10 @@ export function EventForm({
             className="crm-button secondary"
             onClick={close}
           >
-            Anuluj
+            Cancel
           </button>
           <button disabled={busy} className="crm-button" type="submit">
-            {busy ? "Zapisywanie…" : "Zapisz zdarzenie"}
+            {busy ? "Saving…" : "Save event"}
           </button>
         </div>
       </form>

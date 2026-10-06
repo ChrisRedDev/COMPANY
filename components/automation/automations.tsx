@@ -26,19 +26,19 @@ import { Field, Icon, Modal } from "../crm/ui";
 
 const kindIcon = { report: "file", followup: "tasks", agent: "agent" } as const;
 const kindText = {
-  report: "Tworzy raport i zapisuje go w sekcji Raporty.",
+  report: "Tworzy raport i zapisuje go w sekcji Reports.",
   followup: "Dodaje zadania dla otwartych szans bez kolejnego kroku.",
-  agent: "Agent AI wykonuje polecenie; w autopilocie sam wprowadza zmiany.",
+  agent: "AI assistant wykonuje polecenie; w autopilocie sam wprowadza zmiany.",
 };
 const when = (iso?: string) =>
   iso
-    ? new Intl.DateTimeFormat("pl-PL", {
+    ? new Intl.DateTimeFormat("en-GB", {
         weekday: "short",
         day: "2-digit",
         month: "short",
         hour: "2-digit",
         minute: "2-digit",
-        timeZone: "Europe/Warsaw",
+        timeZone: "Europe/London",
       }).format(new Date(iso))
     : "—";
 
@@ -83,11 +83,11 @@ function JobEditor({
   }
   return (
     <Modal
-      title={job.id ? "Edytuj automatyzację" : "Nowa automatyzacja"}
+      title={job.id ? "Edit automatyzację" : "Nowa automatyzacja"}
       onClose={onClose}
     >
       <form className="crm-form" onSubmit={save}>
-        <Field label="Nazwa">
+        <Field label="Name">
           <input
             required
             maxLength={120}
@@ -119,7 +119,7 @@ function JobEditor({
           ))}
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Częstotliwość">
+          <Field label="Frequency">
             <select
               value={form.frequency}
               onChange={(e) =>
@@ -133,7 +133,7 @@ function JobEditor({
               ))}
             </select>
           </Field>
-          <Field label="Godzina (czas polski)">
+          <Field label="Time (Europe/London)">
             <input
               type="time"
               required
@@ -142,7 +142,7 @@ function JobEditor({
             />
           </Field>
           {form.frequency === "weekly" && (
-            <Field label="Dzień tygodnia">
+            <Field label="Day tygodnia">
               <select
                 value={form.weekday}
                 onChange={(e) => set("weekday", Number(e.target.value))}
@@ -156,7 +156,7 @@ function JobEditor({
             </Field>
           )}
           {form.frequency === "monthly" && (
-            <Field label="Dzień miesiąca">
+            <Field label="Day miesiąca">
               <select
                 value={form.monthDay}
                 onChange={(e) => set("monthDay", Number(e.target.value))}
@@ -203,7 +203,7 @@ function JobEditor({
         {form.kind === "agent" && (
           <Field
             label="Polecenie dla agenta"
-            hint="Np. „Zaplanuj follow-upy dla szans bez kroku i przygotuj szkice maili”."
+            hint="Np. „Plan follow-ups dla szans bez kroku i przygotuj szkice maili”."
           >
             <textarea
               required
@@ -221,9 +221,9 @@ function JobEditor({
             className="crm-button secondary"
             onClick={onClose}
           >
-            Anuluj
+            Cancel
           </button>
-          <button className="crm-button">Zapisz</button>
+          <button className="crm-button">Save</button>
         </div>
       </form>
     </Modal>
@@ -266,20 +266,20 @@ export default function Automations({
         <div className="relative grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
             <span className="text-[11px] font-bold tracking-[1.8px] text-sky-100 uppercase">
-              Harmonogram · Europe/Warsaw
+              Schedule · Europe/London
             </span>
             <h2 className="mt-2 text-2xl! font-bold text-white! sm:text-3xl!">
-              Firma, która pracuje sama.
+              Company, która pracuje sama.
             </h2>
             <p className="mt-3! max-w-xl text-sm leading-relaxed text-sky-50/90">
-              Raporty, follow-upy i zadania agenta AI uruchamiają się
+              Reports, follow-upy i zadania agenta AI uruchamiają się
               automatycznie, gdy Growth OS jest otwarty — pominięte terminy są
               nadrabiane przy kolejnym uruchomieniu.
             </p>
           </div>
           <dl className="grid grid-cols-3 gap-3 text-center">
             {[
-              { label: "Aktywne", value: active.length },
+              { label: "Active", value: active.length },
               { label: "Uruchomienia", value: runs.length },
               {
                 label: "Skuteczność",
@@ -409,7 +409,7 @@ export default function Automations({
                         }
                       />
                       <span className="relative h-5 w-9 rounded-full bg-slate-200 transition peer-checked:bg-violet-600 after:absolute after:top-0.5 after:left-0.5 after:size-4 after:rounded-full after:bg-white after:shadow after:transition peer-checked:after:translate-x-4" />
-                      <span className="sr-only">Aktywne</span>
+                      <span className="sr-only">Active</span>
                     </label>
                     <button
                       className="crm-button secondary px-3! py-1.5! text-xs!"
@@ -420,7 +420,7 @@ export default function Automations({
                     </button>
                     <button
                       className="crm-icon-button"
-                      aria-label={`Edytuj ${j.name}`}
+                      aria-label={`Edit ${j.name}`}
                       disabled={readOnly}
                       onClick={() => setEditor(j)}
                     >
@@ -428,7 +428,7 @@ export default function Automations({
                     </button>
                     <button
                       className="crm-icon-button"
-                      aria-label={`Usuń ${j.name}`}
+                      aria-label={`Delete ${j.name}`}
                       disabled={readOnly}
                       onClick={() => s.deleteJob(j.id)}
                     >
@@ -451,7 +451,7 @@ export default function Automations({
               {copilotLabels[settings.provider]}
             </h3>
             <p className="mt-1 text-xs text-slate-500">
-              Zadania „agent AI” używają modelu wybranego w sekcji Agent AI. Bez
+              Tasks „agent AI” używają modelu wybranego w sekcji AI assistant. Bez
               autopilota propozycje czekają na Twoje zatwierdzenie w czacie.
             </p>
             <label className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-slate-50 p-3 text-sm">

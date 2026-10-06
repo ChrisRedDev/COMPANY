@@ -10,14 +10,14 @@ export const CATEGORIES = [
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 export const categoryLabels: Record<Category, string> = {
-  company: "Firma i marka",
-  services: "Usługi i oferta",
-  locations: "Lokalizacje",
+  company: "Company & brand",
+  services: "Services & quotes",
+  locations: "Locations",
   marketing: "Marketing",
   tracking: "Tracking",
-  web: "Strona internetowa",
-  processes: "Procesy i zasady",
-  competitors: "Konkurencja",
+  web: "Website",
+  processes: "Processes & guidance",
+  competitors: "Competitors",
 };
 export type Document = {
   id: string;

@@ -8,36 +8,36 @@ const model = load("lib/crm/model.ts"),
   agent = load("lib/ai/agent.ts"),
   growth = load("lib/growth/model.ts");
 
-test("harmonogram liczy termin w czasie polskim, także przy zmianie czasu", () => {
+test("harmonogram liczy termin w czasie Londynu, także przy zmianie czasu", () => {
   const job = { frequency: "daily", time: "08:00", weekday: 1, monthDay: 1 };
   assert.equal(
     automation.nextRun(job, new Date("2026-10-06T07:00:00Z")),
-    "2026-10-07T06:00:00.000Z",
+    "2026-10-07T07:00:00.000Z",
   );
   assert.equal(
     automation.nextRun(job, new Date("2026-10-24T07:00:00Z")),
-    "2026-10-25T07:00:00.000Z",
+    "2026-10-25T08:00:00.000Z",
   );
   assert.equal(
     automation.nextRun(
       { ...job, frequency: "weekly", weekday: 1, time: "07:30" },
       new Date("2026-10-06T10:00:00Z"),
     ),
-    "2026-10-12T05:30:00.000Z",
+    "2026-10-12T06:30:00.000Z",
   );
   assert.equal(
     automation.nextRun(
       { ...job, frequency: "weekdays" },
       new Date("2026-10-09T08:00:00Z"),
     ),
-    "2026-10-12T06:00:00.000Z",
+    "2026-10-12T07:00:00.000Z",
   );
   assert.equal(
     automation.nextRun(
       { ...job, frequency: "monthly", monthDay: 1 },
       new Date("2026-10-06T08:00:00Z"),
     ),
-    "2026-11-01T07:00:00.000Z",
+    "2026-11-01T08:00:00.000Z",
   );
 });
 
@@ -48,7 +48,7 @@ test("zadania harmonogramu są walidowane i wykrywane jako zaległe", () => {
     "j1",
     now,
   );
-  assert.equal(job.nextRun, "2026-10-07T06:00:00.000Z");
+  assert.equal(job.nextRun, "2026-10-07T07:00:00.000Z");
   assert.equal(automation.dueJobs([job], new Date(job.nextRun)).length, 1);
   assert.equal(
     automation.dueJobs([{ ...job, enabled: false }], new Date(job.nextRun))

@@ -98,7 +98,7 @@ export default function BrainGenerator({
         {!draft && (
           <div className="rounded-xl bg-violet-50 p-5">
             <span className="crm-eyebrow">STRONA → WIEDZA → MARKETING</span>
-            <h3>Opisz firmę raz. Pracuj z jej kontekstem.</h3>
+            <h3>Descriptionz firmę raz. Pracuj z jej kontekstem.</h3>
             <p className="mt-2 text-sm text-slate-600">
               Podaj adres. Agent odczyta stronę i do 4 podstron, przygotuje 34
               sekcje oraz notatki o ofercie, marce i marketingu. Sprawdź szkic,
@@ -115,7 +115,7 @@ export default function BrainGenerator({
             }}
           >
             <Field
-              label="Adres strony firmy"
+              label="Address strony firmy"
               hint="Publiczny, docelowy adres HTTPS. Bez logowania; strony wymagające JavaScript mogą nie udostępniać treści."
             >
               <input
@@ -129,7 +129,7 @@ export default function BrainGenerator({
               />
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Dostawca generatora">
+              <Field label="Provider generatora">
                 <select
                   value={provider}
                   disabled={busy}
@@ -193,7 +193,7 @@ export default function BrainGenerator({
               </div>
             )}
             <p className="crm-muted text-sm">
-              Treść odczytanych stron trafi do wybranego dostawcy. Generowanie
+              Content odczytanych stron trafi do wybranego dostawcy. Generowanie
               wykorzystuje płatne API lub limit Twojej subskrypcji, do 8000
               tokenów odpowiedzi. Nie wyszukuje zewnętrznych opinii ani
               konkurencji.
@@ -298,7 +298,7 @@ export default function BrainGenerator({
                   disabled={busy}
                   onClick={() => void save()}
                 >
-                  {busy ? "Zapisuję…" : "Zatwierdź i zapisz 4 notatki"}
+                  {busy ? "Zapisuję…" : "Approve i zapisz 4 notatki"}
                 </button>
               ) : (
                 <>
@@ -314,7 +314,7 @@ export default function BrainGenerator({
                     Pobierz do Obsidiana
                   </button>
                   <button className="crm-button secondary" onClick={close}>
-                    Otwórz Company Brain
+                    Open Company Brain
                   </button>
                 </>
               )}
@@ -322,7 +322,7 @@ export default function BrainGenerator({
             <p className="crm-muted text-sm">
               Zapis jest jedną transakcją. Istniejące notatki nie zostaną
               nadpisane. Po zapisie możesz je edytować i uzupełnić odpowiedzi
-              właściciela. Obsidian: rozpakuj ZIP i wybierz „Otwórz folder jako
+              właściciela. Obsidian: rozpakuj ZIP i wybierz „Open folder jako
               skarbiec”.
             </p>
           </>

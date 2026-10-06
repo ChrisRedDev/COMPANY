@@ -21,6 +21,10 @@ export const SECTIONS = [
   "ai",
   "reports",
   "automations",
+  "ads",
+  "tracking",
+  "calls",
+  "localSeo",
 ] as const;
 export type Section = (typeof SECTIONS)[number];
 export type Firm = {
@@ -107,7 +111,7 @@ export type WorkspaceData = {
 };
 export function today() {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Warsaw",
+    timeZone: "Europe/London",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -119,18 +123,18 @@ export function offsetDate(days: number) {
   return date.toISOString().slice(0, 10);
 }
 export function money(value: number) {
-  return new Intl.NumberFormat("pl-PL", {
+  return new Intl.NumberFormat("en-GB", {
     style: "currency",
-    currency: "PLN",
+    currency: "GBP",
     maximumFractionDigits: 0,
   }).format(value);
 }
 export function dateLabel(value: string) {
-  return new Intl.DateTimeFormat("pl-PL", {
+  return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-    timeZone: "Europe/Warsaw",
+    timeZone: "Europe/London",
   }).format(new Date(`${value.slice(0, 10)}T12:00:00Z`));
 }
 export function validEmail(value: string) {

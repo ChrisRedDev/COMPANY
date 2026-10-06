@@ -10,15 +10,15 @@ import {
   type LeadStatus,
 } from "@/lib/leads/model";
 import { Badge, Icon } from "../crm/ui";
-export const leadMoney = (v: number) =>
-  new Intl.NumberFormat("pl-PL", {
+export const leadMoney = (v: number, currency = "GBP") =>
+  new Intl.NumberFormat("en-GB", {
     style: "currency",
-    currency: "PLN",
+    currency,
     maximumFractionDigits: 2,
   }).format(v);
 export const eventDate = (v: string) =>
-  new Date(v).toLocaleString("pl-PL", {
-    timeZone: "Europe/Warsaw",
+  new Date(v).toLocaleString("en-GB", {
+    timeZone: "Europe/London",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -30,30 +30,38 @@ const stateLabel = (v: Json | undefined) =>
     ? statusLabels[v as LeadStatus]
     : "";
 const metadataLabels: Record<string, string> = {
-  campaign: "Kampania",
-  keyword: "Słowo kluczowe",
-  landing_page: "Strona wejścia",
-  call_duration: "Długość rozmowy",
-  form_name: "Formularz",
-  amount: "Kwota",
-  job_value: "Wartość pracy",
-  scheduled_at: "Umówiony termin",
-  note: "Opis",
+  campaign: "Campaign",
+  keyword: "Keyword",
+  landing_page: "Landing page",
+  call_duration: "Call duration",
+  call_outcome: "Call outcome",
+  called_number: "Number dialled",
+  form_name: "Form",
+  amount: "Amount",
+  job_value: "Job value",
+  scheduled_at: "Scheduled time",
+  note: "Description",
   utm_source: "utm_source",
   utm_medium: "utm_medium",
   utm_campaign: "utm_campaign",
   utm_term: "utm_term",
   utm_content: "utm_content",
 };
-function valueText(key: string, v: Json) {
+function valueText(key: string, v: Json, currency: string) {
   if (typeof v === "number" && ["amount", "job_value"].includes(key))
-    return leadMoney(v);
+    return leadMoney(v, currency);
   if (key === "call_duration" && typeof v === "number")
     return `${Math.floor(v / 60)}:${String(v % 60).padStart(2, "0")}`;
   if (key === "scheduled_at" && typeof v === "string") return eventDate(v);
   return typeof v === "string" ? v : JSON.stringify(v);
 }
-function EventItem({ event }: { event: LeadEvent }) {
+function EventItem({
+  event,
+  currency,
+}: {
+  event: LeadEvent;
+  currency: string;
+}) {
   const m = event.metadata;
   const more = Object.entries(m).filter(
     ([k, v]) =>
@@ -92,7 +100,7 @@ function EventItem({ event }: { event: LeadEvent }) {
             >
               <dt className="text-slate-500">{label}</dt>
               <dd className="min-w-0 break-words whitespace-pre-wrap text-slate-700">
-                {valueText(k, m[k])}
+                {valueText(k, m[k], currency)}
               </dd>
             </div>
           ))}
@@ -100,13 +108,13 @@ function EventItem({ event }: { event: LeadEvent }) {
       {more.length > 0 && (
         <details className="mt-3 text-sm">
           <summary className="cursor-pointer text-violet-600">
-            Pozostałe informacje
+            Additional information
           </summary>
           <dl className="mt-3 grid gap-2">
             {more.map(([k, v]) => (
               <div key={k} className="min-w-0 break-words">
                 <dt className="font-medium">{k}</dt>
-                <dd>{valueText(k, v)}</dd>
+                <dd>{valueText(k, v, currency)}</dd>
               </div>
             ))}
           </dl>
@@ -120,20 +128,20 @@ function Fact({ label, value }: { label: string; value: string | number }) {
     <div className="min-w-0">
       <dt className="mb-1 text-sm text-slate-500">{label}</dt>
       <dd className="font-medium break-words text-slate-800">
-        {value || "Do uzupełnienia"}
+        {value || "Not recorded"}
       </dd>
     </div>
   );
 }
 const salesStates: Record<string, string> = {
-  sent: "Wysłana",
-  accepted: "Przyjęta",
-  rejected: "Odrzucona",
-  booked: "Zarezerwowana",
-  completed: "Zakończona",
-  cancelled: "Anulowana",
-  in_progress: "W realizacji",
-  received: "Otrzymana",
+  sent: "Sent",
+  accepted: "Accepted",
+  rejected: "Declined",
+  booked: "Booked",
+  completed: "Completed",
+  cancelled: "Cancelled",
+  in_progress: "In progress",
+  received: "Received",
 };
 export default function LeadDetail({
   bundle,
@@ -158,43 +166,54 @@ export default function LeadDetail({
       <div className="grid min-w-0 content-start gap-5">
         <section className="crm-card p-6">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-lg!">Przegląd leada</h3>
+            <h3 className="text-lg!">Enquiry overview</h3>
             <button
               disabled={readOnly}
               className="crm-button secondary"
               onClick={edit}
             >
-              Edytuj leada
+              Edit enquiry
             </button>
           </div>
           <dl className="grid gap-5 sm:grid-cols-2">
             <Fact
-              label="Kontakt"
+              label="Contact"
               value={[l.first_name, l.last_name].filter(Boolean).join(" ")}
             />
-            <Fact label="Firma" value={l.company_name} />
+            <Fact label="Company" value={l.company_name} />
             <Fact label="E-mail" value={l.email} />
-            <Fact label="Telefon" value={l.phone} />
+            <Fact label="Phone" value={l.phone} />
             <Fact label="Status" value={statusLabels[l.status]} />
-            <Fact label="Źródło" value={l.source} />
+            <Fact label="Postcode" value={l.postcode ?? ""} />
+            <Fact label="Service" value={l.service ?? ""} />
             <Fact
-              label="Szacowana wartość"
-              value={leadMoney(l.estimated_value)}
+              label="Urgency"
+              value={l.urgency?.replaceAll("_", " ") ?? ""}
             />
-            <Fact label="Revenue" value={leadMoney(l.revenue)} />
+            <Fact label="Contact channel" value={l.channel ?? ""} />
+            <Fact label="Plumbing problem" value={l.problem ?? ""} />
+            <Fact label="Source" value={l.source} />
+            <Fact
+              label="Estimated quote"
+              value={leadMoney(l.estimated_value, l.currency ?? "PLN")}
+            />
+            <Fact
+              label="Revenue"
+              value={leadMoney(l.revenue, l.currency ?? "PLN")}
+            />
           </dl>
           <p className="mt-5! text-sm leading-relaxed text-slate-500">
-            Revenue to zapis CRM i wpłaty zadeklarowane w zdarzeniach.
-            Zakończenie pracy nie oznacza płatności.
+            Revenue includes the opening CRM balance and recorded payments.
+            Completed work does not establish payment.
           </p>
         </section>
         <section className="crm-card p-6">
-          <h3 className="mb-5 text-lg!">Źródła i atrybucja</h3>
+          <h3 className="mb-5 text-lg!">Source & attribution</h3>
           <div className="mb-5 grid gap-3 sm:grid-cols-2">
             <div className="min-w-0 rounded-2xl border border-violet-100 bg-violet-50/60 p-4">
               <p className="text-sm text-violet-600">First touch</p>
               <strong className="mt-2 block break-words">
-                {l.first_touch_source || "Źródło nieznane"}
+                {l.first_touch_source || "Unknown source"}
               </strong>
               {first && (
                 <p className="mt-2! text-sm text-slate-600">
@@ -205,7 +224,7 @@ export default function LeadDetail({
             <div className="min-w-0 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4">
               <p className="text-sm text-emerald-700">Last touch</p>
               <strong className="mt-2 block break-words">
-                {l.last_touch_source || "Źródło nieznane"}
+                {l.last_touch_source || "Unknown source"}
               </strong>
               {last && (
                 <p className="mt-2! text-sm text-slate-600">
@@ -215,9 +234,9 @@ export default function LeadDetail({
             </div>
           </div>
           <dl className="grid gap-4">
-            <Fact label="Kampania" value={l.campaign} />
+            <Fact label="Campaign" value={l.campaign} />
             <Fact label="Medium" value={l.medium} />
-            <Fact label="Słowo kluczowe" value={l.keyword} />
+            <Fact label="Keyword" value={l.keyword} />
             <Fact label="Landing page" value={l.landing_page} />
             {Object.entries(l.utm)
               .filter(([, v]) => v)
@@ -226,33 +245,33 @@ export default function LeadDetail({
               ))}
           </dl>
           <p className="mt-5! text-sm leading-relaxed text-slate-500">
-            First/last touch wynikają z czasu zapisanych interakcji. To
-            fundament atrybucji, bez automatycznego śledzenia anonimowych wizyt.
+            First and last touch come from recorded interactions; anonymous
+            visits are not tracked automatically.
           </p>
         </section>
         <section className="crm-card p-6">
-          <h3 className="mb-5 text-lg!">Sprzedaż i realizacja</h3>
+          <h3 className="mb-5 text-lg!">Quotes, jobs & payments</h3>
           <div className="grid gap-5">
             <div>
               <h4 className="mb-3 font-semibold">
-                Oferty ({bundle.quotes.length})
+                Quotes ({bundle.quotes.length})
               </h4>
               {bundle.quotes.length ? (
                 bundle.quotes.slice(-3).map((q) => (
                   <p key={q.id} className="mb-2! text-sm leading-relaxed">
-                    {leadMoney(q.amount)} · {salesStates[q.status]} ·{" "}
-                    {eventDate(q.created_at)}
+                    {leadMoney(q.amount, q.currency)} · {salesStates[q.status]}{" "}
+                    · {eventDate(q.created_at)}
                   </p>
                 ))
               ) : (
                 <p className="text-sm text-slate-500">
-                  Zapisz zdarzenie „Wysłana oferta”.
+                  Record a quote using Add event or the Quote Sent stage.
                 </p>
               )}
             </div>
             <div>
               <h4 className="mb-3 font-semibold">
-                Rezerwacje ({bundle.appointments.length})
+                Bookings ({bundle.appointments.length})
               </h4>
               {bundle.appointments.length ? (
                 bundle.appointments.slice(-3).map((a) => (
@@ -260,55 +279,56 @@ export default function LeadDetail({
                     {salesStates[a.status]} ·{" "}
                     {a.scheduled_at
                       ? eventDate(a.scheduled_at)
-                      : "Termin do uzupełnienia"}
+                      : "Time not recorded"}
                   </p>
                 ))
               ) : (
                 <p className="text-sm text-slate-500">
-                  Zapisz zdarzenie „Rezerwacja”.
+                  Record a booking using Add event or the Booked stage.
                 </p>
               )}
             </div>
             <div>
               <h4 className="mb-3 font-semibold">
-                Prace ({bundle.jobs.length})
+                Jobs ({bundle.jobs.length})
               </h4>
               {bundle.jobs.length ? (
                 bundle.jobs.slice(-3).map((j) => (
                   <p key={j.id} className="mb-2! text-sm leading-relaxed">
-                    {leadMoney(j.amount)} · {salesStates[j.status]}
+                    {leadMoney(j.amount, j.currency)} · {salesStates[j.status]}
                   </p>
                 ))
               ) : (
                 <p className="text-sm text-slate-500">
-                  Rozpoczęcie i zakończenie pracy zapiszesz w zdarzeniach.
+                  Record job start and completion using Add event or the
+                  pipeline.
                 </p>
               )}
             </div>
             <div>
               <h4 className="mb-3 font-semibold">
-                Wpłaty ({bundle.payments.length})
+                Payments ({bundle.payments.length})
               </h4>
               {bundle.payments.length ? (
                 bundle.payments.slice(-3).map((p) => (
                   <p key={p.id} className="mb-2! text-sm leading-relaxed">
-                    {leadMoney(p.amount)} · {eventDate(p.timestamp)}
+                    {leadMoney(p.amount, p.currency)} · {eventDate(p.timestamp)}
                   </p>
                 ))
               ) : (
                 <p className="text-sm text-slate-500">
-                  Nie zapisano otrzymanej płatności.
+                  No received payments recorded.
                 </p>
               )}
             </div>
           </div>
           <p className="mt-5! text-sm text-slate-500">
-            Ostatnie 3 rekordy każdego rodzaju. Pełna historia jest na osi
-            czasu. Zlecenia w trybie usługowym pozostają osobnym modułem.
+            The latest three records of each type. See the timeline for complete
+            history. The job planner uses separate service bookings.
           </p>
         </section>
         <section className="crm-card p-6">
-          <h3 className="mb-4 text-lg!">Notatki CRM</h3>
+          <h3 className="mb-4 text-lg!">Notes CRM</h3>
           <p className="text-sm leading-relaxed whitespace-pre-wrap text-slate-700">
             {l.notes || "Dodaj ustalenia i kontekst w edycji leada."}
           </p>
@@ -317,18 +337,18 @@ export default function LeadDetail({
       <section className="crm-card min-w-0 self-start p-6">
         <div className="mb-5 flex flex-wrap justify-between gap-3">
           <div>
-            <h3 className="text-xl!">Oś kontaktu</h3>
+            <h3 className="text-xl!">Customer timeline</h3>
             <p className="mt-2! text-sm text-slate-500">
-              {bundle.events.length} zdarzeń · Europe/Warsaw
+              {bundle.events.length} events · Europe/London
             </p>
           </div>
           <button disabled={readOnly} className="crm-button" onClick={addEvent}>
             <Icon name="plus" size={18} />
-            Dodaj zdarzenie
+            Add event
           </button>
         </div>
         <select
-          aria-label="Kolejność osi czasu"
+          aria-label="Timeline order"
           className="mb-6 w-full sm:w-auto"
           value={order}
           onChange={(e) => {
@@ -336,17 +356,17 @@ export default function LeadDetail({
             setLimit(50);
           }}
         >
-          <option value="oldest">Od najstarszych</option>
-          <option value="newest">Od najnowszych</option>
+          <option value="oldest">Oldest first</option>
+          <option value="newest">Newest first</option>
         </select>
-        <ol aria-label="Historia kontaktu leada" className="ml-1 grid">
+        <ol aria-label="Customer history" className="ml-1 grid">
           {events.slice(0, limit).map((e) => (
-            <EventItem key={e.id} event={e} />
+            <EventItem key={e.id} event={e} currency={l.currency ?? "PLN"} />
           ))}
         </ol>
         {!events.length && (
           <p className="text-sm text-slate-600">
-            Pierwsze zdarzenie zapiszesz przyciskiem powyżej.
+            Use Add event to record the first interaction.
           </p>
         )}
         {events.length > limit && (
@@ -354,7 +374,7 @@ export default function LeadDetail({
             className="crm-button secondary mt-6"
             onClick={() => setLimit((l) => l + 50)}
           >
-            Pokaż kolejne zdarzenia ({events.length - limit})
+            Show more events ({events.length - limit})
           </button>
         )}
       </section>
