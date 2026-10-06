@@ -150,7 +150,7 @@ export default function Connectors({
         body: JSON.stringify({ csv: await file.text() }),
       });
       setMessage(
-        `Zapisano ${result.count} wierszy. Pulpit pokaże przeliczone wyniki; ponowny import aktualizuje te same kampanie i daty.`,
+        `Zapisano ${result.count} wierszy. Owner overview pokaże przeliczone wyniki; ponowny import aktualizuje te same kampanie i daty.`,
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Błąd importu.");
@@ -277,15 +277,15 @@ export default function Connectors({
                 <ConnectorLogo id="ai" />
                 <h3 className="text-lg!">Twoje AI · Twój model</h3>
               </div>
-              <Badge tone="green">Wbudowany agent + OpenRouter / CLI</Badge>
+              <Badge tone="green">Built-in assistant + OpenRouter / CLI</Badge>
             </div>
             <p className="crm-muted">
-              Wbudowany Evolution Agent działa od razu, bez klucza. Dla
+              Wbudowany Plumbing assistant działa od razu, bez klucza. Dla
               generatywnych odpowiedzi podłącz OpenRouter API albo lokalne CLI
               Codex / Claude Code i zatwierdzaj propozycje agenta.
             </p>
             <button className="crm-button justify-self-start" onClick={openAi}>
-              Otwórz połączenie AI
+              Open połączenie AI
             </button>
           </article>
         )}
@@ -307,7 +307,7 @@ export default function Connectors({
               className="crm-button secondary justify-self-start"
               onClick={openBrain}
             >
-              Otwórz wiedzę firmy
+              Open wiedzę firmy
             </button>
           </article>
         )}
@@ -342,7 +342,7 @@ export default function Connectors({
                           : s?.status === "error"
                             ? "Błąd"
                             : c.configured
-                              ? "Gotowy do sprawdzenia"
+                              ? "Ready do sprawdzenia"
                               : "Wymaga konfiguracji"}
                   </Badge>
                 </div>
@@ -352,7 +352,7 @@ export default function Connectors({
                     : c.provider === "posthog"
                       ? "Odczyt liczby zdarzeń z ostatnich 30 dni z PostHog Cloud EU/US. Bez tworzenia własnego session replay."
                       : c.provider === "stripe"
-                        ? "Płatności, zwroty i saldo z ostatnich 30 dni. Klucz ograniczony tylko do odczytu; bez tworzenia płatności i zmian w koncie."
+                        ? "Payments, zwroty i saldo z ostatnich 30 dni. Klucz ograniczony tylko do odczytu; bez tworzenia płatności i zmian w koncie."
                         : c.provider === "ga4"
                           ? "Sesje, użytkownicy, odsłony, kluczowe zdarzenia i przychód z usługi GA4. Zapisany raport pokaże się też na Pulpicie."
                           : c.provider === "google_ads"
@@ -375,7 +375,7 @@ export default function Connectors({
                     c.provider === "google_ads") && (
                     <p className="crm-muted mt-3">
                       Połącz konto w panelu Google powyżej i włącz odpowiednie
-                      API w Google Cloud. GA4 wymaga Data API i Admin API do
+                      API w Google Cloud. GA4 wymaga Date API i Admin API do
                       listy usług; Search Console wymaga Search Console API. Ads
                       wymaga tokenu deweloperskiego i zgody adwords. Dla GA4/GSC
                       działa też konto usługi. Szczegóły tutaj.{" "}
@@ -423,7 +423,7 @@ export default function Connectors({
                 {s?.last_sync && (
                   <p className="crm-muted">
                     Ostatni udany odczyt:{" "}
-                    {new Date(s.last_sync).toLocaleString("pl-PL")}
+                    {new Date(s.last_sync).toLocaleString("en-GB")}
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2">
@@ -510,19 +510,19 @@ export default function Connectors({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <ConnectorLogo id="resend" />
-                <h3 className="text-lg!">Poczta · Resend</h3>
+                <h3 className="text-lg!">Email · Resend</h3>
               </div>
               <Badge tone="purple">Wysyłka</Badge>
             </div>
             <p className="crm-muted">
-              Bezpośrednia wysyłka z CRM z potwierdzeniem użytkownika. Klucz API
+              Bezpośrednia wysyłka z CRM z potwierdzeniem użytkownika. API key
               na serwerze, token wysyłki tylko w pamięci sesji.
             </p>
             <button
               className="crm-button secondary justify-self-start"
               onClick={mailSettings}
             >
-              Otwórz konfigurację poczty
+              Open konfigurację poczty
             </button>
           </article>
         )}
@@ -564,7 +564,7 @@ export default function Connectors({
       ))}
       {!!events.length && (
         <section className="crm-card p-6">
-          <h3>Zdarzenia PostHog · ostatnie 30 dni</h3>
+          <h3>Events PostHog · ostatnie 30 dni</h3>
           <ul className="mt-4 grid gap-2 text-sm">
             {events.map((r, i) => (
               <li key={i}>

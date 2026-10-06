@@ -118,7 +118,7 @@ export default function AiAgent({
       const r = await localRequest(wid, "ai/models");
       setModels(r.models);
       setNotice(
-        `Pobrano ${r.models.length} modeli. Wybierz identyfikator; koszt zależy od wybranego modelu i konta.`,
+        `Pobrano ${r.models.length} modeli. Choose identyfikator; koszt zależy od wybranego modelu i konta.`,
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Nie udało się pobrać modeli.");
@@ -244,7 +244,7 @@ export default function AiAgent({
             <h3 className="text-base!">Silnik AI</h3>
             <Badge tone={available(provider) ? "green" : "gray"}>
               {provider === "builtin"
-                ? "Gotowy · offline"
+                ? "Ready · offline"
                 : provider === "openrouter"
                   ? status.openrouter
                     ? "Klucz dostępny"
@@ -298,7 +298,7 @@ export default function AiAgent({
             <>
               <Field
                 label="Model AI"
-                hint="Wybierz z listy lub wpisz identyfikator dostępny na swoim koncie."
+                hint="Choose z listy lub wpisz identyfikator dostępny na swoim koncie."
               >
                 <input
                   list="growth-models"
@@ -365,7 +365,7 @@ export default function AiAgent({
                       .catch((e) => setError(e.message))
                   }
                 >
-                  Usuń klucz sesji
+                  Delete klucz sesji
                 </button>
               </div>
             </div>

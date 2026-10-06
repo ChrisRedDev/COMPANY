@@ -1,0 +1,5400 @@
+{
+  "version": 1,
+  "demo": true,
+  "reference_date": "2026-10-06",
+  "currency": "GBP",
+  "timezone": "Europe/London",
+  "description": "Synthetic Local Plumbing Services demonstration. Not real customers, prices, reviews, rankings or performance.",
+  "leads": [
+    {
+      "date": "2026-10-06",
+      "first_name": "Demo Customer 01",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-1@example.com",
+      "phone": "07700 900001",
+      "postcode": "DA1 2JH",
+      "service": "Emergency plumbing",
+      "urgency": "emergency",
+      "channel": "call",
+      "problem": "Synthetic emergency plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "new",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 0,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 0,
+            "call_outcome": "missed",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-1"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "first_name": "Demo Customer 02",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-2@example.com",
+      "phone": "07700 900002",
+      "postcode": "DA2 6AA",
+      "service": "Leak detection",
+      "urgency": "same_day",
+      "channel": "form",
+      "problem": "Synthetic leak detection enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "qualified",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 280,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "first_name": "Demo Customer 03",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-3@example.com",
+      "phone": "07700 900003",
+      "postcode": "DA11 0AA",
+      "service": "Blocked drains",
+      "urgency": "same_day",
+      "channel": "whatsapp",
+      "problem": "Synthetic blocked drains enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "booked",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "medium": "cpc",
+      "estimated_value": 240,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "blocked drains kent",
+      "utm": {
+        "utm_source": "microsoft_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Drainage Kent"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "blocked drains kent",
+            "campaign": "Drainage Kent"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "whatsapp",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 240,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 240,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-10-06T11:00:00Z"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "first_name": "Demo Customer 04",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-4@example.com",
+      "phone": "07700 900004",
+      "postcode": "DA1 1AA",
+      "service": "Emergency plumbing",
+      "urgency": "emergency",
+      "channel": "call",
+      "problem": "Synthetic emergency plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 420,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 213,
+            "call_outcome": "answered",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-4"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 420,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 420,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-10-06T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 420,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 420,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 420,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "first_name": "Demo Customer 05",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-5@example.com",
+      "phone": "07700 900005",
+      "postcode": "DA8 1AA",
+      "service": "Toilet repairs",
+      "urgency": "same_day",
+      "channel": "form",
+      "problem": "Synthetic toilet repairs enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "organic",
+      "campaign": "Local search",
+      "medium": "organic",
+      "estimated_value": 210,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "plumber dartford",
+      "utm": {
+        "utm_source": "organic",
+        "utm_medium": "organic",
+        "utm_campaign": "Local search"
+      },
+      "events": [
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 210,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 210,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-10-06T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 210,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 210,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 210,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "first_name": "Demo Customer 06",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-6@example.com",
+      "phone": "07700 900006",
+      "postcode": "DA6 7AA",
+      "service": "Taps & sinks",
+      "urgency": "same_day",
+      "channel": "call",
+      "problem": "Synthetic taps & sinks enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "contacted",
+      "source": "gbp",
+      "campaign": "Google Business Profile",
+      "medium": "organic",
+      "estimated_value": 0,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "plumber dartford",
+      "utm": {
+        "utm_source": "gbp",
+        "utm_medium": "organic",
+        "utm_campaign": "Google Business Profile"
+      },
+      "events": [
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 0,
+            "call_outcome": "missed",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-6"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-05",
+      "first_name": "Demo Customer 07",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-7@example.com",
+      "phone": "07700 900007",
+      "postcode": "DA1 5AA",
+      "service": "Leak detection",
+      "urgency": "same_day",
+      "channel": "form",
+      "problem": "Synthetic leak detection enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "quote",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 650,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "leak detection dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "leak detection dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 650,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-05",
+      "first_name": "Demo Customer 08",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-8@example.com",
+      "phone": "07700 900008",
+      "postcode": "DA2 7AA",
+      "service": "General plumbing",
+      "urgency": "same_day",
+      "channel": "call",
+      "problem": "Synthetic general plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "in_progress",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 380,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 257,
+            "call_outcome": "answered",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-8"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 380,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 380,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-10-05T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 380,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-04",
+      "first_name": "Demo Customer 09",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-9@example.com",
+      "phone": "07700 900009",
+      "postcode": "ME15 6AA",
+      "service": "Blocked drains",
+      "urgency": "same_day",
+      "channel": "whatsapp",
+      "problem": "Synthetic blocked drains enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "completed",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "medium": "cpc",
+      "estimated_value": 320,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/24h-maidstone-kent/",
+      "keyword": "blocked drains kent",
+      "utm": {
+        "utm_source": "microsoft_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Drainage Kent"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "blocked drains kent",
+            "campaign": "Drainage Kent"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/24h-maidstone-kent/"
+          }
+        },
+        {
+          "type": "whatsapp",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 320,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 320,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-10-04T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 320,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 320,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-03",
+      "first_name": "Demo Customer 10",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-10@example.com",
+      "phone": "07700 900010",
+      "postcode": "DA1 3AA",
+      "service": "Emergency plumbing",
+      "urgency": "emergency",
+      "channel": "call",
+      "problem": "Synthetic emergency plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 590,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 279,
+            "call_outcome": "answered",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-10"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 590,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 590,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-10-03T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 590,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 590,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 590,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-02",
+      "first_name": "Demo Customer 11",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-11@example.com",
+      "phone": "07700 900011",
+      "postcode": "ME1 1AA",
+      "service": "Blocked drains",
+      "urgency": "same_day",
+      "channel": "form",
+      "problem": "Synthetic blocked drains enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "medium": "cpc",
+      "estimated_value": 460,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/24h-maidstone-kent/",
+      "keyword": "blocked drains kent",
+      "utm": {
+        "utm_source": "microsoft_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Drainage Kent"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "blocked drains kent",
+            "campaign": "Drainage Kent"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/24h-maidstone-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 460,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 460,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-10-02T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 460,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 460,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 460,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-01",
+      "first_name": "Demo Customer 12",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-12@example.com",
+      "phone": "07700 900012",
+      "postcode": "DA1 4AA",
+      "service": "General plumbing",
+      "urgency": "same_day",
+      "channel": "website",
+      "problem": "Synthetic general plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "lost",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "medium": "cpc",
+      "estimated_value": 0,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "plumbing advice",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "General plumbing broad"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "plumbing advice",
+            "campaign": "General plumbing broad"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Website callback"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-30",
+      "first_name": "Demo Customer 13",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-13@example.com",
+      "phone": "07700 900013",
+      "postcode": "DA11 9AA",
+      "service": "Emergency plumbing",
+      "urgency": "emergency",
+      "channel": "call",
+      "problem": "Synthetic emergency plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 740,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 312,
+            "call_outcome": "answered",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-13"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 740,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 740,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-09-30T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 740,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 740,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 740,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-28",
+      "first_name": "Demo Customer 14",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-14@example.com",
+      "phone": "07700 900014",
+      "postcode": "BR8 7AA",
+      "service": "Leak detection",
+      "urgency": "same_day",
+      "channel": "form",
+      "problem": "Synthetic leak detection enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 560,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "leak detection dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "leak detection dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 560,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 560,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-09-28T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 560,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 560,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 560,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-26",
+      "first_name": "Demo Customer 15",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-15@example.com",
+      "phone": "07700 900015",
+      "postcode": "ME14 1AA",
+      "service": "Blocked drains",
+      "urgency": "same_day",
+      "channel": "call",
+      "problem": "Synthetic blocked drains enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "medium": "cpc",
+      "estimated_value": 390,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/24h-maidstone-kent/",
+      "keyword": "blocked drains kent",
+      "utm": {
+        "utm_source": "microsoft_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Drainage Kent"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "blocked drains kent",
+            "campaign": "Drainage Kent"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/24h-maidstone-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 334,
+            "call_outcome": "answered",
+            "called_number": "07900 049749",
+            "provider_call_id": "DEMO-CALL-15"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 390,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 390,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-09-26T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 390,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 390,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 390,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-24",
+      "first_name": "Demo Customer 16",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-16@example.com",
+      "phone": "07700 900016",
+      "postcode": "DA1 2AA",
+      "service": "Emergency plumbing",
+      "urgency": "emergency",
+      "channel": "whatsapp",
+      "problem": "Synthetic emergency plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 480,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "whatsapp",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 480,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 480,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-09-24T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 480,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 480,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 480,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-22",
+      "first_name": "Demo Customer 17",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-17@example.com",
+      "phone": "07700 900017",
+      "postcode": "DA7 4AA",
+      "service": "Bathrooms",
+      "urgency": "planned",
+      "channel": "form",
+      "problem": "Synthetic bathrooms enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "quote",
+      "source": "organic",
+      "campaign": "Local search",
+      "medium": "organic",
+      "estimated_value": 1200,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "bathroom plumber dartford",
+      "utm": {
+        "utm_source": "organic",
+        "utm_medium": "organic",
+        "utm_campaign": "Local search"
+      },
+      "events": [
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 1200,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-20",
+      "first_name": "Demo Customer 18",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-18@example.com",
+      "phone": "07700 900018",
+      "postcode": "DA8 2AA",
+      "service": "Emergency plumbing",
+      "urgency": "emergency",
+      "channel": "call",
+      "problem": "Synthetic emergency plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 510,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 367,
+            "call_outcome": "answered",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-18"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 510,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 510,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-09-20T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 510,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 510,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 510,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-16",
+      "first_name": "Demo Customer 19",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-19@example.com",
+      "phone": "07700 900019",
+      "postcode": "RM17 5AA",
+      "service": "Blocked drains",
+      "urgency": "same_day",
+      "channel": "form",
+      "problem": "Synthetic blocked drains enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "medium": "cpc",
+      "estimated_value": 440,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "blocked drains kent",
+      "utm": {
+        "utm_source": "microsoft_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Drainage Kent"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "blocked drains kent",
+            "campaign": "Drainage Kent"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "form_submit",
+          "minutes": 2,
+          "metadata": {
+            "form_name": "Request a quote"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 440,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 440,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-09-16T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 440,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 440,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 440,
+            "currency": "GBP"
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-09-12",
+      "first_name": "Demo Customer 20",
+      "last_name": "",
+      "company_name": "",
+      "email": "plumbing-demo-20@example.com",
+      "phone": "07700 900020",
+      "postcode": "TN13 1AA",
+      "service": "Emergency plumbing",
+      "urgency": "emergency",
+      "channel": "call",
+      "problem": "Synthetic emergency plumbing enquiry for demonstration only.",
+      "currency": "GBP",
+      "status": "paid",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "medium": "cpc",
+      "estimated_value": 620,
+      "revenue": 0,
+      "notes": "DEMO — synthetic customer, illustrative values, no live account data.",
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/",
+      "keyword": "emergency plumber dartford",
+      "utm": {
+        "utm_source": "google_ads",
+        "utm_medium": "cpc",
+        "utm_campaign": "Emergency Dartford"
+      },
+      "events": [
+        {
+          "type": "ad_click",
+          "minutes": 0,
+          "metadata": {
+            "keyword": "emergency plumber dartford",
+            "campaign": "Emergency Dartford"
+          }
+        },
+        {
+          "type": "page_view",
+          "minutes": 1,
+          "metadata": {
+            "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+          }
+        },
+        {
+          "type": "phone_call",
+          "minutes": 2,
+          "metadata": {
+            "call_duration": 389,
+            "call_outcome": "answered",
+            "called_number": "07392 234913",
+            "provider_call_id": "DEMO-CALL-20"
+          }
+        },
+        {
+          "type": "status_change",
+          "minutes": 5,
+          "metadata": {
+            "status": "qualified",
+            "previous_status": "contacted"
+          }
+        },
+        {
+          "type": "quote_sent",
+          "minutes": 15,
+          "metadata": {
+            "amount": 620,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "quote_accepted",
+          "minutes": 25,
+          "metadata": {
+            "amount": 620,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "booking_created",
+          "minutes": 30,
+          "metadata": {
+            "scheduled_at": "2026-09-12T11:00:00Z"
+          }
+        },
+        {
+          "type": "job_started",
+          "minutes": 120,
+          "metadata": {
+            "amount": 620,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "job_completed",
+          "minutes": 180,
+          "metadata": {
+            "amount": 620,
+            "currency": "GBP"
+          }
+        },
+        {
+          "type": "payment_received",
+          "minutes": 210,
+          "metadata": {
+            "amount": 620,
+            "currency": "GBP"
+          }
+        }
+      ]
+    }
+  ],
+  "ads": [
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-29",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-29",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-29",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-29",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-28",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-28",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-28",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-28",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-27",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-27",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-27",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-27",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-26",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-26",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-26",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-26",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-25",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-25",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-25",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-25",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-24",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-24",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-24",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-24",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-23",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-23",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-23",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-23",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-22",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-22",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-22",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-22",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-21",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-21",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-21",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-21",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-20",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-20",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-20",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-20",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-19",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-19",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-19",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-19",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-18",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-18",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-18",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-18",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-17",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-17",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-17",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-17",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-16",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-16",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-16",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-16",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-15",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-15",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-15",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-15",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-14",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-14",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-14",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-14",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-13",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-13",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-13",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-13",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-12",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-12",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-12",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-12",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-11",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-11",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-11",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-11",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-10",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-10",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-10",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-10",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-09",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-09",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-09",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-09",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-08",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-08",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-08",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-08",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-07",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "emergency plumber dartford",
+      "search_term": "emergency plumber near me",
+      "spend": 21,
+      "impressions": 133,
+      "clicks": 7,
+      "conversions": 1,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-07",
+      "source": "google_ads",
+      "campaign": "Emergency Dartford",
+      "keyword": "leak detection dartford",
+      "search_term": "water leak repair dartford",
+      "spend": 6,
+      "impressions": 57,
+      "clicks": 3,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-07",
+      "source": "microsoft_ads",
+      "campaign": "Drainage Kent",
+      "keyword": "blocked drains kent",
+      "search_term": "blocked drains maidstone",
+      "spend": 9,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-07",
+      "source": "google_ads",
+      "campaign": "General plumbing broad",
+      "keyword": "plumbing advice",
+      "search_term": "how to fix a tap yourself",
+      "spend": 5,
+      "impressions": 76,
+      "clicks": 4,
+      "conversions": 0,
+      "currency": "GBP"
+    }
+  ],
+  "tracking": [
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "google_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 4,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "google_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "microsoft_ads",
+      "conversions": 2,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "organic",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "organic",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "organic",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "organic",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "gbp",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "gbp",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "gbp",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "gbp",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-06",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "google_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "google_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "organic",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "organic",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "organic",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "organic",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "gbp",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "gbp",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "gbp",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "gbp",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-05",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "microsoft_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "organic",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "organic",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "organic",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "organic",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "gbp",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "gbp",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "gbp",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "gbp",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-04",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "google_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "organic",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "organic",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "organic",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "organic",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "gbp",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "gbp",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "gbp",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "gbp",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-03",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "microsoft_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "organic",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "organic",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "organic",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "organic",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "gbp",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "gbp",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "gbp",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "gbp",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-02",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "google_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "organic",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "organic",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "organic",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "organic",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "gbp",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "gbp",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "gbp",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "gbp",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-10-01",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "call",
+      "system": "google_ads",
+      "conversions": 1,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "form",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "google_ads",
+      "channel": "whatsapp",
+      "system": "google_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "call",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "form",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "microsoft_ads",
+      "channel": "whatsapp",
+      "system": "microsoft_ads",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "organic",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "organic",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "organic",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "organic",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "organic",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "gbp",
+      "channel": "call",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "gbp",
+      "channel": "call",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "gbp",
+      "channel": "form",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "gbp",
+      "channel": "form",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "ga4",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    },
+    {
+      "date": "2026-09-30",
+      "source": "gbp",
+      "channel": "whatsapp",
+      "system": "gtm",
+      "conversions": 0,
+      "definition": "unique_leads",
+      "timezone": "Europe/London",
+      "currency": "GBP"
+    }
+  ],
+  "localSeo": [
+    {
+      "date": "2026-10-06",
+      "location": "Dartford",
+      "service": "Emergency plumbing",
+      "keyword": "emergency plumber dartford",
+      "rank": 4,
+      "competitor": "Demo competitor A",
+      "competitor_rank": 2,
+      "calls": 18,
+      "reviews": 12,
+      "rating": 4.8,
+      "landing_page": "https://local-plumbing-services.co.uk/dartford-kent/"
+    },
+    {
+      "date": "2026-10-06",
+      "location": "Maidstone",
+      "service": "Blocked drains",
+      "keyword": "blocked drains maidstone",
+      "rank": 8,
+      "competitor": "Demo competitor B",
+      "competitor_rank": 3,
+      "calls": 9,
+      "reviews": 7,
+      "rating": 4.7,
+      "landing_page": "https://local-plumbing-services.co.uk/24h-maidstone-kent/"
+    },
+    {
+      "date": "2026-10-06",
+      "location": "Gravesend",
+      "service": "General plumbing",
+      "keyword": "plumber gravesend",
+      "rank": 11,
+      "competitor": "Demo competitor C",
+      "competitor_rank": 5,
+      "calls": 6,
+      "reviews": 5,
+      "rating": 4.6,
+      "landing_page": "https://local-plumbing-services.co.uk/"
+    }
+  ]
+}

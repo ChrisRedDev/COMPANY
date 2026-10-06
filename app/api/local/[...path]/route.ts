@@ -1,4 +1,5 @@
 import { leadHandler } from "@/lib/leads/http";
+import {plumbingInputs} from "@/lib/plumbing/repository";
 import { sqliteLeads } from "@/lib/leads/sqlite";
 import { randomUUID } from "node:crypto";
 import { readFileSync, unlinkSync } from "node:fs";
@@ -89,7 +90,7 @@ async function handler(request: Request, context: Context) {
     readWorkspace(wid);
     switch (path[2]) {
       case "leads":
-        return leadHandler(request, wid, path.slice(3), body, sqliteLeads);
+        return leadHandler(request, wid, path.slice(3), body, sqliteLeads,plumbingInputs(wid).demo);
       case "data":
         if (request.method === "GET") return json(readWorkspace(wid));
         if (request.method === "PUT")

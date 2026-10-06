@@ -2,6 +2,16 @@ const fs = require("node:fs");
 const path = require("node:path");
 const ts = require("typescript");
 const vm = require("node:vm");
+const databases = [];
+function closeTestDatabases(folder) {
+  for (const db of databases) {
+    if (db.path.startsWith(path.resolve(folder) + path.sep)) {
+      try {
+        db.exports.closeDatabase();
+      } catch {}
+    }
+  }
+}
 function load(file, stubs = {}) {
   const filename = path.resolve(file);
   const source = ts.transpileModule(fs.readFileSync(filename, "utf8"), {
@@ -39,6 +49,8 @@ function load(file, stubs = {}) {
     },
     { filename },
   );
+  if (filename.endsWith(path.join("local", "database.ts")))
+    databases.push({ exports, path: exports.databasePath() });
   return exports;
 }
-module.exports = { load };
+module.exports = { load, closeTestDatabases };

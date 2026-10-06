@@ -1,0 +1,19 @@
+# Local Plumbing Services workspace
+
+Use Node.js 24 or later. Run `npm ci` and `npm run dev:localdb`; open http://127.0.0.1:3000/. For a production check, run `npm run build:localdb` followed by `npm run start:localdb`.
+
+The local edition automatically creates **Local Plumbing Services · DEMO**, with 20 synthetic enquiries, historical calls, quotes, booked jobs, payments, paid-search reports, tracking observations, local SEO observations, a sample SEO audit and the supplied Company Brain. The initial 30-day fixture has £1,230 spend, £5,420 recorded payments and £5,210 attributed to paid search. Dates move to the London date at first load. Reopening the demo preserves edits and does not duplicate records. On a fresh browser, the demo is selected by default; returning browsers retain their selected workspace. **Open ready DEMO** switches to it explicitly.
+
+Create a separate workspace for real enquiries. Each local workspace loads its own editable copy of the supplied Company Brain without replacing existing notes. The nine plumbing stages use the existing Lead Hub ledger; Paid requires an actual payment amount. Non-GBP legacy leads retain their currency and are excluded from GBP revenue.
+
+Demo files are available in the dashboard and `public/demo`. The JSON pack is the seed fixture; the CSV files demonstrate the importer contracts. `node scripts/generate-plumbing-demo.mjs` regenerates the synthetic files; an optional first argument copies an updated owner-provided Company Brain file. Example phone numbers use the reserved UK drama range and emails use example.com. Never upload real customer data into `public/demo`.
+
+Google OAuth, Google Ads, GA4, Search Console and Stripe reuse the existing Connectors page. Choose the firm's accounts and read their reports there. Keyword/search-term, Microsoft Ads, call provider, GBP/local-rank and tracking observations are CSV/JSON imports; these imports do not establish a live provider connection. Use GBP, Europe/London, stable call IDs and one observation per import key. Ads rows must partition spend (do not mix keyword totals with their search-term subtotals). Reimporting updates existing observations. Calls replay by provider ID, with conflicting replays rejected; a multi-call file is processed per call and can stop after earlier calls were saved, so retry the corrected file with the same IDs.
+
+Owner revenue is the sum of dated GBP payment events, excluding quote and job values. Payment ROAS uses payments attributed to paid-search acquisition sources divided by spend in the selected period. It is not a click-cohort profit calculation. Keyword revenue is repeated as context for search terms and must not be summed across them. Tracking comparison uses unique CRM contacts for the same date, source, channel and unique-lead definition; event/click definitions remain non-comparable.
+
+SEO Search Audit checks public HTTPS server HTML using the existing DNS-pinned public-page reader. It does not render JavaScript, crawl the whole site, measure Core Web Vitals or query Google rankings. Saved Search Console queries retain their separate reporting period. Demo audit fixtures and local positions/reviews are explicitly synthetic.
+
+The existing AI assistant and 08:00 weekday briefing receive owner metrics and Company Brain. Offline recommendations are deterministic and available without API keys. The existing browser scheduler needs the application open; it is not a server cron. Advertising budget/keyword changes are recommendations. Existing CRM actions remain reviewable.
+
+The specialised dashboard/import/demo/SEO endpoints are localhost SQLite features. Existing Supabase Lead Hub is retained; apply `supabase/migrations/202610060001_plumbing_pipeline.sql` to enable the extended stages and GBP child ledger entries. This change does not add cloud equivalents for the new local reporting endpoints.

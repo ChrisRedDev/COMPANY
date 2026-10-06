@@ -132,11 +132,12 @@ test("OAuth: PKCE, cookie przeglądarki, single-use, szyfrowanie i izolacja firm
           .includes(Buffer.from("refresh-private-demo")),
         false,
       );
-    assert.equal(
-      fs.statSync(path.join(`${f.db.databasePath()}.google-oauth`, "key"))
-        .mode & 0o777,
-      0o600,
-    );
+    if (process.platform !== "win32")
+      assert.equal(
+        fs.statSync(path.join(`${f.db.databasePath()}.google-oauth`, "key"))
+          .mode & 0o777,
+        0o600,
+      );
     const backup = path.join(f.dir, "backup.sqlite");
     f.db.database().exec(`VACUUM INTO '${backup}'`);
     assert.equal(

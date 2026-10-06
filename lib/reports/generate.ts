@@ -11,13 +11,13 @@ import {
 
 const DAY = 86400000;
 const pln = (v: number) =>
-  new Intl.NumberFormat("pl-PL", {
+  new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "PLN",
     maximumFractionDigits: 0,
   }).format(v);
 const num = (v: number) =>
-  new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 1 }).format(v);
+  new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 }).format(v);
 function shift(day: string, days: number) {
   return new Date(Date.parse(`${day}T12:00:00Z`) + days * DAY)
     .toISOString()
@@ -109,7 +109,7 @@ function weekly(
 ) {
   const days = span(r.from, r.to);
   const monthLabel = (key: string) =>
-    new Intl.DateTimeFormat("pl-PL", { month: "short", timeZone: "UTC" })
+    new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" })
       .format(new Date(`${key}-15T12:00:00Z`))
       .replace(".", "");
   if (days > 70) {
@@ -137,7 +137,7 @@ function weekly(
   for (let start = r.from; start <= r.to; start = shift(start, bucketDays))
     buckets.push({
       value: 0,
-      label: new Intl.DateTimeFormat("pl-PL", {
+      label: new Intl.DateTimeFormat("en-GB", {
         day: "numeric",
         month: "short",
         timeZone: "UTC",

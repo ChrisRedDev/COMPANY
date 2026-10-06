@@ -48,7 +48,7 @@ export default function JobForm({
         Number(value) < 0 ||
         Number(value) > 1e12
       )
-        throw Error("Wybierz klienta, nazwę pracy i wartość w PLN.");
+        throw Error("Choose klienta, nazwę pracy i wartość w PLN.");
       const changes: string[] = [];
       if (!b) changes.push("Utworzono zlecenie");
       else {
@@ -85,7 +85,7 @@ export default function JobForm({
       const conflict = bookingConflict(s.deals, booking, item?.id);
       if (conflict)
         throw Error(
-          `Ten termin jest zajęty: „${conflict.name}”. Wybierz inny termin lub osobę / stanowisko.`,
+          `Ten termin jest zajęty: „${conflict.name}”. Choose inny termin lub osobę / stanowisko.`,
         );
       s.saveDeal({
         id: item?.id || id(),
@@ -105,21 +105,21 @@ export default function JobForm({
   }
   return (
     <Modal
-      title={item ? "Edytuj zlecenie" : "Zarezerwuj pracę"}
+      title={item ? "Edit zlecenie" : "Zarezerwuj pracę"}
       onClose={close}
     >
       <form className="crm-form" onSubmit={save}>
         <p className="crm-muted">
-          Termin w strefie Europe/Warsaw. Ta sama osoba lub stanowisko może mieć
+          Due date w strefie Europe/London. Ta sama osoba lub stanowisko może mieć
           jedną aktywną rezerwację naraz.
         </p>
-        <Field label="Klient zlecenia">
+        <Field label="Customer zlecenia">
           <select
             required
             value={client}
             onChange={(e) => setClient(e.target.value)}
           >
-            <option value="">Wybierz klienta</option>
+            <option value="">Choose klienta</option>
             {s.firms.map((f) => (
               <option key={f.id} value={f.id}>
                 {f.name}
@@ -129,10 +129,10 @@ export default function JobForm({
         </Field>
         {!s.firms.length && (
           <p className="crm-alert">
-            Najpierw dodaj klienta w zakładce Klienci.
+            Najpierw dodaj klienta w zakładce Customers.
           </p>
         )}
-        <Field label="Nazwa pracy">
+        <Field label="Name pracy">
           <input
             required
             maxLength={200}
@@ -161,7 +161,7 @@ export default function JobForm({
           </Field>
         </div>
         <div className="crm-form-grid">
-          <Field label="Wartość zlecenia (PLN)">
+          <Field label="Quote value zlecenia (PLN)">
             <input
               type="number"
               min="0"
@@ -229,10 +229,10 @@ export default function JobForm({
             className="crm-button secondary"
             onClick={close}
           >
-            Anuluj
+            Cancel
           </button>
           <button className="crm-button" disabled={!s.firms.length}>
-            Zapisz zlecenie
+            Save zlecenie
           </button>
         </div>
       </form>

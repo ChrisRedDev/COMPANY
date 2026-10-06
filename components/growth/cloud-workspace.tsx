@@ -17,27 +17,40 @@ import { emptyAutomation } from "@/lib/automation/model";
 import { Field } from "../crm/ui";
 export default function CloudWorkspace({ user }: { user: User }) {
   const selectionKey = `growth-os-space:${isSqlite() ? "sqlite" : "cloud"}:${user.id}`;
-  const savedLabel = isSqlite() ? "Zapisano w SQLite" : "Zapisano w Supabase";
+  const savedLabel = isSqlite() ? "Saved in SQLite" : "Saved in Supabase";
   const [spaces, setSpaces] = useState<WorkspaceInfo[]>([]),
     [selected, setSelected] = useState<WorkspaceInfo | null>(null),
     [loaded, setLoaded] = useState(false),
     [loading, setLoading] = useState(false),
     [error, setError] = useState(""),
-    [sync, setSync] = useState("Wybierz przestrzeń"),
+    [sync, setSync] = useState("Choose a workspace"),
     [members, setMembers] = useState(false),
     [createOpen, setCreateOpen] = useState(false),
     [spacesReady, setSpacesReady] = useState(false);
   const pending =
-    sync === "Zmiany oczekują na zapis" ||
-    sync === "Zapisywanie…" ||
-    sync === "Zmiany niezapisane";
+    sync === "Changes waiting to save" ||
+    sync === "Saving…" ||
+    sync === "Unsaved changes";
   const dirty = useRef(false),
     failure = useRef(false),
     revision = useRef(0);
   const refresh = useRef<() => Promise<void>>(async () => {});
   useEffect(() => {
     let active = true;
-    cloudRequest("")
+    (async () => {
+      let demoId = "";
+      if (isSqlite()) {
+        const response = await fetch("/api/plumbing/demo", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+        });
+        const data = await response.json();
+        if (!response.ok) throw Error(data.error);
+        demoId = data.id;
+      }
+      return { ...(await cloudRequest("")), demoId };
+    })()
       .then((r) => {
         if (active) {
           setSpaces(r.workspaces);
@@ -52,6 +65,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
           setSelected(
             r.workspaces.find((s: WorkspaceInfo) => s.id === returning) ??
               r.workspaces.find((s: WorkspaceInfo) => s.id === previous) ??
+              r.workspaces.find((s: WorkspaceInfo) => s.id === r.demoId) ??
               r.workspaces[0] ??
               null,
           );
@@ -102,7 +116,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
       if (!active || writing || !dirty.current || failure.current) return;
       writing = true;
       dirty.current = false;
-      setSync("Zapisywanie…");
+      setSync("Saving…");
       const payload = snapshot(useCrm.getState(), revision.current);
       try {
         const result = await cloudRequest(`/${selected.id}/data`, {
@@ -111,21 +125,31 @@ export default function CloudWorkspace({ user }: { user: User }) {
         });
         if (active) {
           revision.current = result.revision;
-          setSync(dirty.current ? "Zapisywanie…" : savedLabel);
+          setSync(dirty.current ? "Saving…" : savedLabel);
         }
       } catch (e) {
         if (active) {
           failure.current = true;
           dirty.current = true;
-          setError(e instanceof Error ? e.message : "Błąd zapisu.");
-          setSync("Zmiany niezapisane");
+          setError(e instanceof Error ? e.message : "Save failed.");
+          setSync("Unsaved changes");
         }
       } finally {
         writing = false;
         if (active && dirty.current && !failure.current) void save();
       }
     };
-    cloudRequest(`/${selected.id}/data`)
+    (async () => {
+      if (isSqlite()) {
+        const r = await fetch(`/api/plumbing/${selected.id}/brain`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+        });
+        if (!r.ok) throw Error((await r.json()).error);
+      }
+      return cloudRequest(`/${selected.id}/data`);
+    })()
       .then((raw) => {
         if (!active) return;
         const state = validateSnapshot(raw);
@@ -142,7 +166,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
             )
               return;
             dirty.current = true;
-            setSync("Zmiany oczekują na zapis");
+            setSync("Changes waiting to save");
             clearTimeout(timer);
             timer = setTimeout(() => void save(), 180);
           });
@@ -150,7 +174,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
       .catch((e) => {
         if (active) {
           setError(e.message);
-          setSync("Brak połączenia");
+          setSync("Connection unavailable");
         }
       })
       .finally(() => {
@@ -159,7 +183,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
     refresh.current = async () => {
       if (!active || writing || dirty.current || failure.current) return;
       setLoading(true);
-      setSync("Wczytywanie…");
+      setSync("Loading…");
       try {
         const state = validateSnapshot(
           await cloudRequest(`/${selected.id}/data`),
@@ -177,7 +201,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
         if (active) {
           failure.current = true;
           setError(
-            "Nie udało się odświeżyć CRM po działaniu agenta. Wczytaj dane z bazy.",
+            "Could not refresh after the assistant action. Reload the workspace.",
           );
         }
       } finally {
@@ -228,7 +252,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
       setCreateOpen(false);
       setSelected(list.workspaces.find((s: WorkspaceInfo) => s.id === r.id));
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Błąd tworzenia.");
+      setError(e instanceof Error ? e.message : "Could not create workspace.");
     } finally {
       setLoading(false);
     }
@@ -246,17 +270,49 @@ export default function CloudWorkspace({ user }: { user: User }) {
         mails: [],
       });
     } catch {
-      setError("Nie udało się wylogować. Spróbuj ponownie.");
+      setError("Could not sign out. Please retry.");
+    }
+  }
+  async function openDemo() {
+    if (pending || loading) return;
+    setLoading(true);
+    try {
+      const r = await fetch("/api/plumbing/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      const data = await r.json();
+      if (!r.ok) throw Error(data.error);
+      const list = await cloudRequest("");
+      setSpaces(list.workspaces);
+      setSelected(list.workspaces.find((s: WorkspaceInfo) => s.id === data.id));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not load DEMO.");
+    } finally {
+      setLoading(false);
     }
   }
   return (
     <div className="crm flex-col [&_.crm-main]:ml-0! [&_.crm-sidebar]:sticky! [&_.crm-sidebar]:top-0 [&_.crm-sidebar]:h-screen [&_.crm-sidebar]:self-start">
-      <header className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white p-4">
-        <strong>Evolution Growth OS {isSqlite() && "· lokalnie"}</strong>
+      <header className="plumbing-spacebar flex flex-wrap items-center gap-3 p-4">
+        <strong>
+          Local Plumbing Services{" "}
+          <span className="plumbing-chip">Growth OS</span>
+        </strong>
+        {isSqlite() && (
+          <button
+            className="crm-button secondary"
+            onClick={() => void openDemo()}
+            disabled={pending || loading}
+          >
+            Open ready DEMO
+          </button>
+        )}
         <label className="flex items-center gap-2">
-          Przestrzeń
+          Workspace
           <select
-            aria-label="Przestrzeń robocza"
+            aria-label="Workspace selector"
             className="max-w-[18em] rounded-lg border border-slate-200 p-2"
             value={selected?.id ?? ""}
             disabled={pending || loading}
@@ -264,7 +320,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
               setSelected(spaces.find((s) => s.id === e.target.value) ?? null)
             }
           >
-            {!selected && <option value="">Wybierz</option>}
+            {!selected && <option value="">Choose</option>}
             {spaces.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -275,13 +331,13 @@ export default function CloudWorkspace({ user }: { user: User }) {
         <span role="status" className="crm-muted">
           {sync}
         </span>
-        {selected && <span className="crm-muted">Rola: {selected.role}</span>}
+        {selected && <span className="crm-muted">Role: {selected.role}</span>}
         <button
           className="crm-button secondary"
           disabled={!selected || pending || loading || isSqlite()}
           onClick={() => setMembers(true)}
         >
-          Zespół
+          Team
         </button>
         <button
           className="crm-button secondary"
@@ -289,7 +345,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
           onClick={() => void signOut()}
           hidden={isSqlite()}
         >
-          Wyloguj
+          Sign out
         </button>
         <details className="w-full" open={createOpen}>
           <summary
@@ -299,27 +355,25 @@ export default function CloudWorkspace({ user }: { user: User }) {
               if (spacesReady) setCreateOpen((value) => !value);
             }}
           >
-            {isSqlite()
-              ? "Nowa przestrzeń firmy"
-              : "Moje konto · nowa przestrzeń"}
+            {isSqlite() ? "New company workspace" : "Account · new workspace"}
           </summary>
           <p className="crm-muted my-3 break-all">
             {user.email} · UUID: {user.id}
           </p>
           <form onSubmit={create} className="flex flex-wrap items-end gap-3">
-            <Field label="Nazwa nowej przestrzeni">
+            <Field label="New workspace name">
               <input
                 name="name"
                 required
                 maxLength={120}
-                placeholder="Nazwa Twojej firmy"
+                placeholder="Local Plumbing Services"
               />
             </Field>
             <button
               className="crm-button"
               disabled={!spacesReady || loading || pending}
             >
-              Utwórz przestrzeń
+              Create workspace
             </button>
           </form>
         </details>
@@ -327,11 +381,11 @@ export default function CloudWorkspace({ user }: { user: User }) {
       {error && (
         <div className="p-4">
           <p role="alert" className="crm-alert error">
-            {error} Edycja zatrzymana, żeby chronić dane.
+            {error} Editing paused to protect unsaved data.
           </p>
           {loaded && (
             <button className="crm-button secondary" onClick={backup}>
-              Pobierz kopię zmian
+              Download unsaved changes
             </button>
           )}
           <button
@@ -340,7 +394,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
               if (
                 !dirty.current ||
                 confirm(
-                  "Odrzucić niezapisane zmiany i wczytać dane z bazy? Pobierz wcześniej kopię.",
+                  "Discard unsaved changes and reload? Download a backup first.",
                 )
               ) {
                 dirty.current = false;
@@ -349,14 +403,13 @@ export default function CloudWorkspace({ user }: { user: User }) {
               }
             }}
           >
-            Wczytaj z bazy
+            Reload from database
           </button>
         </div>
       )}
       {selected?.role === "viewer" && (
         <p className="crm-alert m-4">
-          Dostęp tylko do odczytu. Zmiany może wprowadzać marketer,
-          administrator lub właściciel.
+          Read-only access. A marketer, administrator or owner can edit.
         </p>
       )}
       {loaded && selected ? (
@@ -378,12 +431,11 @@ export default function CloudWorkspace({ user }: { user: User }) {
       ) : (
         !error && (
           <div className="p-8">
-            <h1>
-              {loading ? "Wczytywanie danych…" : "Utwórz pierwszą przestrzeń"}
-            </h1>
+            <h1>{loading ? "Loading data…" : "Create your first workspace"}</h1>
             <p className="crm-muted">
-              Nowa przestrzeń zaczyna od pustej bazy. Zaimportuj kopię lokalnego
-              CRM w Ustawieniach.
+              The ready DEMO workspace includes synthetic enquiries, jobs,
+              reports and Company Brain. Create a separate workspace for real
+              customers.
             </p>
           </div>
         )
@@ -402,7 +454,9 @@ export default function CloudWorkspace({ user }: { user: User }) {
                 if (current && current.role !== selected.role)
                   setSelected(current);
               })
-              .catch(() => setError("Nie udało się odświeżyć uprawnień."));
+              .catch(() =>
+                setError("Could not refresh workspace permissions."),
+              );
           }}
         />
       )}

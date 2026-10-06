@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
-export const SITE_NAME = "Evolution Growth OS · AI Evolution Polska";
+export const SITE_NAME = "Local Plumbing Services · Growth OS";
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 export const SITE_DESCRIPTION =
-  "Evolution Growth OS od AI Evolution Polska. Lokalny CRM, klienci i rezerwacje usług, Company Brain ze strony firmy, wiedza do Obsidiana i agent AI. Sprzedaż, marka i marketing — po polsku.";
+  "The Local Plumbing Services owner workspace: enquiries, calls, quotes, booked jobs, paid search, tracking health, SEO Search Audit and Company Brain.";
 export const DEFAULT_OG_IMAGE = "/opengraph-image";
 
 export function absoluteUrl(path: string) {
@@ -56,7 +56,7 @@ export function pageMetadata({
     description,
     alternates: { canonical: url },
     openGraph: {
-      locale: "pl_PL",
+      locale: "en_GB",
       type: "website",
       url,
       siteName: SITE_NAME,

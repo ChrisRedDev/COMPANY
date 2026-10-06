@@ -229,7 +229,7 @@ export function validateAutomation(value: unknown): Automation {
 function warsawParts(date: Date) {
   const parts = Object.fromEntries(
     new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Europe/Warsaw",
+      timeZone: "Europe/London",
       year: "numeric",
       month: "2-digit",
       day: "2-digit",

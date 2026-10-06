@@ -4,19 +4,26 @@ export const LEAD_STATUSES = [
   "qualified",
   "quote",
   "booked",
+  "in_progress",
+  "completed",
+  "paid",
   "won",
   "lost",
 ] as const;
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
 export const statusLabels: Record<LeadStatus, string> = {
-  new: "Nowy",
-  contacted: "Kontakt nawiązany",
-  qualified: "Zakwalifikowany",
-  quote: "Oferta",
-  booked: "Zarezerwowany",
-  won: "Wygrany",
-  lost: "Utracony",
+  new: "New Lead",
+  contacted: "Contacted",
+  qualified: "Qualified",
+  quote: "Quote Sent",
+  booked: "Booked",
+  in_progress: "In Progress",
+  completed: "Completed",
+  paid: "Paid",
+  won: "Won (legacy)",
+  lost: "Lost",
 };
+export const PLUMBING_PIPELINE = LEAD_STATUSES.filter((s) => s !== "won");
 export const EVENT_TYPES = [
   "ad_click",
   "page_view",
@@ -39,24 +46,24 @@ export const EVENT_TYPES = [
 ] as const;
 export type EventType = (typeof EVENT_TYPES)[number];
 export const eventLabels: Record<EventType, string> = {
-  ad_click: "Kliknięcie reklamy",
-  page_view: "Wizyta na stronie",
-  form_submit: "Wysłanie formularza",
-  phone_call: "Rozmowa telefoniczna",
+  ad_click: "Ad click",
+  page_view: "Landing page visit",
+  form_submit: "Website form received",
+  phone_call: "Phone call",
   whatsapp: "WhatsApp",
   email: "E-mail",
-  meeting: "Spotkanie",
-  quote_sent: "Wysłana oferta",
-  quote_accepted: "Przyjęta oferta",
-  booking_created: "Rezerwacja",
-  job_started: "Rozpoczęcie pracy",
-  job_completed: "Zakończenie pracy",
-  payment_received: "Otrzymana płatność",
-  review_received: "Opinia klienta",
-  note_added: "Notatka",
-  lead_created: "Utworzenie leada",
-  status_change: "Zmiana statusu",
-  lead_updated: "Aktualizacja danych",
+  meeting: "Customer meeting",
+  quote_sent: "Quote sent",
+  quote_accepted: "Quote accepted",
+  booking_created: "Job booked",
+  job_started: "Job started",
+  job_completed: "Job completed",
+  payment_received: "Payment received",
+  review_received: "Customer review",
+  note_added: "Note added",
+  lead_created: "Enquiry created",
+  status_change: "Pipeline stage changed",
+  lead_updated: "Enquiry details updated",
 };
 export type Json =
   | string
@@ -66,6 +73,12 @@ export type Json =
   | Json[]
   | { [key: string]: Json };
 export type LeadInput = {
+  postcode?: string;
+  service?: string;
+  urgency?: string;
+  channel?: string;
+  problem?: string;
+  currency?: "GBP" | "PLN";
   first_name: string;
   last_name: string;
   company_name: string;
@@ -130,7 +143,7 @@ export type Conversion = {
   event_id: string;
   kind: string;
   value: number;
-  currency: "PLN";
+  currency: "GBP" | "PLN";
   timestamp: string;
 };
 export type Appointment = {
@@ -149,7 +162,7 @@ export type Quote = {
   event_id: string;
   status: "sent" | "accepted" | "rejected";
   amount: number;
-  currency: "PLN";
+  currency: "GBP" | "PLN";
   created_at: string;
   updated_at: string;
 };
@@ -160,7 +173,7 @@ export type Job = {
   event_id: string;
   status: "in_progress" | "completed" | "cancelled";
   amount: number;
-  currency: "PLN";
+  currency: "GBP" | "PLN";
   created_at: string;
   updated_at: string;
 };
@@ -170,7 +183,7 @@ export type Payment = {
   lead_id: string;
   event_id: string;
   amount: number;
-  currency: "PLN";
+  currency: "GBP" | "PLN";
   status: "received";
   timestamp: string;
 };
@@ -256,6 +269,8 @@ export function phoneKey(value: string) {
     throw new LeadError("Wpisz telefon bez liter i numeru wewnętrznego.");
   let normalized = value.replace(/[\s().-]/g, "");
   if (normalized.startsWith("00")) normalized = "+" + normalized.slice(2);
+  if (/^0\d{10}$/.test(normalized)) normalized = "+44" + normalized.slice(1);
+  else if (/^44\d{10}$/.test(normalized)) normalized = "+" + normalized;
   if (/^\d{9}$/.test(normalized)) normalized = "+48" + normalized;
   else if (/^48\d{9}$/.test(normalized)) normalized = "+" + normalized;
   if (!/^\+[1-9]\d{7,14}$/.test(normalized))
@@ -301,6 +316,15 @@ function utm(value: unknown) {
 export function parseLead(value: unknown): LeadInput {
   const v = object(value);
   const result: LeadInput = {
+    postcode: text(v.postcode, 10, "Postcode")
+      .toUpperCase()
+      .replace(/\s+/g, " ")
+      .trim(),
+    service: text(v.service, 100, "Service"),
+    urgency: text(v.urgency, 30, "Urgency"),
+    channel: text(v.channel, 30, "Channel"),
+    problem: text(v.problem, 2000, "Problem"),
+    currency: (v.currency ?? "GBP") as "GBP" | "PLN",
     first_name: text(v.first_name, 100, "Imię"),
     last_name: text(v.last_name, 100, "Nazwisko"),
     company_name: text(v.company_name, 200, "Firma"),
@@ -318,6 +342,25 @@ export function parseLead(value: unknown): LeadInput {
     utm: utm(v.utm),
   };
   phoneKey(result.phone);
+  if (
+    result.postcode &&
+    !/^(GIR 0AA|[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2})$/.test(result.postcode)
+  )
+    throw new LeadError("Enter a valid UK postcode, for example DA1 2JH.");
+  if (!["GBP", "PLN"].includes(result.currency!))
+    throw new LeadError("Unsupported currency.");
+  if (
+    result.urgency &&
+    !["emergency", "same_day", "planned"].includes(result.urgency)
+  )
+    throw new LeadError("Invalid urgency.");
+  if (
+    result.channel &&
+    !["call", "form", "whatsapp", "website", "email", "referral"].includes(
+      result.channel,
+    )
+  )
+    throw new LeadError("Invalid enquiry channel.");
   if (
     !result.first_name &&
     !result.last_name &&
@@ -369,6 +412,11 @@ export function parseEvent(
     throw new LeadError("Opis zdarzenia jest zbyt duży.");
   if (!source) throw new LeadError("Podaj źródło zdarzenia.");
   if (metadata.amount !== undefined) amount(metadata.amount);
+  if (
+    metadata.currency !== undefined &&
+    !["GBP", "PLN"].includes(String(metadata.currency))
+  )
+    throw new LeadError("Unsupported event currency.");
   if (metadata.job_value !== undefined) amount(metadata.job_value);
   if (
     v.event_type === "payment_received" &&

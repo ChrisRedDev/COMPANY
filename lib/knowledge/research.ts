@@ -194,3 +194,9 @@ export async function researchWebsite(input: string) {
   }
   return { sources, warnings };
 }
+// Shared public HTML reader for the SEO audit. Retains DNS pinning, proxy
+// policy, HTTPS restrictions, timeout, response-type and size checks above.
+export async function readPublicHtml(input: string) {
+  const url = websiteUrl(input);
+  return {url:url.href,html:await readPage(url),checkedAt:new Date().toISOString()};
+}

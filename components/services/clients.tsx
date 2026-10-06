@@ -37,7 +37,7 @@ export default function Clients({
         </p>
         <button className="crm-button" onClick={() => edit()}>
           <Icon name="plus" />
-          Dodaj klienta
+          Add customer
         </button>
       </div>
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -73,7 +73,7 @@ export default function Clients({
                 </span>
               </div>
               <span className="crm-text-button">
-                Otwórz kartę klienta <Icon name="arrow" size={16} />
+                Open kartę klienta <Icon name="arrow" size={16} />
               </span>
             </button>
           );
@@ -83,7 +83,7 @@ export default function Clients({
         <section className="crm-card">
           <Empty
             title="Zacznij od swojego klienta"
-            description="Osoba prywatna lub firma. Zapisz kontakt, notatki i pierwszą rezerwację pracy."
+            description="Osoba prywatna lub firma. Save kontakt, notatki i pierwszą rezerwację pracy."
             action={
               <button className="crm-button" onClick={() => edit()}>
                 Dodaj pierwszego klienta
@@ -94,7 +94,7 @@ export default function Clients({
       )}
       {selected && (
         <Modal
-          title={`Klient: ${selected.name}`}
+          title={`Customer: ${selected.name}`}
           wide
           onClose={() => setSelected("")}
         >
@@ -105,7 +105,7 @@ export default function Clients({
                 <h2>{selected.name}</h2>
                 <p className="crm-muted">
                   {selected.address || selected.city} ·{" "}
-                  {selected.phone || "Telefon do uzupełnienia"}
+                  {selected.phone || "Phone do uzupełnienia"}
                 </p>
                 {selected.email && (
                   <a
@@ -124,7 +124,7 @@ export default function Clients({
                     setSelected("");
                   }}
                 >
-                  Edytuj klienta
+                  Edit klienta
                 </button>
                 <button
                   className="crm-button"
@@ -148,7 +148,7 @@ export default function Clients({
             <section>
               <h3>Historia współpracy</h3>
               <p className="crm-muted mb-4">
-                Rezerwacje i realizacje tego klienta. Wartości zleceń nie są
+                Bookings i realizacje tego klienta. Wartości zleceń nie są
                 potwierdzeniem płatności.
               </p>
               <div className="grid gap-3">
@@ -193,11 +193,11 @@ export default function Clients({
                 ) {
                   s.deleteFirm(selected.id);
                   setSelected("");
-                  notify("Klient i jego powiązane dane zostały usunięte.");
+                  notify("Customer i jego powiązane dane zostały usunięte.");
                 }
               }}
             >
-              Usuń klienta i powiązane dane
+              Delete klienta i powiązane dane
             </button>
           </div>
         </Modal>

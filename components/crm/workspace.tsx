@@ -1,6 +1,7 @@
 "use client";
 import { isSqlite } from "@/lib/growth/model";
 import LeadHub from "../leads/hub";
+import PlumbingDashboard from "../plumbing/dashboard";
 import Brain from "../local/brain";
 import Connectors from "../local/connectors";
 import Marketing from "../local/marketing";
@@ -34,76 +35,77 @@ import Reports from "../reports/reports";
 import Automations from "../automation/automations";
 import Copilot from "../copilot/copilot";
 import { useScheduler } from "@/stores/scheduler";
+import { useAgent } from "@/stores/agent-store";
 const NAV: { id: Section; title: string; description: string }[] = [
   {
     id: "dashboard",
-    title: "Pulpit",
-    description: "Twoja sprzedaż w jednym miejscu.",
+    title: "Owner overview",
+    description: "Today’s leads, booked jobs and received revenue.",
   },
   {
     id: "leads",
     title: "Lead Hub",
-    description: "Jeden kontakt, źródła i pełna historia współpracy.",
+    description: "Calls, forms and WhatsApp, through to payment.",
   },
   {
     id: "companies",
-    title: "Firmy",
-    description: "Poznaj klientów i uporządkuj współpracę.",
+    title: "Customers",
+    description: "Customer details and job history.",
   },
   {
     id: "deals",
-    title: "Szanse sprzedaży",
-    description: "Każdy dobry kontakt ma swój kolejny krok.",
+    title: "Sales pipeline",
+    description: "Quotes and opportunities with a clear next step.",
   },
   {
     id: "contacts",
-    title: "Kontakty",
-    description: "Ludzie, z którymi budujesz relacje.",
+    title: "Contacts",
+    description: "Customer contact details.",
   },
   {
     id: "tasks",
-    title: "Zadania",
-    description: "Plan, który zamienia rozmowy w działanie.",
+    title: "Tasks",
+    description: "Follow-ups and work that needs attention.",
   },
   {
     id: "mail",
-    title: "Poczta",
-    description: "Krótkie wiadomości. Dobre rozmowy.",
+    title: "Email",
+    description: "Customer emails and drafts.",
   },
   {
     id: "agent",
-    title: "Agent follow-up",
-    description: "Asystent, który pomaga wrócić do kontaktu.",
+    title: "Follow-up assistant",
+    description: "Keep in touch with customers awaiting a response.",
   },
   {
     id: "reports",
-    title: "Raporty",
-    description: "Raporty zarządcze, sprzedaży i aktywności z eksportem PDF.",
+    title: "Reports",
+    description: "Owner, sales and job reports with PDF export.",
   },
   {
     id: "automations",
-    title: "Harmonogram",
-    description: "Cykliczne raporty, follow-upy i zadania agenta AI.",
+    title: "Schedule",
+    description: "Recurring reports, follow-ups and AI briefings.",
   },
   {
     id: "brain",
     title: "Company Brain",
-    description: "Wiedza firmy w notatkach Markdown i linkach.",
+    description: "Company knowledge, source notes and service guidelines.",
   },
   {
     id: "connectors",
-    title: "Konektory",
-    description: "Połączenia, importy i stan źródeł danych.",
+    title: "Connectors",
+    description: "Connected accounts, imports and data status.",
   },
   {
     id: "ai",
-    title: "Agent AI",
-    description: "Agent, który analizuje dane i sam obsługuje CRM.",
+    title: "AI assistant",
+    description: "Daily insights and reviewable CRM actions.",
   },
   {
     id: "settings",
-    title: "Ustawienia",
-    description: "Poczta, podpis i kopie Twoich danych.",
+    title: "Settings",
+    description: "Email setup, signature and data backups.",
   },
 ];
 export default function Workspace({
@@ -121,24 +123,59 @@ export default function Workspace({
   reloadDatabase?: () => void;
 }) {
   const cloudName = cloud?.name;
+  useEffect(() => {
+    useAgent
+      .getState()
+      .setWorkspace(cloud?.id ?? "local", Boolean(cloud?.readOnly));
+  }, [cloud?.id, cloud?.readOnly]);
   const readOnly = cloud?.readOnly;
   const s = useCrm();
   const serviceMode = s.businessMode === "services";
-  const navigation = NAV.map((n) =>
+  const plumbing = isSqlite() && Boolean(cloud?.id);
+  const [leadId, setLeadId] = useState("");
+  const navigation = [
+    ...NAV,
+    ...(plumbing
+      ? [
+          {
+            id: "ads" as const,
+            title: "Paid search",
+            description: "Google and Microsoft Ads through to booked jobs.",
+          },
+          {
+            id: "calls" as const,
+            title: "Call tracking",
+            description: "Answered and missed calls, linked to their leads.",
+          },
+          {
+            id: "tracking" as const,
+            title: "Tracking health",
+            description:
+              "Compare CRM with GA4, GTM and paid search observations.",
+          },
+          {
+            id: "localSeo" as const,
+            title: "SEO Search Audit",
+            description:
+              "Local visibility, Google Business Profile and page checks.",
+          },
+        ]
+      : []),
+  ].map((n) =>
     serviceMode && n.id === "companies"
       ? {
           ...n,
-          title: "Klienci",
-          description: "Kontakt, ustalenia i historia współpracy.",
+          title: "Customers",
+          description: "Contacts, details and previous jobs.",
         }
       : serviceMode && n.id === "deals"
         ? {
             ...n,
-            title: "Zlecenia",
-            description: "Zarezerwowane prace, terminy i realizacje.",
+            title: "Jobs",
+            description: "Booked jobs, availability and completed work.",
           }
         : serviceMode && n.id === "dashboard"
-          ? { ...n, description: "Twoi klienci i plan pracy w jednym miejscu." }
+          ? { ...n, description: "Your enquiries, booked work and payments." }
           : n,
   );
   const [jobEditor, setJobEditor] = useState<{
@@ -190,7 +227,7 @@ export default function Workspace({
               ...m,
               status: "failed",
               error:
-                "Poprzednia wysyłka nie została potwierdzona. Ponowienie wykorzysta ten sam identyfikator.",
+                "The previous send was not confirmed. Retrying uses the same message ID.",
             });
         if (
           isSqlite() &&
@@ -203,9 +240,7 @@ export default function Workspace({
       .catch(() => {
         if (active) {
           setReady(true);
-          notify(
-            "Nie udało się odczytać zapisu. Sprawdź ustawienia pamięci przeglądarki.",
-          );
+          notify("Could not read saved data. Check browser storage.");
         }
       });
     return () => {
@@ -217,7 +252,7 @@ export default function Workspace({
     const storage = () => {
       setStorageWarning(true);
       notify(
-        "Pamięć przeglądarki jest pełna lub niedostępna. Zmiana nie została trwale zapisana — pobierz kopię w Ustawieniach.",
+        "Browser storage is full or unavailable. Download a backup in Settings.",
       );
     };
     const keyboard = (e: KeyboardEvent) => {
@@ -243,7 +278,7 @@ export default function Workspace({
         setStatus({
           configured: false,
           verified: false,
-          error: "Nie udało się odczytać statusu poczty.",
+          error: "Could not read email status.",
         }),
       );
   }, []);
@@ -273,29 +308,25 @@ export default function Workspace({
     <>
       <div className="crm-brand">
         <Image
-          src="/assets/brand/evolution-mark.png"
-          alt=""
-          width={44}
-          height={44}
+          src="/assets/brand/local-plumbing-services.png"
+          alt="Local Plumbing Services"
+          width={215}
+          height={100}
+          priority
         />
         <div>
-          <strong>
-            Evolution
-            <br />
-            <span>Growth OS</span>
-          </strong>
-          <small>AI EVOLUTION POLSKA</small>
+          <small>LOCAL PLUMBING · GROWTH OS</small>
         </div>
       </div>
       <div className="crm-workspace-label">
         <span className="crm-workspace-dot" />
-        {cloud?.name || "Mój obszar pracy"}
+        {cloud?.name || "My workspace"}
         <Icon name="check" size={13} />
       </div>
       <label className="growth-mode-switch">
-        Sposób pracy
+        Workflow
         <select
-          aria-label="Tryb pracy"
+          aria-label="Workflow mode"
           value={s.businessMode}
           disabled={readOnly || storageBusy}
           onChange={(e) => {
@@ -303,47 +334,38 @@ export default function Workspace({
             navigate("dashboard");
           }}
         >
-          <option value="crm">CRM · sprzedaż B2B</option>
-          <option value="services">Firma usługowa</option>
+          <option value="crm">Sales CRM</option>
+          <option value="services">Plumbing services</option>
         </select>
       </label>
       <div className="crm-nav-caption">
-        {serviceMode ? "KLIENCI I REALIZACJE" : "PRZESTRZEŃ SPRZEDAŻY"}
+        {serviceMode ? "CUSTOMERS & JOBS" : "WORKSPACE"}
       </div>
-      <nav aria-label="Menu główne">
-        {navigation
-          .filter((n) =>
-            [
+      <nav aria-label="Main menu">
+        {(plumbing
+          ? [
+              "dashboard",
+              "leads",
+              "calls",
+              "ads",
+              "tracking",
+              "localSeo",
+              "brain",
+              "deals",
+            ]
+          : [
               "dashboard",
               "leads",
               "companies",
               "deals",
               "contacts",
               "tasks",
-            ].includes(n.id),
-          )
-          .map((n) => (
-            <button
-              key={n.id}
-              aria-label={n.title}
-              className={`crm-nav-item ${section === n.id ? "active" : ""}`}
-              onClick={() => navigate(n.id)}
-              aria-current={section === n.id ? "page" : undefined}
-            >
-              <Icon name={n.id === "leads" ? "contacts" : n.id} />
-              <span>{n.title}</span>
-              {n.id === "companies" && <small>{s.firms.length}</small>}
-              {n.id === "tasks" && (
-                <small>{s.tasks.filter((t) => !t.done).length}</small>
-              )}
-            </button>
-          ))}
-        <div className="crm-nav-caption">KOMUNIKACJA I AUTOMATYZACJA</div>
-        {navigation
-          .filter((n) =>
-            ["ai", "mail", "agent", "automations", "reports"].includes(n.id),
-          )
-          .map((n) => (
+              "brain",
+              "ai",
+            ]
+        ).map((id) => {
+          const n = navigation.find((n) => n.id === id)!;
+          return (
             <button
               key={n.id}
               aria-label={n.title}
@@ -353,51 +375,89 @@ export default function Workspace({
             >
               <Icon
                 name={
-                  n.id === "ai"
-                    ? "spark"
-                    : n.id === "automations"
-                      ? "clock"
-                      : n.id === "reports"
-                        ? "file"
-                        : n.id
+                  n.id === "dashboard"
+                    ? "dashboard"
+                    : n.id === "deals"
+                      ? "deals"
+                      : n.id === "calls" || n.id === "leads"
+                        ? "contacts"
+                        : n.id === "ads"
+                          ? "spark"
+                          : n.id === "tracking"
+                            ? "help"
+                            : n.id === "brain" || n.id === "localSeo"
+                              ? "file"
+                              : n.id
                 }
               />
               <span>{n.title}</span>
-              {n.id === "ai" && <span className="crm-mini-badge">AI</span>}
-              {n.id === "automations" &&
-                s.automation.jobs.some((j) => j.enabled) && (
-                  <small>
-                    {s.automation.jobs.filter((j) => j.enabled).length}
-                  </small>
-                )}
             </button>
-          ))}
-        <div className="crm-nav-caption">WIEDZA I DANE</div>
-        {navigation
-          .filter((n) => ["brain", "connectors"].includes(n.id))
-          .map((n) => (
-            <button
-              key={n.id}
-              aria-label={n.title}
-              className={`crm-nav-item ${section === n.id ? "active" : ""}`}
-              onClick={() => navigate(n.id)}
-            >
-              <Icon name={n.id === "brain" ? "companies" : "settings"} />
-              <span>{n.title}</span>
-            </button>
-          ))}
+          );
+        })}
+        <div className="crm-nav-caption">DAILY DECISIONS</div>
+        {plumbing && (
+          <button
+            className={`crm-nav-item ${section === "ai" ? "active" : ""}`}
+            onClick={() => navigate("ai")}
+            aria-label="AI assistant"
+          >
+            <Icon name="spark" />
+            <span>AI assistant</span>
+            <span className="crm-mini-badge">AI</span>
+          </button>
+        )}
+        <details className="plumbing-more-tools">
+          <summary>More tools</summary>
+          {navigation
+            .filter(
+              (n) =>
+                ![
+                  "dashboard",
+                  "leads",
+                  "calls",
+                  "ads",
+                  "tracking",
+                  "localSeo",
+                  "brain",
+                  "deals",
+                  "ai",
+                  "settings",
+                ].includes(n.id),
+            )
+            .map((n) => (
+              <button
+                key={n.id}
+                aria-label={n.title}
+                className={`crm-nav-item ${section === n.id ? "active" : ""}`}
+                onClick={() => navigate(n.id)}
+              >
+                <Icon
+                  name={
+                    n.id === "automations"
+                      ? "clock"
+                      : n.id === "reports"
+                        ? "file"
+                        : n.id === "connectors"
+                          ? "settings"
+                          : n.id
+                  }
+                />
+                <span>{n.title}</span>
+              </button>
+            ))}
+        </details>
       </nav>
       <div className="crm-sidebar-bottom">
         <div className="crm-sidebar-promo">
           <Icon name="spark" />
-          <strong>Twój kolejny krok z AI</strong>
+          <strong>Your daily plumbing briefing</strong>
           <p>
-            Uporządkuj relacje.
+            Follow up your enquiries.
             <br />
-            Daj sobie przestrzeń na rozwój.
+            Turn leads into booked work.
           </p>
           <button className="crm-text-button" onClick={() => navigate("ai")}>
-            Otwórz agenta AI <Icon name="arrow" size={15} />
+            Open AI assistant <Icon name="arrow" size={15} />
           </button>
         </div>
         <button
@@ -405,7 +465,7 @@ export default function Workspace({
           onClick={() => navigate("settings")}
         >
           <Icon name="settings" />
-          <span>Ustawienia</span>
+          <span>Settings</span>
         </button>
         <button
           className="crm-nav-item"
@@ -415,15 +475,15 @@ export default function Workspace({
           }}
         >
           <Icon name="help" />
-          <span>Jak to działa?</span>
+          <span>Workspace guide</span>
         </button>
         <div className="crm-local-label">
           <span />
           {cloud
             ? isSqlite()
-              ? "Tryb lokalny · SQLite"
-              : "Tryb chmurowy · Supabase"
-            : "Tryb lokalny · Twoja przeglądarka"}
+              ? "Local workspace · SQLite"
+              : "Cloud workspace · Supabase"
+            : "Local browser storage"}
         </div>
       </div>
     </>
@@ -432,7 +492,7 @@ export default function Workspace({
     return (
       <main className="crm-loading" role="status">
         <Icon name="spark" size={32} />
-        <p>Przygotowujemy Twój obszar pracy…</p>
+        <p>Preparing your workspace…</p>
       </main>
     );
   return (
@@ -443,12 +503,12 @@ export default function Workspace({
           <div className="crm-breadcrumb">
             <button
               className="crm-icon-button crm-mobile-only"
-              aria-label="Otwórz nawigację"
+              aria-label="Open navigation"
               onClick={() => setNavOpen(true)}
             >
               <Icon name="menu" />
             </button>
-            <span>Obszar pracy</span>
+            <span>Workspace</span>
             <span>/</span>
             <strong>{current.title}</strong>
           </div>
@@ -457,13 +517,13 @@ export default function Workspace({
               <span />
               {cloud
                 ? isSqlite()
-                  ? "Baza SQLite"
-                  : "Baza Supabase"
-                : "Zapis w przeglądarce"}
+                  ? "SQLite database"
+                  : "Supabase database"
+                : "Saved in browser"}
             </span>
             <button
               className="crm-icon-button"
-              aria-label="Otwórz przewodnik"
+              aria-label="Open guide"
               onClick={() => setOnboarding(true)}
             >
               <Icon name="help" />
@@ -471,16 +531,16 @@ export default function Workspace({
             <button
               className="crm-user"
               onClick={() => navigate("settings")}
-              aria-label="Ustawienia mojego obszaru"
+              aria-label="Workspace settings"
             >
-              AE
+              LS
             </button>
           </div>
         </header>
         <main className="crm-content" inert={readOnly && section !== "leads"}>
           <div className="crm-page-heading">
             <div>
-              <span className="crm-eyebrow">EVOLUTION GROWTH OS</span>
+              <span className="crm-eyebrow">LOCAL PLUMBING SERVICES</span>
               <h1>{current.title}</h1>
               <p>{current.description}</p>
             </div>
@@ -488,13 +548,13 @@ export default function Workspace({
               <Icon name="search" size={18} />
               <input
                 ref={search}
-                aria-label="Szukaj w CRM"
+                aria-label="Search workspace"
                 placeholder={
                   section === "leads"
-                    ? "Szukaj leadów, źródeł i kampanii…"
+                    ? "Search leads, sources and campaigns…"
                     : serviceMode
-                      ? "Szukaj klientów i prac…"
-                      : "Szukaj w CRM…"
+                      ? "Search customers and jobs…"
+                      : "Search workspace…"
                 }
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -504,9 +564,8 @@ export default function Workspace({
           </div>
           {storageWarning && (
             <div className="crm-alert error" role="alert">
-              Zapis lokalny wymaga uwagi: nie udało się odczytać lub zapisać
-              danych. Pobierz kopię JSON w Ustawieniach przed zamknięciem
-              aplikacji.
+              Storage needs attention. Download a JSON backup in Settings before
+              closing the app.
             </div>
           )}
           {query &&
@@ -519,7 +578,7 @@ export default function Workspace({
               "automations",
             ].includes(section) && (
               <div className="crm-card crm-search-results">
-                <h3>Wyniki wyszukiwania</h3>
+                <h3>Search results</h3>
                 {[
                   ...s.firms
                     .filter((f) =>
@@ -528,7 +587,7 @@ export default function Workspace({
                     .map((f) => ({
                       id: f.id,
                       name: f.name,
-                      label: serviceMode ? "Klient" : "Firma",
+                      label: serviceMode ? "Customer" : "Company",
                       open: () => setEditor({ kind: "firm", item: f }),
                     })),
                   ...s.contacts
@@ -540,7 +599,7 @@ export default function Workspace({
                     .map((c) => ({
                       id: c.id,
                       name: c.name,
-                      label: "Kontakt",
+                      label: "Contact",
                       open: () => setEditor({ kind: "contact", item: c }),
                     })),
                   ...s.deals
@@ -565,14 +624,40 @@ export default function Workspace({
                     </button>
                   ))}
                 <p className="crm-muted">
-                  Wyświetlamy do 10 wyników. Pełne filtrowanie znajdziesz w
+                  Showing up to 10 results. Use the section filters for more.
                   odpowiednim module.
                 </p>
               </div>
             )}
+          {plumbing &&
+            ["dashboard", "ads", "calls", "tracking", "localSeo"].includes(
+              section,
+            ) && (
+              <PlumbingDashboard
+                wid={cloud!.id!}
+                view={
+                  section as
+                    | "dashboard"
+                    | "ads"
+                    | "calls"
+                    | "tracking"
+                    | "localSeo"
+                }
+                navigate={navigate}
+                openLead={(id) => {
+                  setLeadId(id);
+                  navigate("leads");
+                }}
+                askAgent={askAgent}
+                notify={notify}
+                readOnly={Boolean(readOnly)}
+              />
+            )}
           {section === "leads" &&
             (cloud?.id ? (
               <LeadHub
+                initialLeadId={leadId}
+                demo={cloudName === "Local Plumbing Services · DEMO"}
                 wid={cloud.id}
                 query={query}
                 readOnly={!!readOnly}
@@ -582,9 +667,8 @@ export default function Workspace({
               <section className="crm-card p-6">
                 <h2>Lead Hub potrzebuje bazy</h2>
                 <p className="mt-4! text-sm leading-relaxed">
-                  Uruchom lokalną edycję SQLite lub skonfiguruj Supabase, aby
-                  zapisywać leady i ich historię. Dotychczasowy CRM pozostaje w
-                  tej przeglądarce.
+                  Run the SQLite edition or configure Supabase to persist Lead
+                  Hub history.
                 </p>
                 <p className="mt-4! text-sm">
                   <code>npm run dev:localdb</code> · Instrukcja w README
@@ -592,7 +676,7 @@ export default function Workspace({
                 </p>
               </section>
             ))}
-          {section === "dashboard" && !query && (
+          {section === "dashboard" && !plumbing && !query && (
             <>
               <CommandCenter
                 navigate={navigate}
@@ -602,7 +686,7 @@ export default function Workspace({
               <StatsBoard navigate={navigate} serviceMode={serviceMode} />
             </>
           )}
-          {section === "dashboard" && !serviceMode && (
+          {section === "dashboard" && !plumbing && !serviceMode && (
             <>
               {isSqlite() && cloud?.id && (
                 <Marketing
@@ -613,7 +697,7 @@ export default function Workspace({
               <Dashboard {...props} />
             </>
           )}{" "}
-          {section === "dashboard" && serviceMode && (
+          {section === "dashboard" && !plumbing && serviceMode && (
             <>
               <ServiceDashboard openJob={openJob} navigate={navigate} />
               {isSqlite() && cloud?.id && (
@@ -654,7 +738,7 @@ export default function Workspace({
               {isSqlite() && cloud?.id && (
                 <details className="crm-card mt-6 p-6">
                   <summary className="cursor-pointer font-semibold">
-                    Agent Company Brain (SQLite) — analiza notatek i marketingu
+                    Company Brain assistant · knowledge and marketing analysis
                   </summary>
                   <div className="mt-5">
                     <AiAgent
@@ -725,8 +809,8 @@ export default function Workspace({
             />
           )}
           <footer className="crm-footer">
-            <span>Stworzone dla dobrych relacji.</span>
-            <span>AI Evolution Polska · PLN · Europe/Warsaw</span>
+            <span>Your local plumbing growth workspace.</span>
+            <span>Local Plumbing Services · GBP · Europe/London</span>
           </footer>
         </main>
       </div>
@@ -743,7 +827,7 @@ export default function Workspace({
           onSaved={() =>
             notify(
               cloud
-                ? "Zmiany wprowadzone. Sprawdź stan synchronizacji."
+                ? "Changes applied. Check sync status."
                 : "Zmiany zapisane w CRM.",
             )
           }
@@ -753,9 +837,7 @@ export default function Workspace({
         <JobForm
           {...jobEditor}
           close={() => setJobEditor(null)}
-          saved={() =>
-            notify("Zlecenie zapisane. Sprawdź stan synchronizacji.")
-          }
+          saved={() => notify("Job saved. Check sync status.")}
         />
       )}
       {composer && (
@@ -780,7 +862,7 @@ export default function Workspace({
           <span>{notice}</span>
           <button
             className="crm-icon-button"
-            aria-label="Zamknij komunikat"
+            aria-label="Close komunikat"
             onClick={() => setNotice("")}
           >
             <Icon name="close" size={16} />

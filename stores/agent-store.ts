@@ -20,7 +20,10 @@ import {
 } from "@/lib/crm/model";
 import { generateReport } from "@/lib/reports/generate";
 import { newJob } from "@/lib/automation/model";
-import { isCloud } from "@/lib/growth/model";
+import { dailyBriefing } from "@/lib/plumbing/briefing";
+import { ukDay, type PlumbingReport } from "@/lib/plumbing/model";
+import { cloudRequest } from "@/lib/supabase/browser";
+import { isSqlite, isCloud } from "@/lib/growth/model";
 
 export type ActionState = {
   id: string;
@@ -361,11 +364,65 @@ export async function runAgent(
   const day = today();
   let reply: { answer: string; actions: AgentAction[]; rejected: string[] };
   let error = false;
+  let plumbing: PlumbingReport | null = null,
+    brain = "";
+  if (isSqlite() && agent.workspace !== "local") {
+    try {
+      const to = ukDay(),
+        from = new Date(Date.parse(`${to}T12:00:00Z`) - 29 * 86400000)
+          .toISOString()
+          .slice(0, 10);
+      const r = await fetch(
+        `/api/plumbing/${agent.workspace}/report?from=${from}&to=${to}`,
+      );
+      if (!r.ok) throw Error("Owner metrics unavailable");
+      plumbing = await r.json();
+      const notes = await cloudRequest(`/${agent.workspace}/brain`);
+      brain =
+        notes.documents
+          ?.map(
+            (d: { title: string; content: string }) =>
+              d.title + "\n" + d.content,
+          )
+          .join("\n\n")
+          .slice(0, 18000) ?? "";
+    } catch {
+      /* CRM-only fallback when the owner report is unavailable. */
+    }
+  }
+  const plumbingPrompt =
+    /plumb|brief|budget|campaign|keyword|tracking|lead|today|dziś|dzisiaj|budżet/i.test(
+      prompt,
+    );
+  const offline = () => {
+    const base = parseCopilotReply(
+      builtinCopilot(prompt, data, day, crm.businessMode),
+    );
+    if (plumbing && plumbingPrompt) {
+      base.answer = dailyBriefing(plumbing);
+      base.actions = plumbing.briefing
+        .filter(
+          (i) =>
+            i.kind === "followup" &&
+            !data.tasks.some(
+              (t) => !t.done && t.title === i.title && t.date === day,
+            ),
+        )
+        .slice(0, 3)
+        .map((i) => ({
+          type: "create_task" as const,
+          title: i.title,
+          date: day,
+          ...(data.firms.some((f) => f.id === i.leadId)
+            ? { companyId: i.leadId }
+            : {}),
+        }));
+    }
+    return base;
+  };
   try {
     if (provider === "builtin") {
-      reply = parseCopilotReply(
-        builtinCopilot(prompt, data, day, crm.businessMode),
-      );
+      reply = offline();
     } else {
       const history = (agent.messages[agent.workspace] ?? [])
         .slice(-3)
@@ -393,6 +450,15 @@ export async function runAgent(
           context: copilotContext(data, day, {
             automation: crm.automation,
             businessMode: crm.businessMode,
+            marketing: plumbing
+              ? {
+                  kpis: plumbing.kpis,
+                  period: { from: plumbing.from, to: plumbing.to },
+                  demo: plumbing.demo,
+                  briefing: plumbing.briefing,
+                  companyBrain: brain,
+                }
+              : undefined,
           }),
         }),
       });
@@ -404,9 +470,7 @@ export async function runAgent(
     }
   } catch (e) {
     error = true;
-    const fallback = parseCopilotReply(
-      builtinCopilot(prompt, data, day, crm.businessMode),
-    );
+    const fallback = offline();
     reply = {
       answer: `> ⚠️ ${e instanceof Error ? e.message : "Błąd dostawcy AI."} Odpowiada wbudowany agent offline.\n\n${fallback.answer}`,
       actions: fallback.actions,

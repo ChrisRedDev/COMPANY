@@ -18,7 +18,7 @@ export default function BrainEditor({
   close: () => void;
   saved: () => void;
 }) {
-  const [content, setContent] = useState(note?.content || "# Wiedza firmy\n\n"),
+  const [content, setContent] = useState(note?.content || "# Company knowledge\n\n"),
     [title, setTitle] = useState(note?.title || ""),
     [category, setCategory] = useState(note?.category || "company"),
     [busy, setBusy] = useState(false),
@@ -50,13 +50,13 @@ export default function BrainEditor({
   }
   return (
     <Modal
-      title={note ? "Edytuj notatkę" : "Nowa notatka"}
+      title={note ? "Edit note" : "New note"}
       onClose={() => {
         if (!busy) close();
       }}
     >
       <form onSubmit={submit}>
-        <Field label="Tytuł notatki">
+        <Field label="Title notatki">
           <input
             autoFocus
             value={title}
@@ -65,7 +65,7 @@ export default function BrainEditor({
             onChange={(e) => setTitle(e.target.value)}
           />
         </Field>
-        <Field label="Folder wiedzy">
+        <Field label="Category wiedzy">
           <select
             value={category}
             onChange={(e) =>
@@ -80,8 +80,8 @@ export default function BrainEditor({
           </select>
         </Field>
         <Field
-          label="Treść Markdown"
-          hint="Łącz notatki przez [[Tytuł]] lub [[services/Tytuł]]."
+          label="Content Markdown"
+          hint="Łącz notatki przez [[Title]] lub [[services/Title]]."
         >
           <textarea
             className="font-mono text-sm"
@@ -103,10 +103,10 @@ export default function BrainEditor({
             disabled={busy}
             onClick={close}
           >
-            Anuluj
+            Cancel
           </button>
           <button className="crm-button" disabled={busy}>
-            {busy ? "Zapisywanie…" : "Zapisz notatkę"}
+            {busy ? "Saving…" : "Save notatkę"}
           </button>
         </div>
       </form>

@@ -22,6 +22,7 @@ export async function leadHandler(
   path: string[],
   body: unknown,
   repo: LeadRepository,
+  demoWorkspace = false,
 ) {
   try {
     if (!uuid(wid)) throw new LeadError("Nieprawidłowa przestrzeń.");
@@ -64,7 +65,7 @@ export async function leadHandler(
         input.phone,
       );
       if (match) return response({ lead: match, duplicate: true });
-      let b = newLead(wid, id, input);
+      let b = newLead(wid, id, input, demoWorkspace);
       b = addEvent(b, {
         id: randomUUID(),
         workspace_id: wid,
@@ -86,6 +87,11 @@ export async function leadHandler(
     ) {
       const event = parseEvent(v, wid, lid),
         previous = current.events.find((e) => e.id === event.id);
+      if (
+        event.metadata.currency &&
+        event.metadata.currency !== (current.lead.currency ?? "PLN")
+      )
+        throw new LeadError("Event currency must match the lead currency.");
       if (
         [
           "ad_click",

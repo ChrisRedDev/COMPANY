@@ -4,6 +4,7 @@ import ScrollToTop from "@/components/_common/scroll-to-top";
 import { SIDEBAR_WIDTH_SCRIPT } from "@/lib/sidebar";
 import "./globals.css";
 import "./crm.css";
+import "./plumbing.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pl" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en-GB" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
