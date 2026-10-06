@@ -100,6 +100,8 @@ API ma limit 20 sekund na żądanie, 2 MB odpowiedzi, jedno ponowienie 429/502/5
 
 ## 8. Weryfikacja
 
+W połączonym wydaniu 0.7.0 przeszło **59 testów Node**, **13 testów przeglądarkowych SQLite** i **5 testów regresji cloud**. Przeszły także TypeScript, ESLint oraz produkcyjny build lokalny.
+
 Testy Node sprawdzają OAuth z PKCE, cookies, single-use, wygasanie, anulowanie, zakresy, szyfrowanie, brak sekretów w rzeczywistej kopii SQLite, izolację firm, zmianę konta podczas odczytu oraz kontrakty GA4/GSC/Ads, metryki, paginację i MCC. Testy przeglądarkowe sprawdzają wybór usług, powrót logowania, konfigurację, raporty, odłączenie, pulpit i telefon.
 
 **Odpowiedzi Google w testach i screenshotach są jawnie mockowane.** Ta sesja nie ma danych OAuth ani dostępu do Twoich kont; odczyt live potwierdzisz dopiero po własnej konfiguracji przyciskiem **Sprawdź odczyt**. Screenshoty `google-*-demo.png` pokazują dane testowe.

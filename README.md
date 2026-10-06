@@ -14,7 +14,7 @@ Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, 
 
 ![Centrum dowodzenia Evolution Growth OS](docs/screenshots/command-center.png)
 
-**W 0.7:** logowanie Google i bezpośrednie statystyki Ads, rozwijające wersję 0.6: Centrum dowodzenia z kondycją firmy i rekomendacjami AI, wbudowany **Evolution Agent** działający bez klucza API, katalog konektorów premium i odczyt płatności **Stripe**. Plan i szczegóły: [docs/PRODUCT-POLISH.md](docs/PRODUCT-POLISH.md).
+**W 0.7:** logowanie Google, wybór usług i statystyki Ads bez CSV. Aplikacja zawiera również Centrum dowodzenia, wbudowanego **Evolution Agenta** bez klucza API, katalog konektorów i odczyt płatności **Stripe**. Plan i szczegóły: [docs/PRODUCT-POLISH.md](docs/PRODUCT-POLISH.md).
 
 ![Pulpit Evolution Growth OS z wynikami kampanii DEMO](docs/screenshots/local-dashboard.png)
 
@@ -292,7 +292,7 @@ npm run test:localdb
 
 Playwright wymaga Chromium: `npx playwright install chromium` lub `CRM_CHROMIUM_PATH=/ścieżka/do/chromium`. Testy uruchamiają serwery na portach 3000 (CRM), 3001 (cloud UI) i 3002 (SQLite). Nie uruchamiaj kilku instancji Next dev z tym samym `.next/dev` równocześnie. `npm run test:db` dodatkowo wymaga Docker i sprawdza migrację/RLS w jednorazowym Postgres; bootstrap Auth nie jest testem rzeczywistej usługi Supabase Auth.
 
-Testy obejmują rezerwacje i kolizje terminów, historię klienta, przełączanie trybu, onboarding, agregację wykresów, walidację, izolację przestrzeni, konflikty, SQLite, kopie, wikilinki, ZIP, import/KPI, adaptery, wybór modelu, zatwierdzanie i generator. Dostawcy API/AI są jawnie mockowani w testach; SQLite i eksporty są rzeczywiste. Generator UI używa dostawcy testowego, a jego atomowy zapis jest sprawdzany osobno na SQLite. Nie wykonano płatnych wywołań AI ani logowania do rzeczywistych kont Supabase, WordPress, PostHog czy Resend w tym środowisku. Live smoke test wymaga własnej konfiguracji użytkownika.
+Testy obejmują rezerwacje i kolizje terminów, historię klienta, przełączanie trybu, onboarding, agregację wykresów, walidację, izolację przestrzeni, konflikty, SQLite, kopie, wikilinki, ZIP, import/KPI, adaptery, wybór modelu, zatwierdzanie i generator. Testy obejmują także OAuth z PKCE, szyfrowanie i konta MCC. Dostawcy API/AI są jawnie mockowani w testach; SQLite i eksporty są rzeczywiste. Generator UI używa dostawcy testowego, a jego atomowy zapis jest sprawdzany osobno na SQLite. Nie wykonano płatnych wywołań AI ani logowania do rzeczywistych kont Supabase, WordPress, PostHog czy Resend w tym środowisku. Live smoke test wymaga własnej konfiguracji użytkownika.
 
 | Katalog                                                                          | Odpowiedzialność                                          |
 | -------------------------------------------------------------------------------- | --------------------------------------------------------- |

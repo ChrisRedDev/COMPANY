@@ -475,8 +475,8 @@ export default function Connectors({
             </div>
             <p className="crm-muted">
               Wczytaj dzienne wyniki kampanii w PLN. Adapter importu waliduje
-              dane i aktualizuje istniejące wiersze. Bez live OAuth i zmian
-              kampanii.
+              dane i aktualizuje istniejące wiersze. Import pozostaje osobny
+              względem odczytu Google Ads API.
             </p>
             <p className="text-sm">
               Kolumny: date, source, campaign, spend, impressions, clicks,
