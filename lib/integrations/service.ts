@@ -9,6 +9,7 @@ import {
   integrationSettings,
   saveIntegrationSettings,
 } from "./repository";
+import { credential } from "./google-vault";
 import { IntegrationError } from "./http";
 const running = new Set<string>();
 export function integrations(wid: string) {
@@ -26,7 +27,7 @@ export function integrations(wid: string) {
       })),
     providers: PROVIDERS.map((provider) => ({
       provider,
-      ...providerConfig(provider, integrationSettings(wid, provider)),
+      ...providerConfig(provider, integrationSettings(wid, provider), wid),
     })),
   };
 }
@@ -46,7 +47,9 @@ export async function integrationAction(
     );
   if (
     body.action === "configure" &&
-    (provider === "ga4" || provider === "search_console")
+    (provider === "ga4" ||
+      provider === "search_console" ||
+      provider === "google_ads")
   ) {
     return {
       resource: saveIntegrationSettings(wid, provider, body.resource),
@@ -70,14 +73,29 @@ export async function integrationAction(
   )
     throw new IntegrationError("Najpierw połącz integrację ponownie.", 400);
   const resource = integrationSettings(wid, provider);
-  if (!providerConfig(provider, resource).configured)
+  if (!providerConfig(provider, resource, wid).configured)
     throw new IntegrationError(
       "Uzupełnij konfigurację dostawcy i zapisz usługę w tej przestrzeni.",
       400,
     );
   running.add(key);
   try {
-    const result = await adapter(provider, resource).read();
+    const google =
+      provider === "ga4" ||
+      provider === "search_console" ||
+      provider === "google_ads";
+    const generation = google ? credential(wid)?.generation : undefined;
+    const result = await adapter(provider, resource, wid).read();
+    if (
+      google &&
+      (generation !== credential(wid)?.generation ||
+        JSON.stringify(resource) !==
+          JSON.stringify(integrationSettings(wid, provider)))
+    )
+      throw new IntegrationError(
+        "Połączenie lub usługa Google zmieniły się w czasie odczytu. Pobierz raport ponownie.",
+        409,
+      );
     if (body.action === "sync") {
       if (result.documents) {
         const existing = listDocuments(wid);

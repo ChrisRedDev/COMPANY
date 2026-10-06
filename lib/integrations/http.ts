@@ -12,8 +12,9 @@ export async function apiJson(
   url: URL | string,
   init: RequestInit = {},
   google = false,
+  retry = true,
 ): Promise<unknown> {
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; attempt < (retry ? 2 : 1); attempt++) {
     let response: Response;
     try {
       response = await fetch(url, {
@@ -27,7 +28,11 @@ export async function apiJson(
         "Nie udało się połączyć z API. Sprawdź sieć, proxy i dostęp do domeny dostawcy.",
       );
     }
-    if ([429, 502, 503, 504].includes(response.status) && attempt === 0) {
+    if (
+      [429, 502, 503, 504].includes(response.status) &&
+      attempt === 0 &&
+      retry
+    ) {
       await response.body?.cancel();
       await delay(300);
       continue;

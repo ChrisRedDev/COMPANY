@@ -47,3 +47,6 @@ next-env.d.ts
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+# Local encrypted Google OAuth vault (never commit key or token files)
+*.google-oauth/

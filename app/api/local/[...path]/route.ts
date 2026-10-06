@@ -25,6 +25,13 @@ import {
 } from "@/lib/knowledge/generation";
 import { marketingRows, importMarketing } from "@/lib/integrations/repository";
 import { integrations, integrationAction } from "@/lib/integrations/service";
+import {
+  beginOAuth,
+  disconnectOAuth,
+  oauthStatus,
+} from "@/lib/integrations/google-oauth";
+import { googleResources } from "@/lib/integrations/google-resources";
+import type { GoogleProvider } from "@/lib/integrations/model";
 import { IntegrationError } from "@/lib/integrations/http";
 import {
   aiStatus,
@@ -146,6 +153,30 @@ async function handler(request: Request, context: Context) {
         if (request.method === "GET") return json({ rows: marketingRows(wid) });
         if (request.method === "POST" && typeof body.csv === "string")
           return json({ count: importMarketing(wid, body.csv) });
+        break;
+      case "google":
+        try {
+          if (request.method === "GET" && path.length === 3)
+            return json(oauthStatus(wid, request));
+          if (request.method === "GET" && path[3] === "resources") {
+            const params = new URL(request.url).searchParams;
+            return json({
+              resources: await googleResources(
+                wid,
+                params.get("provider") as GoogleProvider,
+                params.get("manager") || undefined,
+              ),
+            });
+          }
+          if (request.method === "POST" && path[3] === "connect")
+            return beginOAuth(wid, request, body.includeAds === true);
+          if (request.method === "POST" && path[3] === "disconnect")
+            return json(disconnectOAuth(wid));
+        } catch (e) {
+          if (e instanceof IntegrationError)
+            return json({ error: e.message }, e.status);
+          throw e;
+        }
         break;
       case "integrations":
         if (request.method === "GET") return json(integrations(wid));

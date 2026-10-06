@@ -103,9 +103,10 @@ function gaRows(
 export async function readGoogle(
   provider: GoogleProvider,
   settings: Resource,
+  wid?: string,
 ): Promise<IntegrationResult> {
   const resource = validateResource(provider, settings),
-    token = await googleToken();
+    token = await googleToken(wid, provider);
   const post = (url: string, body: unknown) =>
     apiJson(
       url,

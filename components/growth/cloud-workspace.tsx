@@ -45,8 +45,12 @@ export default function CloudWorkspace({ user }: { user: User }) {
           try {
             previous = sessionStorage.getItem(selectionKey) || "";
           } catch {}
+          const returning = isSqlite()
+            ? new URLSearchParams(window.location.search).get("googleWorkspace")
+            : null;
           setSelected(
-            r.workspaces.find((s: WorkspaceInfo) => s.id === previous) ??
+            r.workspaces.find((s: WorkspaceInfo) => s.id === returning) ??
+              r.workspaces.find((s: WorkspaceInfo) => s.id === previous) ??
               r.workspaces[0] ??
               null,
           );

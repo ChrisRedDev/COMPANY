@@ -3,6 +3,7 @@ export const PROVIDERS = [
   "posthog",
   "ga4",
   "search_console",
+  "google_ads",
   "stripe",
 ] as const;
 export type Provider = (typeof PROVIDERS)[number];
@@ -11,6 +12,7 @@ export const providerLabels: Record<Provider, string> = {
   posthog: "PostHog",
   ga4: "Google Analytics 4",
   search_console: "Google Search Console",
+  google_ads: "Google Ads",
   stripe: "Stripe",
 };
 export type PaymentsReport = {
@@ -28,8 +30,13 @@ export type PaymentsReport = {
   daily: { date: string; amount: number }[];
   truncated: boolean;
 };
-export type GoogleProvider = "ga4" | "search_console";
-export type Resource = { propertyId?: string; siteUrl?: string };
+export type GoogleProvider = "ga4" | "search_console" | "google_ads";
+export type Resource = {
+  propertyId?: string;
+  siteUrl?: string;
+  customerId?: string;
+  loginCustomerId?: string;
+};
 export type GoogleReport = {
   provider: GoogleProvider;
   resource: string;
@@ -57,6 +64,20 @@ export function validateResource(
   if (!value || typeof value !== "object" || Array.isArray(value))
     throw Error("Podaj usługę Google.");
   const v = value as Record<string, unknown>;
+  if (provider === "google_ads") {
+    const normalize = (value: unknown) =>
+      typeof value === "string" ? value.trim().replaceAll("-", "") : "";
+    const customerId = normalize(v.customerId),
+      loginCustomerId = normalize(v.loginCustomerId);
+    if (
+      !/^[1-9][0-9]{9}$/.test(customerId) ||
+      (loginCustomerId && !/^[1-9][0-9]{9}$/.test(loginCustomerId))
+    )
+      throw Error(
+        "Podaj 10-cyfrowy numer konta Google Ads oraz opcjonalnie numer menedżera MCC.",
+      );
+    return { customerId, ...(loginCustomerId ? { loginCustomerId } : {}) };
+  }
   if (provider === "ga4") {
     if (
       typeof v.propertyId !== "string" ||

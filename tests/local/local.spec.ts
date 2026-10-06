@@ -1111,3 +1111,290 @@ test("Google raporty: statystyki na Pulpicie, oznaczenie błędu, wyłączenie i
     ),
   ).toBe(true);
 });
+
+test("Google OAuth: adres powrotny, CSRF i zewnętrzny callback bez state nie otwierają dostępu", async ({
+  page,
+  request,
+}) => {
+  await ready(page);
+  const wid = await page.getByLabel("Przestrzeń robocza").inputValue();
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  const google = page.getByRole("region", { name: "Połączenie konta Google" });
+  await expect(
+    google.getByRole("button", { name: "Połącz przez Google", exact: true }),
+  ).toBeEnabled();
+  const status = await request.get(`/api/local/workspaces/${wid}/google`);
+  expect(status.ok()).toBeTruthy();
+  expect((await status.json()).redirectUri).toBe(
+    "http://127.0.0.1:3002/api/local/google/callback",
+  );
+  const rejected = await request.post(
+    `/api/local/workspaces/${wid}/google/connect`,
+    { headers: { Origin: "https://evil.example" }, data: { includeAds: true } },
+  );
+  expect(rejected.status()).toBe(403);
+  const callback = await request.get(
+    "/api/local/google/callback?state=bad&code=secret-demo",
+    { headers: { "sec-fetch-site": "cross-site" } },
+  );
+  expect(callback.status()).toBe(400);
+  expect(await callback.text()).not.toContain("secret-demo");
+  const start = await page.request.post(
+    `/api/local/workspaces/${wid}/google/connect`,
+    { data: { includeAds: true } },
+  );
+  expect(start.ok()).toBeTruthy();
+  const authorization = new URL((await start.json()).url);
+  expect(authorization.origin).toBe("https://accounts.google.com");
+  const callbackUrl = `/api/local/google/callback?${new URLSearchParams({ state: authorization.searchParams.get("state")!, error: "access_denied" })}`;
+  const denied = await page.request.get(callbackUrl, {
+    headers: { "sec-fetch-site": "cross-site" },
+    maxRedirects: 0,
+  });
+  expect(denied.status()).toBe(303);
+  expect(new URL(denied.headers().location).searchParams.get("google")).toBe(
+    "denied",
+  );
+  expect(
+    (await page.request.get(callbackUrl, { maxRedirects: 0 })).status(),
+  ).toBe(400);
+  expect(
+    (
+      await (
+        await page.request.get(`/api/local/workspaces/${wid}/google`)
+      ).json()
+    ).connected,
+  ).toBe(false);
+});
+
+test("Google OAuth i Ads: wybór usług, MCC, zapis raportu, pulpit i odłączenie — DEMO mock API", async ({
+  page,
+}) => {
+  await ready(page);
+  const wid = await page.getByLabel("Przestrzeń robocza").inputValue();
+  let connected = true,
+    saved = false;
+  const totals = {
+    clicks: 420,
+    impressions: 21000,
+    cost: 1250,
+    conversions: 12.5,
+    conversionValue: 6250,
+    ctr: 0.02,
+    cpc: 1250 / 420,
+    cpa: 100,
+    roas: 5,
+  };
+  const weights = Array.from({ length: 30 }, (_, i) => 5 + i / 3 + (i % 7));
+  const weightSum = weights.reduce((a, b) => a + b, 0);
+  let clicksLeft = totals.clicks,
+    costLeft = totals.cost,
+    conversionsLeft = totals.conversions;
+  const daily = weights.map((w, i) => {
+    const date = new Date("2026-09-06T12:00:00Z");
+    date.setUTCDate(date.getUTCDate() + i);
+    const clicks =
+      i === 29 ? clicksLeft : Math.floor((totals.clicks * w) / weightSum);
+    const cost =
+      i === 29
+        ? costLeft
+        : Math.round(((totals.cost * w) / weightSum) * 100) / 100;
+    const conversions =
+      i === 29
+        ? conversionsLeft
+        : Math.round(((totals.conversions * w) / weightSum) * 100) / 100;
+    clicksLeft -= clicks;
+    costLeft -= cost;
+    conversionsLeft -= conversions;
+    return {
+      date: date.toISOString().slice(0, 10),
+      clicks,
+      impressions: clicks * 50,
+      cost,
+      conversions,
+      conversionValue: cost * 5,
+    };
+  });
+  const report = {
+    provider: "google_ads",
+    resource: "Firma DEMO · 1234567890",
+    from: "2026-09-06",
+    to: "2026-10-05",
+    fetched_at: "2026-10-06T12:00:00Z",
+    currency: "PLN",
+    totals,
+    daily,
+    breakdown: [{ label: "DEMO · Rozwój firmy", values: totals }],
+    warnings: [
+      "DEMO — jawny mock Google Ads API, bez danych kont użytkownika.",
+    ],
+  };
+  let selection = { customerId: "", loginCustomerId: "" };
+  await page.route(`**/api/local/workspaces/${wid}/google*`, async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname.endsWith("/resources"))
+      return route.fulfill({
+        json: {
+          resources: [{ id: "1234567890", label: "Firma DEMO · 1234567890" }],
+        },
+      });
+    if (url.pathname.endsWith("/disconnect")) {
+      connected = false;
+      saved = false;
+      selection = { customerId: "", loginCustomerId: "" };
+      return route.fulfill({
+        json: { message: "Usunięto lokalne połączenie Google — DEMO." },
+      });
+    }
+    return route.fulfill({
+      json: {
+        clientConfigured: true,
+        connected,
+        connectedAt: "2026-10-06T12:00:00Z",
+        scopes: connected ? ["https://www.googleapis.com/auth/adwords"] : [],
+        adsDeveloperConfigured: true,
+        redirectUri: "http://127.0.0.1:3002/api/local/google/callback",
+      },
+    });
+  });
+  await page.route(
+    `**/api/local/workspaces/${wid}/google/**`,
+    async (route) => {
+      const url = new URL(route.request().url());
+      if (url.pathname.endsWith("/resources"))
+        return route.fulfill({
+          json: {
+            resources: [{ id: "1234567890", label: "Firma DEMO · 1234567890" }],
+          },
+        });
+      if (url.pathname.endsWith("/disconnect")) {
+        connected = false;
+        saved = false;
+        selection = { customerId: "", loginCustomerId: "" };
+        return route.fulfill({
+          json: { message: "Usunięto lokalne połączenie Google — DEMO." },
+        });
+      }
+      return route.fallback();
+    },
+  );
+  await page.route(
+    `**/api/local/workspaces/${wid}/integrations`,
+    async (route) => {
+      if (route.request().method() === "POST") {
+        const body = route.request().postDataJSON();
+        if (body.action === "configure") {
+          selection = body.resource;
+          return route.fulfill({
+            json: { message: "Zapisano usługę Google Ads — DEMO." },
+          });
+        }
+        saved = true;
+        return route.fulfill({
+          json: { summary: "Pobrano Google Ads — DEMO.", report },
+        });
+      }
+      return route.fulfill({
+        json: {
+          providers: [
+            {
+              provider: "ga4",
+              configured: false,
+              resource: {},
+              required: [],
+              authConfigured: connected,
+            },
+            {
+              provider: "google_ads",
+              configured: connected && !!selection.customerId,
+              resource: selection,
+              required: [],
+              authConfigured: connected,
+            },
+          ],
+          states: saved ? [{ provider: "google_ads", status: "checked" }] : [],
+          snapshots: saved
+            ? [{ provider: "google_ads", payload: { report } }]
+            : [],
+        },
+      });
+    },
+  );
+  // Callback landing restores the company and navigates directly to Connectors.
+  await page.goto(`/?google=connected&googleWorkspace=${wid}`);
+  await expect(
+    page.getByText(
+      "Połączono Google. Wybierz usługi poniżej i pobierz statystyki.",
+    ),
+  ).toBeVisible();
+  await expect(page).not.toHaveURL(/google=/);
+  const ads = page.getByRole("article").filter({
+    has: page.getByRole("heading", { name: "Google Ads", exact: true }),
+  });
+  await ads.getByLabel("Numer menedżera MCC (opcjonalnie)").fill("9876543210");
+  await ads
+    .getByRole("button", { name: "Wczytaj konta pod menedżerem MCC" })
+    .click();
+  await ads
+    .getByLabel("Wybierz usługę Google", { exact: true })
+    .selectOption("1234567890");
+  await ads
+    .getByRole("button", { name: "Zapisz usługę Google Ads", exact: true })
+    .click();
+  expect(selection).toEqual({
+    customerId: "1234567890",
+    loginCustomerId: "9876543210",
+  });
+  await ads
+    .getByRole("button", { name: "Pobierz statystyki", exact: true })
+    .click();
+  await expect(
+    page.getByText("1250,00 zł", { exact: true }).first(),
+  ).toBeVisible();
+  await expect(page.getByText("5×", { exact: true })).toBeVisible();
+  await page.getByText("Kampanie Google Ads — do 20 według kosztu").click();
+  await expect(
+    page.getByText("DEMO · Rozwój firmy", { exact: true }),
+  ).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: "docs/screenshots/google-oauth-ads-demo.png",
+    fullPage: true,
+  });
+  await page.getByRole("button", { name: "Pulpit", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Google Ads", exact: true }),
+  ).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: "docs/screenshots/google-ads-dashboard-demo.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByText("5×", { exact: true })).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({
+    path: "docs/screenshots/google-ads-mobile-demo.png",
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: "Konektory", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Usuń lokalne połączenie Google" })
+    .click();
+  await expect(
+    page.getByText("Usunięto lokalne połączenie Google — DEMO."),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Google połączone", { exact: true }),
+  ).not.toBeVisible();
+  await page.getByRole("button", { name: "Pulpit", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Google Ads", exact: true }),
+  ).not.toBeVisible();
+});

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { localRequest } from "@/lib/local/client";
 import { downloadFile } from "@/lib/crm/backup";
 import { today as currentDate } from "@/lib/crm/model";
+import GoogleAccount from "../integrations/google-account";
 import GoogleSetup from "../integrations/google-setup";
 import { GoogleReportView } from "../integrations/google-reports";
 import {
@@ -186,9 +187,9 @@ export default function Connectors({
               Twoje źródła danych, w jednym miejscu.
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-violet-100/90">
-              Sekrety dostawców zostają na komputerze w .env.local. Konfiguracja
-              dotyczy tej instalacji, a importy są oddzielne dla każdej
-              przestrzeni.
+              Tokeny Google są szyfrowane osobno dla firmy. Pozostałe sekrety
+              zostają na serwerze w .env.local. Konfiguracja dotyczy tej
+              instalacji, a importy są oddzielne dla każdej przestrzeni.
             </p>
           </div>
           <dl className="grid grid-cols-3 gap-3">
@@ -267,6 +268,7 @@ export default function Connectors({
           {message}
         </p>
       )}
+      <GoogleAccount wid={wid} changed={load} />
       <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-3">
         {show("ai") && (
           <article className="crm-card crm-connector grid content-start gap-4 border-violet-200! p-6">
@@ -353,7 +355,9 @@ export default function Connectors({
                         ? "Płatności, zwroty i saldo z ostatnich 30 dni. Klucz ograniczony tylko do odczytu; bez tworzenia płatności i zmian w koncie."
                         : c.provider === "ga4"
                           ? "Sesje, użytkownicy, odsłony, kluczowe zdarzenia i przychód z usługi GA4. Zapisany raport pokaże się też na Pulpicie."
-                          : "Kliknięcia, wyświetlenia, CTR, średnia pozycja oraz zapytania z wyszukiwarki Google. Zapisany raport pokaże się też na Pulpicie."}
+                          : c.provider === "google_ads"
+                            ? "Bezpośredni odczyt kosztów, kliknięć, konwersji i ROAS przez Google Ads API. Bez zmian reklam i bez sumowania z CSV."
+                            : "Kliknięcia, wyświetlenia, CTR, średnia pozycja oraz zapytania z wyszukiwarki Google. Zapisany raport pokaże się też na Pulpicie."}
                 </p>
                 <details>
                   <summary className="cursor-pointer text-sm text-violet-700">
@@ -367,15 +371,14 @@ export default function Connectors({
                     ))}
                   </ul>
                   {(c.provider === "ga4" ||
-                    c.provider === "search_console") && (
+                    c.provider === "search_console" ||
+                    c.provider === "google_ads") && (
                     <p className="crm-muted mt-3">
-                      W Google Cloud włącz Google Analytics Data API i Search
-                      Console API. Utwórz konto usługi, zapisz jego JSON na
-                      komputerze i nadaj adresowi e-mail tego konta dostęp do
-                      Twojej usługi GA4 oraz witryny Search Console. Klucz
-                      wskazujesz w .env.local, a konkretną usługę zapisujesz
-                      poniżej. Możesz też użyć własnego OAuth z tokenem
-                      odświeżania.{" "}
+                      Połącz konto w panelu Google powyżej i włącz odpowiednie
+                      API w Google Cloud. GA4 wymaga Data API i Admin API do
+                      listy usług; Search Console wymaga Search Console API. Ads
+                      wymaga tokenu deweloperskiego i zgody adwords. Dla GA4/GSC
+                      działa też konto usługi. Szczegóły tutaj.{" "}
                       <a
                         className="text-violet-700 underline"
                         href="https://github.com/aievolutionpl/CRM-DASHBOARD/blob/main/docs/GOOGLE-INTEGRATIONS.md"
@@ -391,14 +394,17 @@ export default function Connectors({
                     do notatek ani CSV.
                   </p>
                 </details>
-                {(c.provider === "ga4" || c.provider === "search_console") && (
+                {(c.provider === "ga4" ||
+                  c.provider === "search_console" ||
+                  c.provider === "google_ads") && (
                   <>
                     <p className="crm-muted">
                       {c.authConfigured
                         ? "Uwierzytelnienie Google jest skonfigurowane; dostęp potwierdzi dopiero odczyt API."
-                        : "Najpierw skonfiguruj konto usługi Google lub OAuth w .env.local. Szczegóły znajdziesz w instrukcji podłączenia."}
+                        : "Połącz Google w panelu powyżej lub skonfiguruj dostęp w .env.local. Dla Ads dodaj token deweloperski."}
                     </p>
                     <GoogleSetup
+                      wid={wid}
                       key={`${wid}:${c.provider}:${JSON.stringify(c.resource)}`}
                       provider={c.provider}
                       resource={c.resource || {}}

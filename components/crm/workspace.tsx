@@ -177,6 +177,11 @@ export default function Workspace({
               error:
                 "Poprzednia wysyłka nie została potwierdzona. Ponowienie wykorzysta ten sam identyfikator.",
             });
+        if (
+          isSqlite() &&
+          new URLSearchParams(window.location.search).has("google")
+        )
+          setSection("connectors");
         setReady(true);
         setOnboarding(!readOnly && !current.onboarded);
       })

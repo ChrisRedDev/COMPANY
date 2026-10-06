@@ -1,5 +1,6 @@
 import "server-only";
 import { googleAuthConfigured } from "./google-auth";
+import { readGoogleAds } from "./google-ads";
 import { readGoogle } from "./google";
 import {
   PROVIDERS,
@@ -10,20 +11,39 @@ import {
 import { apiJson } from "./http";
 import { readStripe, stripeConfigured } from "./stripe";
 export type { Provider } from "./model";
-export function providerConfig(provider: Provider, resource: Resource = {}) {
-  if (provider === "ga4" || provider === "search_console")
+export function providerConfig(
+  provider: Provider,
+  resource: Resource = {},
+  wid?: string,
+) {
+  if (
+    provider === "ga4" ||
+    provider === "search_console" ||
+    provider === "google_ads"
+  )
     return {
       configured:
-        googleAuthConfigured() &&
-        Boolean(provider === "ga4" ? resource.propertyId : resource.siteUrl),
-      authConfigured: googleAuthConfigured(),
+        googleAuthConfigured(wid, provider) &&
+        Boolean(
+          provider === "ga4"
+            ? resource.propertyId
+            : provider === "google_ads"
+              ? resource.customerId && process.env.GOOGLE_ADS_DEVELOPER_TOKEN
+              : resource.siteUrl,
+        ),
+      authConfigured: googleAuthConfigured(wid, provider),
       resource,
       required: [
-        "GOOGLE_SERVICE_ACCOUNT_FILE (plik JSON konta usługi)",
+        "lub logowanie Google w panelu powyżej",
+        ...(provider === "google_ads"
+          ? []
+          : ["GOOGLE_SERVICE_ACCOUNT_FILE (plik JSON konta usługi)"]),
         "lub GOOGLE_OAUTH_CLIENT_ID + GOOGLE_OAUTH_CLIENT_SECRET + GOOGLE_OAUTH_REFRESH_TOKEN",
         provider === "ga4"
           ? "Identyfikator usługi GA4 w panelu poniżej"
-          : "Usługa Search Console w panelu poniżej",
+          : provider === "google_ads"
+            ? "GOOGLE_ADS_DEVELOPER_TOKEN i numer konta Ads w panelu poniżej"
+            : "Usługa Search Console w panelu poniżej",
       ],
     };
   if (provider === "stripe")
@@ -78,11 +98,22 @@ export interface IntegrationAdapter {
 export function adapter(
   provider: Provider,
   resource: Resource = {},
+  wid?: string,
 ): IntegrationAdapter {
   if (!PROVIDERS.includes(provider))
     throw Error("Nieznany dostawca integracji.");
-  if (provider === "ga4" || provider === "search_console")
-    return { provider, read: () => readGoogle(provider, resource) };
+  if (
+    provider === "ga4" ||
+    provider === "search_console" ||
+    provider === "google_ads"
+  )
+    return {
+      provider,
+      read: () =>
+        provider === "google_ads"
+          ? readGoogleAds(resource, wid)
+          : readGoogle(provider, resource, wid),
+    };
   if (provider === "stripe") return { provider, read: readStripe };
   if (provider === "wordpress")
     return {

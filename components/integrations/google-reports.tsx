@@ -9,6 +9,12 @@ import {
 import { AreaChart } from "../crm/charts";
 import { dailySeries } from "@/lib/crm/analytics";
 const labels: Record<string, string> = {
+  cost: "Koszt reklam",
+  conversions: "Konwersje Ads",
+  conversionValue: "Wartość konwersji",
+  cpc: "Średni CPC",
+  cpa: "Koszt konwersji (CPA)",
+  roas: "ROAS",
   sessions: "Sesje",
   totalUsers: "Użytkownicy w okresie",
   screenPageViews: "Odsłony",
@@ -25,7 +31,12 @@ function value(metric: string, number: number, currency?: string) {
       style: "percent",
       maximumFractionDigits: 2,
     }).format(number);
-  if (metric === "totalRevenue" && currency)
+  if (
+    ["totalRevenue", "cost", "conversionValue", "cpc", "cpa"].includes(
+      metric,
+    ) &&
+    currency
+  )
     return new Intl.NumberFormat("pl-PL", {
       style: "currency",
       currency,
@@ -34,13 +45,19 @@ function value(metric: string, number: number, currency?: string) {
   return (
     new Intl.NumberFormat("pl-PL", {
       maximumFractionDigits:
+        metric === "conversions" ||
+        metric === "roas" ||
         metric === "position" ||
         metric === "totalRevenue" ||
         metric === "keyEvents"
           ? 2
           : 0,
     }).format(number) +
-    (metric === "totalRevenue" && !currency ? " (waluta niepodana)" : "")
+    (metric === "roas"
+      ? "×"
+      : metric === "totalRevenue" && !currency
+        ? " (waluta niepodana)"
+        : "")
   );
 }
 export function GoogleReportView({
@@ -51,16 +68,24 @@ export function GoogleReportView({
   stale?: boolean;
 }) {
   const [metric, setMetric] = useState(
-    report.provider === "ga4" ? "sessions" : "clicks",
+    report.provider === "ga4"
+      ? "sessions"
+      : report.provider === "google_ads"
+        ? "cost"
+        : "clicks",
   );
   const metrics =
     report.provider === "ga4"
       ? ["sessions", "screenPageViews", "keyEvents"]
-      : ["clicks", "impressions"];
+      : report.provider === "google_ads"
+        ? ["cost", "clicks", "impressions", "conversions", "conversionValue"]
+        : ["clicks", "impressions"];
   const breakdown =
     report.provider === "ga4"
       ? ["sessions", "keyEvents", "totalRevenue"]
-      : ["clicks", "impressions", "ctr", "position"];
+      : report.provider === "google_ads"
+        ? ["cost", "clicks", "impressions", "conversions", "conversionValue"]
+        : ["clicks", "impressions", "ctr", "position"];
   return (
     <section className="crm-card grid min-w-0 gap-5 p-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -92,7 +117,11 @@ export function GoogleReportView({
           >
             <dt className="text-sm text-slate-500">{labels[key] || key}</dt>
             <dd className="mt-2 text-xl font-semibold break-words text-slate-800">
-              {key === "position" && !report.totals.impressions
+              {((key === "position" || key === "ctr") &&
+                !report.totals.impressions) ||
+              (key === "cpc" && !report.totals.clicks) ||
+              (key === "cpa" && !report.totals.conversions) ||
+              (key === "roas" && !report.totals.cost)
                 ? "—"
                 : value(key, n, report.currency)}
             </dd>
@@ -116,13 +145,15 @@ export function GoogleReportView({
       <AreaChart
         points={dailySeries(report.daily, report.from, report.to, metric)}
         title={`${providerLabels[report.provider]} · ${labels[metric]}`}
-        format={(v) => value(metric, v)}
+        format={(v) => value(metric, v, report.currency)}
       />
       <details>
         <summary className="cursor-pointer text-sm font-medium text-violet-700">
           {report.provider === "ga4"
             ? "Kanały pozyskania sesji"
-            : "Zapytania w Google — do 20 pozycji"}
+            : report.provider === "google_ads"
+              ? "Kampanie Google Ads — do 20 według kosztu"
+              : "Zapytania w Google — do 20 pozycji"}
         </summary>
         <div className="mt-4 grid gap-3">
           {report.breakdown.length ? (

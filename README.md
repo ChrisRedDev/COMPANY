@@ -10,11 +10,11 @@ Evolution Growth OS to narzędzie dla lokalnych firm usługowych, małych zespo�
 
 **Przykład:** klient trafia z reklamy, zostawia formularz i dzwoni. W Lead Hub zapisujesz te kontakty przy jednej osobie, dodajesz ofertę, rezerwację, wykonanie pracy i wpłatę. W Company Brain zbierasz ofertę i zasady komunikacji marki. AI Brain pomaga analizować kontekst oraz proponuje zadania i notatki, które zatwierdzasz przed wykonaniem.
 
-Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.6.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
+Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.7.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
 
 ![Centrum dowodzenia Evolution Growth OS](docs/screenshots/command-center.png)
 
-**Nowość w 0.6:** Centrum dowodzenia z kondycją firmy i rekomendacjami AI, wbudowany **Evolution Agent** działający bez klucza API, katalog konektorów premium i odczyt płatności **Stripe**. Plan i szczegóły: [docs/PRODUCT-POLISH.md](docs/PRODUCT-POLISH.md).
+**W 0.7:** logowanie Google i bezpośrednie statystyki Ads, rozwijające wersję 0.6: Centrum dowodzenia z kondycją firmy i rekomendacjami AI, wbudowany **Evolution Agent** działający bez klucza API, katalog konektorów premium i odczyt płatności **Stripe**. Plan i szczegóły: [docs/PRODUCT-POLISH.md](docs/PRODUCT-POLISH.md).
 
 ![Pulpit Evolution Growth OS z wynikami kampanii DEMO](docs/screenshots/local-dashboard.png)
 
@@ -24,16 +24,16 @@ _Działająca aplikacja, lokalny zapis SQLite i zaimportowane dane demonstracyjn
 
 ## Co możesz zrobić w aplikacji
 
-| Moduł                     | Do czego służy                                                                                                                                                                   |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.                                                     |
-| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                                                                      |
-| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                                                                     |
-| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                                                                          |
-| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                                                                    |
-| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                                                                          |
-| **AI Brain**              | Wbudowany Evolution Agent (offline, bez klucza) lub wybrany model przez OpenRouter, Codex CLI albo Claude Code; propozycje zadań i notatek.                                      |
-| **Konektory i poczta**    | Katalog z filtrami; ręczne odczyty GA4, Search Console, WordPress, PostHog i Stripe, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
+| Moduł                     | Do czego służy                                                                                                                                                                                    |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.                                                                      |
+| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                                                                                       |
+| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                                                                                      |
+| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                                                                                           |
+| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                                                                                     |
+| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                                                                                           |
+| **AI Brain**              | Wbudowany Evolution Agent (offline, bez klucza) lub wybrany model przez OpenRouter, Codex CLI albo Claude Code; propozycje zadań i notatek.                                                       |
+| **Konektory i poczta**    | Katalog z filtrami; logowanie Google i odczyty Ads, GA4, Search Console, WordPress, PostHog i Stripe, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
 
 **Dwa sposoby pracy:** CRM i sprzedaż albo Firma usługowa. Przełączenie zmienia widoki i zachowuje dane. Lead Hub działa obok dotychczasowego CRM; nie przenosi automatycznie kontaktów ani zleceń między modułami.
 
@@ -180,32 +180,42 @@ CLI działa w folderze tymczasowym: Codex z `--ignore-user-config`, `--ignore-ru
 
 **Koszt:** analiza dopuszcza do 3000 tokenów odpowiedzi, generator do 8000; kontekst wejściowy też podlega rozliczeniu. Zużycie pokazujemy, jeśli dostawca je zwróci. Nie uruchamiamy analiz ani harmonogramów w tle.
 
-## Google Analytics 4 i Search Console
+## Google OAuth, Analytics 4, Search Console i Ads
 
-W **Konektorach** możesz zapisać usługę GA4 i witrynę Search Console dla każdej firmy. Odczyt korzysta z oficjalnych API Google. Podłącz własne konto usługi przez plik JSON lub skonfiguruj OAuth z tokenem odświeżania; sama obecność konfiguracji nie potwierdza uprawnień.
+W **Konektorach → Połącz przez Google** zalogujesz się na własne konto. Wybór usług i połączenie są osobne dla każdej firmy. Google Ads pobiera wyniki **bez CSV**, przez oficjalne API; import CSV nadal jest dostępny jako niezależne źródło.
 
-1. Włącz Google Analytics Data API i Search Console API w swoim projekcie Google Cloud.
-2. Nadaj kontu usługi dostęp do GA4 oraz witryny Search Console i wskaż jego JSON przez `GOOGLE_SERVICE_ACCOUNT_FILE` w `.env.local`.
-3. Zrestartuj aplikację, otwórz **Konektory**, zapisz numeryczny identyfikator GA4 i dokładny adres usługi Search Console.
-4. Kliknij **Sprawdź odczyt**, potem **Pobierz statystyki**. Zapisane raporty pojawią się także na **Pulpicie**.
+1. Jednorazowo utwórz klienta OAuth typu **Web** w Google Cloud i włącz Analytics Data API, Analytics Admin API oraz Search Console API. Dodaj dokładny URI przekierowania widoczny w Konektorach, np. `http://localhost:3000/api/local/google/callback`.
+2. W `.env.local` wpisz `GOOGLE_OAUTH_CLIENT_ID` i `GOOGLE_OAUTH_CLIENT_SECRET`. Do Ads włącz także Google Ads API i dodaj `GOOGLE_ADS_DEVELOPER_TOKEN` z centrum API swojego konta menedżera MCC. Zrestartuj aplikację.
+3. Kliknij **Połącz przez Google**; opcjonalnie zaznacz Google Ads. W Google zaakceptuj wszystkie żądane usługi. Po powrocie kliknij **Wczytaj dostępne usługi**, wybierz usługę i zapisz. Dostępny jest też ręczny wpis identyfikatora.
+4. Dla agencji wpisz MCC i kliknij **Wczytaj konta pod menedżerem MCC**. Wybierz konto reklamowe; menedżer nie jest kontem z wynikami kampanii.
+5. Kliknij **Sprawdź odczyt**, potem **Pobierz statystyki**. Raport pozostaje lokalnie i pojawia się również na **Pulpicie**.
 
-GA4 pokazuje sesje, użytkowników za okres, odsłony, kluczowe zdarzenia, przychód w walucie usługi i kanały. Search Console pokazuje kliknięcia, wyświetlenia, CTR, pozycję i zapytania. Raporty obejmują 30 dni; Search Console kończy zakres 3 dni temu ze względu na opóźnienia. Wyniki Google nie są dodawane do leadów z CSV ani wpłat Lead Hub. Google Ads nadal korzysta z importu CSV.
+| Źródło             | Raport                                                                                                                                                     |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GA4**            | Sesje, użytkownicy za okres, odsłony, kluczowe zdarzenia, przychód w walucie usługi i kanały.                                                              |
+| **Search Console** | Kliknięcia, wyświetlenia, CTR, pozycja i zapytania; 30 dni kończące się 3 dni temu.                                                                        |
+| **Google Ads**     | Koszt, kliknięcia, wyświetlenia, konwersje, wartość konwersji, CTR, CPC, CPA i ROAS. Wykresy oraz do 20 kampanii według kosztu, w walucie i strefie konta. |
 
-Funkcja działa w **SQLite**, bez automatycznych synchronizacji w tle i bez instalowania trackingu na stronie. [Instrukcja podłączenia, uprawnienia, OAuth i diagnostyka](docs/GOOGLE-INTEGRATIONS.md).
+Działa w **lokalnej edycji SQLite**. Odczyt jest ręczny i nie zmienia kampanii. Google Ads wymaga scope `adwords`, który pozwala także na zarządzanie reklamami; aplikacja wykonuje wyłącznie zapytania odczytu. Dane Google nie są dodawane do CSV ani wpłat Lead Hub. Nie ma automatycznego trackingu ani harmonogramu. Nadal działają zaawansowane konfiguracje konta usługi GA4/GSC i tokenu OAuth w `.env.local`.
+
+Tokeny odświeżania z logowania są szyfrowane osobno dla firm, poza SQLite i repozytorium. **Pełna kopia SQLite nie zawiera tokenów Google**; po odtworzeniu na innym komputerze zaloguj się ponownie. Zmiana konta czyści wybór usług i raporty Google tej firmy. **Usuń lokalne połączenie Google** usuwa lokalny token i raporty; zgodę Google cofniesz w ustawieniach swojego konta.
+
+[Pełna instrukcja Google: OAuth, uprawnienia, konta MCC, token deweloperski, kopie i diagnostyka](docs/GOOGLE-INTEGRATIONS.md).
 
 ## Konektory i pulpit marketingowy
 
 Konektory pokazują brak konfiguracji, udany odczyt, datę sprawdzenia, błąd i wyłączenie w przestrzeni. Odczyt jest ręczny. Po zmianie `.env.local` zrestartuj aplikację; plik dotyczy całej instalacji, a zapisane dane są oddzielne dla firm. „Odczyt API sprawdzony” potwierdza żądanie do API, nie poprawność trackingu.
 
-| Integracja                                   | Konfiguracja                                                                                | Działające operacje                                                                                                 |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **WordPress / Elementor**                    | `WP_BASE_URL=https://twoja-strona.pl`; opcjonalnie `WP_USERNAME`, `WP_APPLICATION_PASSWORD` | Sprawdzenie API i import pierwszych 100 opublikowanych stron do folderu `web`; bez publikacji i zmian w Elementorze |
-| **Google Analytics 4**                       | Plik konta usługi lub własny OAuth; identyfikator GA4 zapisany w panelu                     | Odczyt danych za 30 dni, kanały, lokalny zapis i wykresy na Pulpicie                                                |
-| **Google Search Console**                    | To samo uwierzytelnienie Google; osobna usługa witryny w panelu                             | Dane skuteczności Web, trend dzienny, CTR, pozycja i do 20 zapytań                                                  |
-| **PostHog Cloud EU/US**                      | `POSTHOG_HOST`, `POSTHOG_PROJECT_ID`, `POSTHOG_PERSONAL_API_KEY`                            | Liczba zdarzeń według typu z ostatnich 30 dni; ręczny odczyt zapisuje wynik lokalnie                                |
-| **Google Ads / Microsoft Ads i inne kanały** | Plik CSV według szablonu z Konektorów                                                       | Import dziennych wyników i aktualizacja tych samych dat, kampanii oraz źródeł; bez live OAuth                       |
-| **Resend**                                   | `RESEND_API_KEY`, `CRM_MAIL_FROM`, `CRM_MAIL_ACCESS_TOKEN`                                  | Test odczytu domen i wysyłka zatwierdzonych szkiców                                                                 |
-| **OpenRouter / Codex / Claude Code**         | Panel AI Brain lub konfiguracja powyżej                                                     | Wybór modelu, analiza, generator wiedzy i propozycje działań                                                        |
+| Integracja                                        | Konfiguracja                                                                                | Działające operacje                                                                                                 |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **WordPress / Elementor**                         | `WP_BASE_URL=https://twoja-strona.pl`; opcjonalnie `WP_USERNAME`, `WP_APPLICATION_PASSWORD` | Sprawdzenie API i import pierwszych 100 opublikowanych stron do folderu `web`; bez publikacji i zmian w Elementorze |
+| **Google Analytics 4**                            | Logowanie Google lub konto usługi; wybór GA4 z listy albo ręcznie                           | Odczyt danych za 30 dni, kanały, lokalny zapis i wykresy na Pulpicie                                                |
+| **Google Search Console**                         | Logowanie Google lub konto usługi; wybór witryny z listy albo ręcznie                       | Dane skuteczności Web, trend dzienny, CTR, pozycja i do 20 zapytań                                                  |
+| **PostHog Cloud EU/US**                           | `POSTHOG_HOST`, `POSTHOG_PROJECT_ID`, `POSTHOG_PERSONAL_API_KEY`                            | Liczba zdarzeń według typu z ostatnich 30 dni; ręczny odczyt zapisuje wynik lokalnie                                |
+| **Google Ads API**                                | Google OAuth z adwords, token deweloperski, konto Ads i opcjonalnie MCC                     | Koszt, konwersje, CPC, CPA, ROAS, wykresy i kampanie; ręczny odczyt, bez zmian reklam                               |
+| **CSV: Google Ads / Microsoft Ads i inne kanały** | Plik CSV według szablonu z Konektorów                                                       | Import dziennych wyników i aktualizacja tych samych dat, kampanii oraz źródeł; import niezależny od API             |
+| **Resend**                                        | `RESEND_API_KEY`, `CRM_MAIL_FROM`, `CRM_MAIL_ACCESS_TOKEN`                                  | Test odczytu domen i wysyłka zatwierdzonych szkiców                                                                 |
+| **OpenRouter / Codex / Claude Code**              | Panel AI Brain lub konfiguracja powyżej                                                     | Wybór modelu, analiza, generator wiedzy i propozycje działań                                                        |
 
 CSV wymaga kolumn `date, source, campaign, spend, impressions, clicks, leads, qualified, revenue`. Daty: `YYYY-MM-DD`; kwoty w PLN; źródła: `google_ads`, `microsoft_ads`, `organic`, `gbp`, `direct`. Obsługuje separator średnik/przecinek, cudzysłowy i polskie znaki. Wartości nie mogą być ujemne, kwalifikowane leady nie mogą przekraczać leadów. Limit: 2 MB / 10 tys. wierszy. Pobierany szablon z zerami jest przykładem do uzupełnienia.
 
@@ -382,4 +392,16 @@ Trzy kroki wprowadzają w sposób pracy i opcjonalne integracje. Na telefonie do
 
 <p align="center">
   <img src="docs/screenshots/lead-hub-mobile.png" width="390" alt="Lead Hub na telefonie — karta klienta DEMO">
+</p>
+
+### Google OAuth i bezpośrednie raporty Ads · 0.7.0
+
+Logowanie firmy, wybór konta z MCC i raport reklam bez CSV. **Screenshoty używają jawnych mocków API i danych DEMO; nie pokazują wyników użytkownika.**
+
+![Google OAuth, konfiguracja konta Ads i raport kampanii DEMO](docs/screenshots/google-oauth-ads-demo.png)
+
+![Pulpit z kosztami, konwersjami i ROAS Google Ads — DEMO](docs/screenshots/google-ads-dashboard-demo.png)
+
+<p align="center">
+  <img src="docs/screenshots/google-ads-mobile-demo.png" width="390" alt="Raport Google Ads na telefonie — DEMO">
 </p>

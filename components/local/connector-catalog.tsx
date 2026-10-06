@@ -70,6 +70,13 @@ export const BRANDS: Record<string, Brand> = {
     category: "analytics",
     keywords: "google seo zapytania",
   },
+  google_ads: {
+    name: "Google Ads API",
+    mono: "Ads",
+    gradient: "from-emerald-500 to-blue-600",
+    category: "marketing",
+    keywords: "google reklamy kampanie oauth api roas mcc",
+  },
   stripe: {
     name: "Stripe",
     mono: "S",
