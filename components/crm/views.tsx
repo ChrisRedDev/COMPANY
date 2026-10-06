@@ -61,11 +61,6 @@ export function Dashboard({ edit, navigate }: ViewProps) {
   const active = sales.filter(
     (d) => !["Wygrana", "Przegrana"].includes(d.stage),
   );
-  const value = active.reduce((sum, d) => sum + d.value, 0);
-  const forecast = active.reduce(
-    (sum, d) => sum + (d.value * d.probability) / 100,
-    0,
-  );
   const won = sales.filter((d) => d.stage === "Wygrana");
   const tasks = s.tasks
     .filter((t) => !t.done)
@@ -81,45 +76,6 @@ export function Dashboard({ edit, navigate }: ViewProps) {
           <Icon name="plus" size={18} />
           Dodaj szansę
         </button>
-      </div>
-      <div className="crm-metrics">
-        {[
-          {
-            label: "Wartość otwartych szans",
-            value: money(value),
-            caption: `${active.length} szans w procesie`,
-            icon: "deals",
-          },
-          {
-            label: "Prognoza ważona",
-            value: money(forecast),
-            caption: "Wartość × szansa wygranej",
-            icon: "dashboard",
-          },
-          {
-            label: "Wygrana sprzedaż",
-            value: money(won.reduce((sum, d) => sum + d.value, 0)),
-            caption: `${won.length} zamkniętych szans`,
-            icon: "check",
-          },
-          {
-            label: "Aktywne kontakty",
-            value: s.contacts.length,
-            caption: `w ${s.firms.length} firmach`,
-            icon: "contacts",
-          },
-        ].map((item) => (
-          <div className="crm-metric" key={item.label}>
-            <div className="crm-metric-top">
-              <span>{item.label}</span>
-              <span className="crm-metric-icon">
-                <Icon name={item.icon} size={18} />
-              </span>
-            </div>
-            <strong>{item.value}</strong>
-            <small>{item.caption}</small>
-          </div>
-        ))}
       </div>
       <div className="crm-dashboard-grid growth-analytics-grid">
         <section className="crm-card">

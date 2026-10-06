@@ -10,9 +10,13 @@ Evolution Growth OS to narzędzie dla lokalnych firm usługowych, małych zespo�
 
 **Przykład:** klient trafia z reklamy, zostawia formularz i dzwoni. W Lead Hub zapisujesz te kontakty przy jednej osobie, dodajesz ofertę, rezerwację, wykonanie pracy i wpłatę. W Company Brain zbierasz ofertę i zasady komunikacji marki. AI Brain pomaga analizować kontekst oraz proponuje zadania i notatki, które zatwierdzasz przed wykonaniem.
 
-Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.7.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
+Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.8.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
 
 ![Centrum dowodzenia Evolution Growth OS](docs/screenshots/command-center.png)
+
+**W 0.8:** **Agent AI, który sam obsługuje CRM** — w każdym trybie (przeglądarka, SQLite, Supabase), z modelem przez OpenRouter, OpenAI API, lokalną Ollamą/LM Studio, subskrypcją ChatGPT (Codex CLI) albo Claude Code; tryb **autopilota**. Nowy pulpit ze **statystykami i porównaniem okresów**, **Raporty** z eksportem PDF/Markdown/CSV oraz **Harmonogram** cyklicznych raportów, follow-upów i zadań agenta. Szczegóły: [docs/AUDIT-0.8.md](docs/AUDIT-0.8.md).
+
+![Pulpit 0.8 — statystyki, harmonogram i raporty](docs/screenshots/dashboard-stats.png)
 
 **W 0.7:** logowanie Google, wybór usług i statystyki Ads bez CSV. Aplikacja zawiera również Centrum dowodzenia, wbudowanego **Evolution Agenta** bez klucza API, katalog konektorów i odczyt płatności **Stripe**. Plan i szczegóły: [docs/PRODUCT-POLISH.md](docs/PRODUCT-POLISH.md).
 
@@ -24,16 +28,19 @@ _Działająca aplikacja, lokalny zapis SQLite i zaimportowane dane demonstracyjn
 
 ## Co możesz zrobić w aplikacji
 
-| Moduł                     | Do czego służy                                                                                                                                                                                    |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.                                                                      |
-| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                                                                                       |
-| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                                                                                      |
-| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                                                                                           |
-| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                                                                                     |
-| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                                                                                           |
-| **AI Brain**              | Wbudowany Evolution Agent (offline, bez klucza) lub wybrany model przez OpenRouter, Codex CLI albo Claude Code; propozycje zadań i notatek.                                                       |
-| **Konektory i poczta**    | Katalog z filtrami; logowanie Google i odczyty Ads, GA4, Search Console, WordPress, PostHog i Stripe, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
+| Moduł                     | Do czego służy                                                                                                                                                                                      |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.                                                                        |
+| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                                                                                         |
+| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                                                                                        |
+| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                                                                                             |
+| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                                                                                       |
+| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                                                                                             |
+| **Agent AI**              | Czat, który obsługuje CRM: dodaje firmy, kontakty, szanse i zadania, zmienia etapy, pisze szkice maili, tworzy raporty i automatyzacje. Offline albo OpenRouter / OpenAI / Ollama / Codex / Claude. |
+| **Raporty**               | Raport zarządczy, sprzedaży, aktywności i usług za wybrany okres, z porównaniem do poprzedniego okresu, wykresami, rekomendacjami i podsumowaniem AI; eksport PDF, Markdown, CSV.                   |
+| **Harmonogram**           | Cykliczne zadania (codziennie, w dni robocze, co tydzień, co miesiąc): raporty, automatyczne follow-upy i polecenia dla agenta AI, z historią uruchomień.                                           |
+| **AI Brain (SQLite)**     | Agent Company Brain z notatkami i marketingiem; propozycje zadań i notatek z kontrolą wersji po stronie serwera.                                                                                    |
+| **Konektory i poczta**    | Katalog z filtrami; logowanie Google i odczyty Ads, GA4, Search Console, WordPress, PostHog i Stripe, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym.   |
 
 **Dwa sposoby pracy:** CRM i sprzedaż albo Firma usługowa. Przełączenie zmienia widoki i zachowuje dane. Lead Hub działa obok dotychczasowego CRM; nie przenosi automatycznie kontaktów ani zleceń między modułami.
 
@@ -160,6 +167,35 @@ Company Brain obsługuje foldery, wyszukiwanie, edycję, usuwanie, wersje notate
 
 Rozpakuj ZIP, a w Obsidianie wybierz **Otwórz folder jako skarbiec**. To import i eksport; edycja w Obsidianie nie synchronizuje się automatycznie z aplikacją. Eksport obejmuje notatki bieżącej przestrzeni, bez kampanii i CRM.
 
+## Agent AI: model, autopilot i obsługa CRM
+
+Sekcja **Agent AI** działa w każdym trybie przechowywania. Agent dostaje aktualny stan CRM (firmy, kontakty, szanse, otwarte zadania, harmonogram i ostatnie raporty) i odpowiada w Markdown wraz z listą **akcji**. Każdą akcję wykonujesz przyciskiem **Wykonaj** (lub **Wykonaj wszystkie**), a po włączeniu **Autopilota** agent wykonuje je sam. Akcje są walidowane przed zapisem; nieznane lub błędne propozycje są odrzucane i pokazywane w czacie.
+
+| Akcja agenta                        | Co robi                                                     |
+| ----------------------------------- | ----------------------------------------------------------- |
+| `create_company` / `create_contact` | Dodaje firmę (bez duplikatów po nazwie) i osobę kontaktową  |
+| `create_deal` / `update_deal`       | Dodaje szansę lub zmienia etap, wartość, prawdopodobieństwo |
+| `create_task` / `complete_task`     | Planuje lub zamyka zadanie                                  |
+| `draft_email`                       | Zapisuje **szkic** w Poczcie — nic nie jest wysyłane        |
+| `generate_report` / `schedule_job`  | Tworzy raport lub automatyzację w Harmonogramie             |
+
+| Silnik                              | Konfiguracja                                                                                                       |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Evolution Agent · offline**       | Działa od razu. Rozumie m.in. „Dodaj firmę Acme z Poznania”, „Dodaj zadanie … jutro”, raporty i harmonogram.       |
+| **OpenRouter API**                  | Klucz `sk-or-…` w panelu albo `OPENROUTER_API_KEY` w `.env.local`; **Pobierz listę modeli** i wybierz model.       |
+| **OpenAI API (ChatGPT)**            | Klucz `sk-…` w panelu albo `OPENAI_API_KEY`; np. `gpt-4o-mini`.                                                    |
+| **Lokalny model**                   | `LOCAL_AI_BASE_URL=http://127.0.0.1:11434/v1` (Ollama) lub `:1234/v1` (LM Studio). Dane nie opuszczają komputera.  |
+| **Subskrypcja ChatGPT · Codex CLI** | `npm i -g @openai/codex`, `codex login` kontem ChatGPT, `LOCAL_AI_CLI_ENABLED=1`. Model `default` = model z konta. |
+| **Claude Code CLI**                 | `npm i -g @anthropic-ai/claude-code`, zaloguj `claude`, `LOCAL_AI_CLI_ENABLED=1`; model np. `sonnet`.              |
+
+**Bezpieczeństwo kluczy:** klucze serwera (`OPENROUTER_API_KEY`, `OPENAI_API_KEY`, lokalny model) są używane tylko dla żądań z `localhost` albo zalogowanych użytkowników Supabase — publiczna instancja w trybie przeglądarki wymaga własnego klucza użytkownika. Klucz wpisany w panelu trzyma się w pamięci karty, a w `localStorage` tylko po zaznaczeniu **Zapamiętaj klucz na tym urządzeniu**. CLI działają wyłącznie na `localhost`. Gdy zewnętrzny dostawca nie odpowie, odpowiada agent offline z ostrzeżeniem w czacie.
+
+## Raporty i Harmonogram
+
+**Raporty** liczą KPI za okres (7/30 dni, bieżący/poprzedni miesiąc, kwartał, rok) i porównują je z poprzednim okresem tej samej długości. Raport zawiera wykresy, tabele (wygrane, szanse do zamknięcia, zaległości, zlecenia) i rekomendacje. Z wybranym modelem AI agent dopisze **podsumowanie zarządcze**. Eksport: **PDF** (druk raportu bez interfejsu), **Markdown** i **CSV** (Excel, średnik, ochrona formuł). Historia przechowuje 24 ostatnie raporty.
+
+**Harmonogram** uruchamia zadania o wskazanej godzinie czasu polskiego: raport, automatyczne follow-upy (zadania dla szans bez kolejnego kroku) albo polecenie dla agenta AI. Zadania działają, gdy aplikacja jest otwarta w przeglądarce; pominięte terminy są nadrabiane po jej otwarciu, a blokada zapobiega podwójnemu uruchomieniu w kilku kartach. Harmonogram, historia uruchomień i raporty zapisują się razem z przestrzenią: w przeglądarce, w SQLite oraz w Supabase (migracja `202610060001_automation_reports.sql`).
+
 ## AI Brain: własny dostawca i model
 
 | Dostawca                    | Jak podłączyć                                                                                                            | Rozliczenie                                       |
@@ -178,7 +214,7 @@ Agent może zaproponować **zadanie** lub **notatkę**. Sprawdź podgląd i wybi
 
 CLI działa w folderze tymczasowym: Codex z `--ignore-user-config`, `--ignore-rules`, `--ephemeral`, sandbox read-only, wyłączonym shell/unified_exec, MCP i web search; Claude z `--tools ""` i pustą, ścisłą konfiguracją MCP. Narzędzia biznesowe wykonuje aplikacja po zatwierdzeniu. Generator strony jest osobnym przepływem: zbiera publiczną treść i proponuje zestaw wiedzy.
 
-**Koszt:** analiza dopuszcza do 3000 tokenów odpowiedzi, generator do 8000; kontekst wejściowy też podlega rozliczeniu. Zużycie pokazujemy, jeśli dostawca je zwróci. Nie uruchamiamy analiz ani harmonogramów w tle.
+**Koszt:** analiza dopuszcza do 3000 tokenów odpowiedzi, generator do 8000; kontekst wejściowy też podlega rozliczeniu. Zużycie pokazujemy, jeśli dostawca je zwróci. AI Brain (SQLite) nie działa w tle; cykliczne zadania agenta konfigurujesz w Harmonogramie.
 
 ## Google OAuth, Analytics 4, Search Console i Ads
 
@@ -309,6 +345,16 @@ Testy obejmują rezerwacje i kolizje terminów, historię klienta, przełączani
 ## Screenshoty aplikacji
 
 Zrzuty pochodzą z działającej aplikacji. Dane są demonstracyjne. Ekrany AI i generatora pokazują **dostawcę testowego**, a nie odpowiedź z płatnego modelu ani research rzeczywistej firmy. Formularze pokazują przykładowe dane; screenshot nie oznacza wysłania wiadomości lub uruchomienia zewnętrznej integracji.
+
+### Agent AI, Raporty i Harmonogram (0.8)
+
+Agent offline dodaje firmę po zatwierdzeniu i przygotowuje szkice follow-up; panel po prawej wybiera silnik (OpenRouter, OpenAI, Ollama, ChatGPT przez Codex, Claude Code) i autopilota.
+
+![Agent AI — akcje do zatwierdzenia i wybór silnika](docs/screenshots/agent-ai.png)
+
+![Raport sprzedaży z porównaniem okresów i eksportem](docs/screenshots/reports.png)
+
+![Harmonogram — szablony, automatyzacje i historia uruchomień](docs/screenshots/automations.png)
 
 ### Lead Hub — od zapytania do płatności
 

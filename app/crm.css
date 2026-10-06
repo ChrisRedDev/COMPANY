@@ -2320,3 +2320,23 @@
     transition: none;
   }
 }
+@media print {
+  body.printing-report * {
+    visibility: hidden;
+  }
+  body.printing-report .report-print,
+  body.printing-report .report-print * {
+    visibility: visible;
+  }
+  body.printing-report .report-print {
+    position: absolute;
+    inset: 0 0 auto;
+    border: 0;
+    box-shadow: none;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  body.printing-report .report-actions {
+    display: none !important;
+  }
+}

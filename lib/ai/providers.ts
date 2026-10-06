@@ -96,67 +96,170 @@ export async function generate(
   if (provider === "openrouter") {
     const k = key(wid);
     if (!k) throw Error("Brak klucza OpenRouter.");
-    const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${k}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: instruction },
-          {
-            role: "user",
-            content: `Kontekst:\n${context}\nPytanie:\n${prompt}`,
-          },
-        ],
-        max_tokens: options.maxTokens || 3000,
-        temperature: 0.2,
-      }),
-      signal: AbortSignal.timeout(90000),
+    return chatCompletion({
+      provider: "openrouter",
+      key: k,
+      model,
+      system: instruction,
+      user: `Kontekst:\n${context}\nPytanie:\n${prompt}`,
+      maxTokens: options.maxTokens,
     });
-    if (!r.ok)
-      throw Error(
-        `OpenRouter HTTP ${r.status}. Sprawdź uprawnienia, środki i model.`,
-      );
-    const result = await r.json();
-    if (typeof result.choices?.[0]?.message?.content !== "string")
-      throw Error("Model nie zwrócił odpowiedzi tekstowej.");
-    return {
-      text: result.choices[0].message.content,
-      usage: result.usage ?? null,
-    };
   }
   if (process.env.LOCAL_AI_CLI_ENABLED !== "1")
     throw Error(
       "Włącz LOCAL_AI_CLI_ENABLED=1 i zaloguj wybrane CLI na swoim komputerze.",
     );
+  return provider === "claude"
+    ? runClaude(model, content)
+    : runCodex(model, content);
+}
+const endpoints = {
+  openrouter: () =>
+    process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1",
+  openai: () => process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
+  local: () => process.env.LOCAL_AI_BASE_URL || "",
+};
+const providerNames = {
+  openrouter: "OpenRouter",
+  openai: "OpenAI",
+  local: "Lokalny model",
+};
+export async function chatCompletion(options: {
+  provider: keyof typeof endpoints;
+  key?: string;
+  model: string;
+  system: string;
+  user: string;
+  history?: { role: "user" | "assistant"; content: string }[];
+  maxTokens?: number;
+}) {
+  const base = endpoints[options.provider]().replace(/\/$/, "");
+  if (!base)
+    throw Error(
+      "Ustaw LOCAL_AI_BASE_URL, np. http://127.0.0.1:11434/v1 dla Ollama.",
+    );
+  const name = providerNames[options.provider];
+  let r: Response;
+  try {
+    r = await fetch(`${base}/chat/completions`, {
+      method: "POST",
+      headers: {
+        ...(options.key ? { Authorization: `Bearer ${options.key}` } : {}),
+        "Content-Type": "application/json",
+        ...(options.provider === "openrouter"
+          ? {
+              "HTTP-Referer":
+                process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+              "X-Title": "Evolution Growth OS",
+            }
+          : {}),
+      },
+      body: JSON.stringify({
+        model: options.model,
+        messages: [
+          { role: "system", content: options.system },
+          ...(options.history ?? []),
+          { role: "user", content: options.user },
+        ],
+        max_tokens: options.maxTokens || 3000,
+        temperature: 0.2,
+      }),
+      signal: AbortSignal.timeout(120000),
+    });
+  } catch {
+    throw Error(
+      `${name}: brak połączenia z ${new URL(base).host}. Sprawdź sieć lub adres serwera.`,
+    );
+  }
+  if (!r.ok) {
+    let detail = "";
+    try {
+      const body = await r.json();
+      detail = String(body?.error?.message ?? body?.error ?? "").slice(0, 300);
+    } catch {}
+    throw Error(
+      `${name} HTTP ${r.status}${detail ? `: ${detail}` : ""}. ${r.status === 401 ? "Sprawdź klucz API." : r.status === 402 ? "Doładuj środki na koncie." : r.status === 404 ? "Sprawdź nazwę modelu." : r.status === 429 ? "Limit zapytań — spróbuj za chwilę." : "Sprawdź model i uprawnienia."}`,
+    );
+  }
+  const result = await r.json();
+  if (typeof result.choices?.[0]?.message?.content !== "string")
+    throw Error("Model nie zwrócił odpowiedzi tekstowej.");
+  return {
+    text: result.choices[0].message.content as string,
+    usage: result.usage ?? null,
+  };
+}
+export async function listModels(
+  provider: keyof typeof endpoints,
+  key?: string,
+) {
+  const base = endpoints[provider]().replace(/\/$/, "");
+  if (!base) throw Error("Brak adresu serwera modeli.");
+  const r = await fetch(`${base}/models`, {
+    headers: key ? { Authorization: `Bearer ${key}` } : {},
+    signal: AbortSignal.timeout(20000),
+  }).catch(() => {
+    throw Error(`Brak połączenia z ${new URL(base).host}.`);
+  });
+  if (!r.ok) throw Error(`HTTP ${r.status} przy pobieraniu listy modeli.`);
+  const data = await r.json();
+  if (!Array.isArray(data.data)) throw Error("Nieprawidłowa lista modeli.");
+  return data.data
+    .filter((m: { id: string }) => validModel(m.id))
+    .map((m: { id: string; name?: string }) => ({
+      id: m.id,
+      name: m.name || m.id,
+    }))
+    .slice(0, 500) as { id: string; name: string }[];
+}
+export function cliEnabled() {
+  return process.env.LOCAL_AI_CLI_ENABLED === "1";
+}
+export async function cliAvailable(bin: "codex" | "claude") {
+  if (!cliEnabled()) return false;
+  return run(bin, ["--version"])
+    .then(() => true)
+    .catch(() => false);
+}
+export async function runClaude(model: string, content: string) {
+  if (!cliEnabled())
+    throw Error(
+      "Włącz LOCAL_AI_CLI_ENABLED=1 i zaloguj Claude Code na swoim komputerze.",
+    );
   const folder = await mkdtemp(join(tmpdir(), "evolution-ai-"));
   try {
-    if (provider === "claude") {
-      const stdout = await run(
-        "claude",
-        [
-          "-p",
-          "--model",
-          model,
-          "--tools",
-          "",
-          "--strict-mcp-config",
-          "--mcp-config",
-          '{"mcpServers":{}}',
-          "--output-format",
-          "json",
-        ],
-        content,
-        folder,
-      );
-      const result = JSON.parse(stdout);
-      if (result.is_error || typeof result.result !== "string")
-        throw Error("Claude Code nie zwrócił odpowiedzi.");
-      return { text: result.result, usage: result.usage ?? null };
-    }
+    const stdout = await run(
+      "claude",
+      [
+        "-p",
+        "--model",
+        model,
+        "--tools",
+        "",
+        "--strict-mcp-config",
+        "--mcp-config",
+        '{"mcpServers":{}}',
+        "--output-format",
+        "json",
+      ],
+      content,
+      folder,
+    );
+    const result = JSON.parse(stdout);
+    if (result.is_error || typeof result.result !== "string")
+      throw Error("Claude Code nie zwrócił odpowiedzi.");
+    return { text: result.result as string, usage: result.usage ?? null };
+  } finally {
+    await rm(folder, { recursive: true, force: true });
+  }
+}
+export async function runCodex(model: string, content: string) {
+  if (!cliEnabled())
+    throw Error(
+      "Włącz LOCAL_AI_CLI_ENABLED=1 i zaloguj Codex CLI (codex login) kontem ChatGPT.",
+    );
+  const folder = await mkdtemp(join(tmpdir(), "evolution-ai-"));
+  try {
     const output = join(folder, "answer.txt");
     await run(
       "codex",
@@ -176,8 +279,7 @@ export async function generate(
         "mcp_servers={}",
         "-c",
         'web_search="disabled"',
-        "--model",
-        model,
+        ...(model && model !== "default" ? ["--model", model] : []),
         "--output-last-message",
         output,
         "-",
