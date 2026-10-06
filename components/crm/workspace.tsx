@@ -29,6 +29,11 @@ import JobForm from "../services/job-form";
 import type { Deal } from "@/lib/crm/model";
 import Onboarding from "./onboarding";
 import CommandCenter from "./command-center";
+import StatsBoard from "../insights/stats-board";
+import Reports from "../reports/reports";
+import Automations from "../automation/automations";
+import Copilot from "../copilot/copilot";
+import { useScheduler } from "@/stores/scheduler";
 const NAV: { id: Section; title: string; description: string }[] = [
   {
     id: "dashboard",
@@ -71,6 +76,16 @@ const NAV: { id: Section; title: string; description: string }[] = [
     description: "Asystent, który pomaga wrócić do kontaktu.",
   },
   {
+    id: "reports",
+    title: "Raporty",
+    description: "Raporty zarządcze, sprzedaży i aktywności z eksportem PDF.",
+  },
+  {
+    id: "automations",
+    title: "Harmonogram",
+    description: "Cykliczne raporty, follow-upy i zadania agenta AI.",
+  },
+  {
     id: "brain",
     title: "Company Brain",
     description: "Wiedza firmy w notatkach Markdown i linkach.",
@@ -82,8 +97,8 @@ const NAV: { id: Section; title: string; description: string }[] = [
   },
   {
     id: "ai",
-    title: "AI Brain",
-    description: "Twój agent, model i propozycje do zatwierdzenia.",
+    title: "Agent AI",
+    description: "Agent, który analizuje dane i sam obsługuje CRM.",
   },
   {
     id: "settings",
@@ -238,16 +253,10 @@ export default function Workspace({
     setNavOpen(false);
   };
   const askAgent = (text: string) => {
-    if (isSqlite() && cloud?.id) {
-      setAgentPrompt({ text, at: Date.now() });
-      navigate("ai");
-    } else {
-      notify(
-        "Agent AI analizuje dane w lokalnej bazie SQLite. Uruchom aplikację poleceniem npm run dev:localdb.",
-      );
-      navigate("agent");
-    }
+    setAgentPrompt({ text, at: Date.now() });
+    navigate("ai");
   };
+  useScheduler(ready && !readOnly && !storageBusy, notify);
   const compose = (contact?: Contact) => {
     setSection("mail");
     setComposer({ contact });
@@ -331,7 +340,9 @@ export default function Workspace({
           ))}
         <div className="crm-nav-caption">KOMUNIKACJA I AUTOMATYZACJA</div>
         {navigation
-          .filter((n) => ["mail", "agent"].includes(n.id))
+          .filter((n) =>
+            ["ai", "mail", "agent", "automations", "reports"].includes(n.id),
+          )
           .map((n) => (
             <button
               key={n.id}
@@ -340,16 +351,30 @@ export default function Workspace({
               onClick={() => navigate(n.id)}
               aria-current={section === n.id ? "page" : undefined}
             >
-              <Icon name={n.id === "leads" ? "contacts" : n.id} />
+              <Icon
+                name={
+                  n.id === "ai"
+                    ? "spark"
+                    : n.id === "automations"
+                      ? "clock"
+                      : n.id === "reports"
+                        ? "file"
+                        : n.id
+                }
+              />
               <span>{n.title}</span>
-              {n.id === "agent" && (
-                <span className="crm-mini-badge">AGENT</span>
-              )}
+              {n.id === "ai" && <span className="crm-mini-badge">AI</span>}
+              {n.id === "automations" &&
+                s.automation.jobs.some((j) => j.enabled) && (
+                  <small>
+                    {s.automation.jobs.filter((j) => j.enabled).length}
+                  </small>
+                )}
             </button>
           ))}
         <div className="crm-nav-caption">WIEDZA I DANE</div>
         {navigation
-          .filter((n) => ["brain", "connectors", "ai"].includes(n.id))
+          .filter((n) => ["brain", "connectors"].includes(n.id))
           .map((n) => (
             <button
               key={n.id}
@@ -357,15 +382,7 @@ export default function Workspace({
               className={`crm-nav-item ${section === n.id ? "active" : ""}`}
               onClick={() => navigate(n.id)}
             >
-              <Icon
-                name={
-                  n.id === "brain"
-                    ? "companies"
-                    : n.id === "ai"
-                      ? "agent"
-                      : "settings"
-                }
-              />
+              <Icon name={n.id === "brain" ? "companies" : "settings"} />
               <span>{n.title}</span>
             </button>
           ))}
@@ -379,8 +396,8 @@ export default function Workspace({
             <br />
             Daj sobie przestrzeń na rozwój.
           </p>
-          <button className="crm-text-button" onClick={() => navigate("agent")}>
-            Poznaj agenta <Icon name="arrow" size={15} />
+          <button className="crm-text-button" onClick={() => navigate("ai")}>
+            Otwórz agenta AI <Icon name="arrow" size={15} />
           </button>
         </div>
         <button
@@ -492,59 +509,67 @@ export default function Workspace({
               aplikacji.
             </div>
           )}
-          {query && ["dashboard", "agent", "settings"].includes(section) && (
-            <div className="crm-card crm-search-results">
-              <h3>Wyniki wyszukiwania</h3>
-              {[
-                ...s.firms
-                  .filter((f) =>
-                    f.name.toLowerCase().includes(query.toLowerCase()),
-                  )
-                  .map((f) => ({
-                    id: f.id,
-                    name: f.name,
-                    label: serviceMode ? "Klient" : "Firma",
-                    open: () => setEditor({ kind: "firm", item: f }),
-                  })),
-                ...s.contacts
-                  .filter((c) =>
-                    `${c.name} ${c.email}`
-                      .toLowerCase()
-                      .includes(query.toLowerCase()),
-                  )
-                  .map((c) => ({
-                    id: c.id,
-                    name: c.name,
-                    label: "Kontakt",
-                    open: () => setEditor({ kind: "contact", item: c }),
-                  })),
-                ...s.deals
-                  .filter((d) =>
-                    d.name.toLowerCase().includes(query.toLowerCase()),
-                  )
-                  .map((d) => ({
-                    id: d.id,
-                    name: d.name,
-                    label: d.service ? "Zlecenie" : "Szansa",
-                    open: () =>
-                      d.service
-                        ? openJob(d)
-                        : setEditor({ kind: "deal", item: d }),
-                  })),
-              ]
-                .slice(0, 10)
-                .map((item) => (
-                  <button key={item.id} onClick={item.open}>
-                    {item.name}
-                    <small>{item.label}</small>
-                  </button>
-                ))}
-              <p className="crm-muted">
-                Wyświetlamy do 10 wyników. Pełne filtrowanie znajdziesz w
-                odpowiednim module.
-              </p>
-            </div>
-          )}
+          {query &&
+            [
+              "dashboard",
+              "agent",
+              "settings",
+              "ai",
+              "reports",
+              "automations",
+            ].includes(section) && (
+              <div className="crm-card crm-search-results">
+                <h3>Wyniki wyszukiwania</h3>
+                {[
+                  ...s.firms
+                    .filter((f) =>
+                      f.name.toLowerCase().includes(query.toLowerCase()),
+                    )
+                    .map((f) => ({
+                      id: f.id,
+                      name: f.name,
+                      label: serviceMode ? "Klient" : "Firma",
+                      open: () => setEditor({ kind: "firm", item: f }),
+                    })),
+                  ...s.contacts
+                    .filter((c) =>
+                      `${c.name} ${c.email}`
+                        .toLowerCase()
+                        .includes(query.toLowerCase()),
+                    )
+                    .map((c) => ({
+                      id: c.id,
+                      name: c.name,
+                      label: "Kontakt",
+                      open: () => setEditor({ kind: "contact", item: c }),
+                    })),
+                  ...s.deals
+                    .filter((d) =>
+                      d.name.toLowerCase().includes(query.toLowerCase()),
+                    )
+                    .map((d) => ({
+                      id: d.id,
+                      name: d.name,
+                      label: d.service ? "Zlecenie" : "Szansa",
+                      open: () =>
+                        d.service
+                          ? openJob(d)
+                          : setEditor({ kind: "deal", item: d }),
+                    })),
+                ]
+                  .slice(0, 10)
+                  .map((item) => (
+                    <button key={item.id} onClick={item.open}>
+                      {item.name}
+                      <small>{item.label}</small>
+                    </button>
+                  ))}
+                <p className="crm-muted">
+                  Wyświetlamy do 10 wyników. Pełne filtrowanie znajdziesz w
+                  odpowiednim module.
+                </p>
+              </div>
+            )}
           {section === "leads" &&
             (cloud?.id ? (
               <LeadHub
@@ -568,11 +593,14 @@ export default function Workspace({
               </section>
             ))}
           {section === "dashboard" && !query && (
-            <CommandCenter
-              navigate={navigate}
-              askAgent={askAgent}
-              serviceMode={serviceMode}
-            />
+            <>
+              <CommandCenter
+                navigate={navigate}
+                askAgent={askAgent}
+                serviceMode={serviceMode}
+              />
+              <StatsBoard navigate={navigate} serviceMode={serviceMode} />
+            </>
           )}
           {section === "dashboard" && !serviceMode && (
             <>
@@ -603,7 +631,7 @@ export default function Workspace({
               )}
             </>
           )}
-          {["brain", "connectors", "ai"].includes(section) &&
+          {["brain", "connectors"].includes(section) &&
             (!isSqlite() || !cloud?.id) && <LocalUnavailable />}
           {section === "brain" && isSqlite() && cloud?.id && (
             <Brain wid={cloud.id} openAi={() => navigate("ai")} />
@@ -616,13 +644,38 @@ export default function Workspace({
               openBrain={() => navigate("brain")}
             />
           )}
-          {section === "ai" && isSqlite() && cloud?.id && (
-            <AiAgent
-              wid={cloud.id}
-              request={agentPrompt}
-              storageBusy={storageBusy}
-              onApplied={() => reloadDatabase?.()}
+          {section === "ai" && (
+            <>
+              <Copilot
+                workspace={cloud?.id ?? "local"}
+                readOnly={!!readOnly}
+                request={agentPrompt}
+              />
+              {isSqlite() && cloud?.id && (
+                <details className="crm-card mt-6 p-6">
+                  <summary className="cursor-pointer font-semibold">
+                    Agent Company Brain (SQLite) — analiza notatek i marketingu
+                  </summary>
+                  <div className="mt-5">
+                    <AiAgent
+                      wid={cloud.id}
+                      storageBusy={storageBusy}
+                      onApplied={() => reloadDatabase?.()}
+                    />
+                  </div>
+                </details>
+              )}
+            </>
+          )}
+          {section === "reports" && (
+            <Reports
+              notify={notify}
+              navigate={navigate}
+              readOnly={!!readOnly}
             />
+          )}
+          {section === "automations" && (
+            <Automations notify={notify} readOnly={!!readOnly} />
           )}
           {section === "companies" &&
             (serviceMode ? (

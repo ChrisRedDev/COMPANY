@@ -3,6 +3,16 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { parseBackup } from "@/lib/crm/backup";
 import {
+  emptyAutomation,
+  validateAutomation,
+  MAX_REPORTS,
+  MAX_RUNS,
+  type Automation,
+  type Job,
+  type JobRun,
+  type ReportRecord,
+} from "@/lib/automation/model";
+import {
   seedData,
   type WorkspaceData,
   type Firm,
@@ -16,6 +26,12 @@ type State = WorkspaceData & {
   sender: string;
   agentEnabled: boolean;
   businessMode: "crm" | "services";
+  automation: Automation;
+  saveJob: (job: Job) => void;
+  deleteJob: (id: string) => void;
+  addRun: (run: JobRun) => void;
+  saveReport: (report: ReportRecord) => void;
+  deleteReport: (id: string) => void;
   setBusinessMode: (mode: "crm" | "services") => void;
   saveFirm: (item: Firm) => void;
   saveContact: (item: Contact) => void;
@@ -46,6 +62,39 @@ export const useCrm = create<State>()(
       sender: "Zespół AI Evolution Polska",
       agentEnabled: false,
       businessMode: "crm",
+      automation: emptyAutomation(),
+      saveJob: (job) =>
+        set((s) => ({
+          automation: { ...s.automation, jobs: upsert(s.automation.jobs, job) },
+        })),
+      deleteJob: (key) =>
+        set((s) => ({
+          automation: {
+            ...s.automation,
+            jobs: s.automation.jobs.filter((j) => j.id !== key),
+          },
+        })),
+      addRun: (run) =>
+        set((s) => ({
+          automation: {
+            ...s.automation,
+            runs: [run, ...s.automation.runs].slice(0, MAX_RUNS),
+          },
+        })),
+      saveReport: (report) =>
+        set((s) => ({
+          automation: {
+            ...s.automation,
+            reports: upsert(s.automation.reports, report).slice(0, MAX_REPORTS),
+          },
+        })),
+      deleteReport: (key) =>
+        set((s) => ({
+          automation: {
+            ...s.automation,
+            reports: s.automation.reports.filter((r) => r.id !== key),
+          },
+        })),
       setBusinessMode: (businessMode) => set({ businessMode }),
       saveFirm: (item) => set((s) => ({ firms: upsert(s.firms, item) })),
       saveContact: (item) =>
@@ -107,6 +156,13 @@ export const useCrm = create<State>()(
               : current.sender,
           agentEnabled: saved.agentEnabled === true,
           businessMode: saved.businessMode === "services" ? "services" : "crm",
+          automation: (() => {
+            try {
+              return validateAutomation(saved.automation);
+            } catch {
+              return emptyAutomation();
+            }
+          })(),
         };
       },
       onRehydrateStorage: () => (_state, error) => {
@@ -125,6 +181,7 @@ export const useCrm = create<State>()(
         sender: s.sender,
         agentEnabled: s.agentEnabled,
         businessMode: s.businessMode,
+        automation: s.automation,
       }),
     },
   ),

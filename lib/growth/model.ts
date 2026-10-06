@@ -1,5 +1,10 @@
 import { parseBackup } from "../crm/backup";
 import type { WorkspaceData } from "../crm/model";
+import {
+  emptyAutomation,
+  validateAutomation,
+  type Automation,
+} from "../automation/model";
 export const ROLES = ["owner", "admin", "marketer", "viewer"] as const;
 export type Role = (typeof ROLES)[number];
 export type WorkspaceInfo = { id: string; name: string; role: Role };
@@ -8,6 +13,7 @@ export type Preferences = {
   sender: string;
   agentEnabled: boolean;
   businessMode?: "crm" | "services";
+  automation?: Automation;
 };
 export type Snapshot = {
   data: WorkspaceData;
@@ -47,12 +53,14 @@ export function validateSnapshot(value: unknown): Snapshot {
       sender: v.settings.sender,
       agentEnabled: v.settings.agentEnabled,
       businessMode: v.settings.businessMode ?? "crm",
+      automation: validateAutomation(v.settings.automation),
     },
     revision: v.revision,
   };
 }
 export function snapshot(
-  state: WorkspaceData & Preferences,
+  state: WorkspaceData &
+    Omit<Preferences, "automation"> & { automation?: Automation },
   revision: number,
 ): Snapshot {
   return {
@@ -62,6 +70,7 @@ export function snapshot(
       sender: state.sender,
       agentEnabled: state.agentEnabled,
       businessMode: state.businessMode ?? "crm",
+      automation: state.automation ?? emptyAutomation(),
     },
     data: {
       firms: state.firms,

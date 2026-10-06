@@ -13,6 +13,7 @@ import {
   type WorkspaceInfo,
 } from "@/lib/growth/model";
 import { downloadFile } from "@/lib/crm/backup";
+import { emptyAutomation } from "@/lib/automation/model";
 import { Field } from "../crm/ui";
 export default function CloudWorkspace({ user }: { user: User }) {
   const selectionKey = `growth-os-space:${isSqlite() ? "sqlite" : "cloud"}:${user.id}`;
@@ -94,6 +95,7 @@ export default function CloudWorkspace({ user }: { user: User }) {
       sender: "",
       agentEnabled: false,
       businessMode: "crm",
+      automation: emptyAutomation(),
     });
     let unsubscribe = () => {};
     const save = async () => {
