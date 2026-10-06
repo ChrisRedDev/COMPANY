@@ -3,6 +3,7 @@ export const PROVIDERS = [
   "posthog",
   "ga4",
   "search_console",
+  "stripe",
 ] as const;
 export type Provider = (typeof PROVIDERS)[number];
 export const providerLabels: Record<Provider, string> = {
@@ -10,6 +11,22 @@ export const providerLabels: Record<Provider, string> = {
   posthog: "PostHog",
   ga4: "Google Analytics 4",
   search_console: "Google Search Console",
+  stripe: "Stripe",
+};
+export type PaymentsReport = {
+  currency: string;
+  from: string;
+  to: string;
+  gross: number;
+  refunded: number;
+  net: number;
+  count: number;
+  failed: number;
+  average: number;
+  available: number;
+  pending: number;
+  daily: { date: string; amount: number }[];
+  truncated: boolean;
 };
 export type GoogleProvider = "ga4" | "search_console";
 export type Resource = { propertyId?: string; siteUrl?: string };
@@ -30,6 +47,7 @@ export type IntegrationResult = {
   documents?: { title: string; content: string }[];
   events?: unknown[][];
   report?: GoogleReport;
+  payments?: PaymentsReport;
   synced_at?: string;
 };
 export function validateResource(

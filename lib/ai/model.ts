@@ -1,6 +1,14 @@
 import { validateDocument, type Category } from "../knowledge/model";
 export const AI_PROVIDERS = ["openrouter", "codex", "claude"] as const;
 export type AiProvider = (typeof AI_PROVIDERS)[number];
+export const AGENT_PROVIDERS = ["builtin", ...AI_PROVIDERS] as const;
+export type AgentProvider = (typeof AGENT_PROVIDERS)[number];
+export const agentProviderLabels: Record<AgentProvider, string> = {
+  builtin: "Evolution Agent · wbudowany",
+  openrouter: "OpenRouter API",
+  codex: "ChatGPT przez Codex CLI",
+  claude: "Claude Code CLI",
+};
 export type Proposal =
   | { type: "create_task"; title: string; companyId: string; date: string }
   | { type: "create_note"; title: string; category: Category; content: string };

@@ -2302,3 +2302,21 @@
     backdrop-filter: none;
   }
 }
+.crm-connector {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.crm-connector:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 40px -20px #41367a40,
+    inset 0 1px 0 #ffffff;
+}
+@media (prefers-reduced-motion: reduce) {
+  .crm-connector,
+  .crm-connector:hover {
+    transform: none;
+    transition: none;
+  }
+}

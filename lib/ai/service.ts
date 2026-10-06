@@ -6,7 +6,8 @@ import { marketingRows } from "../integrations/repository";
 import { metrics } from "../integrations/marketing";
 import { today } from "../crm/model";
 import { validateSnapshot } from "../growth/model";
-import { parseAnswer, type AiProvider, type Proposal } from "./model";
+import { parseAnswer, type AgentProvider, type Proposal } from "./model";
+import { builtinAnswer } from "./builtin";
 import { generate } from "./providers";
 function ensure() {
   database().exec(
@@ -83,16 +84,14 @@ export function buildContext(wid: string, prompt: string) {
       companies: s.data.firms
         .slice(0, 20)
         .map((f) => ({ id: f.id, name: f.name, industry: f.industry })),
-      deals: s.data.deals
-        .slice(0, 20)
-        .map((d) =>
-          d.service
-            ? {
-                ...d,
-                service: { ...d.service, history: d.service.history.slice(-3) },
-              }
-            : d,
-        ),
+      deals: s.data.deals.slice(0, 20).map((d) =>
+        d.service
+          ? {
+              ...d,
+              service: { ...d.service, history: d.service.history.slice(-3) },
+            }
+          : d,
+      ),
       tasks: s.data.tasks.filter((t) => !t.done).slice(0, 20),
       notes,
       recentConversation: history(wid)
@@ -106,7 +105,7 @@ export function buildContext(wid: string, prompt: string) {
 }
 export async function ask(
   wid: string,
-  provider: AiProvider,
+  provider: AgentProvider,
   model: string,
   prompt: string,
 ) {
@@ -114,7 +113,10 @@ export async function ask(
     throw Error("Pytanie może mieć 1–2000 znaków.");
   ensure();
   const context = buildContext(wid, prompt),
-    result = await generate(wid, provider, model, prompt, context.text),
+    result =
+      provider === "builtin"
+        ? { text: builtinAnswer(prompt, context.text), usage: null }
+        : await generate(wid, provider, model, prompt, context.text),
     parsed = parseAnswer(result.text),
     messageId = randomUUID();
   transaction(() => {
