@@ -72,11 +72,10 @@ export function Dashboard({ edit, navigate }: ViewProps) {
     .sort((a, b) => a.date.localeCompare(b.date));
   return (
     <>
-      <div className="crm-welcome">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <span className="crm-eyebrow">TWÓJ PLAN NA DZIŚ</span>
-          <h2>Dobre relacje. Lepsza sprzedaż.</h2>
-          <p>Wszystko, czego potrzebujesz, żeby zrobić kolejny krok.</p>
+          <span className="crm-eyebrow">SPRZEDAŻ</span>
+          <h2 className="mt-1 text-xl!">Dobre relacje. Lepsza sprzedaż.</h2>
         </div>
         <button className="crm-button" onClick={() => edit({ kind: "deal" })}>
           <Icon name="plus" size={18} />

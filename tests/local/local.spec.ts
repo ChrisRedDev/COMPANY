@@ -234,6 +234,7 @@ test("okno agenta: wybór modelu, odpowiedź i zatwierdzenie z testowym dostawc�
     });
   });
   await page.getByRole("button", { name: "AI Brain", exact: true }).click();
+  await page.getByLabel("Dostawca AI").selectOption("openrouter");
   await page.getByRole("button", { name: "Pobierz modele" }).click();
   await page.getByLabel("Model AI", { exact: true }).fill("test/wybrany-model");
   await page

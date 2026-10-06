@@ -28,6 +28,7 @@ import ServiceJobs from "../services/jobs";
 import JobForm from "../services/job-form";
 import type { Deal } from "@/lib/crm/model";
 import Onboarding from "./onboarding";
+import CommandCenter from "./command-center";
 const NAV: { id: Section; title: string; description: string }[] = [
   {
     id: "dashboard",
@@ -133,6 +134,10 @@ export default function Workspace({
     setJobEditor({ item, companyId });
   const [ready, setReady] = useState(false);
   const [section, setSection] = useState<Section>("dashboard");
+  const [agentPrompt, setAgentPrompt] = useState<{
+    text: string;
+    at: number;
+  } | null>(null);
   const [query, setQuery] = useState("");
   const [navOpen, setNavOpen] = useState(false);
   const [editor, setEditor] = useState<Editor | null>(null);
@@ -226,6 +231,17 @@ export default function Workspace({
     setSection(target);
     setQuery("");
     setNavOpen(false);
+  };
+  const askAgent = (text: string) => {
+    if (isSqlite() && cloud?.id) {
+      setAgentPrompt({ text, at: Date.now() });
+      navigate("ai");
+    } else {
+      notify(
+        "Agent AI analizuje dane w lokalnej bazie SQLite. Uruchom aplikację poleceniem npm run dev:localdb.",
+      );
+      navigate("agent");
+    }
   };
   const compose = (contact?: Contact) => {
     setSection("mail");
@@ -546,6 +562,13 @@ export default function Workspace({
                 </p>
               </section>
             ))}
+          {section === "dashboard" && !query && (
+            <CommandCenter
+              navigate={navigate}
+              askAgent={askAgent}
+              serviceMode={serviceMode}
+            />
+          )}
           {section === "dashboard" && !serviceMode && (
             <>
               {isSqlite() && cloud?.id && (
@@ -591,6 +614,7 @@ export default function Workspace({
           {section === "ai" && isSqlite() && cloud?.id && (
             <AiAgent
               wid={cloud.id}
+              request={agentPrompt}
               storageBusy={storageBusy}
               onApplied={() => reloadDatabase?.()}
             />

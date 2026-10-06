@@ -8,6 +8,7 @@ import {
   type IntegrationResult,
 } from "./model";
 import { apiJson } from "./http";
+import { readStripe, stripeConfigured } from "./stripe";
 export type { Provider } from "./model";
 export function providerConfig(provider: Provider, resource: Resource = {}) {
   if (provider === "ga4" || provider === "search_console")
@@ -23,6 +24,13 @@ export function providerConfig(provider: Provider, resource: Resource = {}) {
         provider === "ga4"
           ? "Identyfikator usługi GA4 w panelu poniżej"
           : "Usługa Search Console w panelu poniżej",
+      ],
+    };
+  if (provider === "stripe")
+    return {
+      configured: stripeConfigured(),
+      required: [
+        "STRIPE_SECRET_KEY (zalecany klucz ograniczony rk_… z odczytem Balance i Charges)",
       ],
     };
   if (provider === "wordpress")
@@ -75,6 +83,7 @@ export function adapter(
     throw Error("Nieznany dostawca integracji.");
   if (provider === "ga4" || provider === "search_console")
     return { provider, read: () => readGoogle(provider, resource) };
+  if (provider === "stripe") return { provider, read: readStripe };
   if (provider === "wordpress")
     return {
       provider,

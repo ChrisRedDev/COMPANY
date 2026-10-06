@@ -10,7 +10,11 @@ Evolution Growth OS to narzędzie dla lokalnych firm usługowych, małych zespo�
 
 **Przykład:** klient trafia z reklamy, zostawia formularz i dzwoni. W Lead Hub zapisujesz te kontakty przy jednej osobie, dodajesz ofertę, rezerwację, wykonanie pracy i wpłatę. W Company Brain zbierasz ofertę i zasady komunikacji marki. AI Brain pomaga analizować kontekst oraz proponuje zadania i notatki, które zatwierdzasz przed wykonaniem.
 
-Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.5.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
+Jasny interfejs ze szkłem i miękkimi gradientami, widok mobilny, kwoty w PLN, walidacja NIP oraz polskie daty. **AI Evolution Polska · wersja 0.6.0.** Zalecana edycja lokalna zapisuje dane w SQLite i nie wymaga konta Supabase. Podłączenie AI jest opcjonalne.
+
+![Centrum dowodzenia Evolution Growth OS](docs/screenshots/command-center.png)
+
+**Nowość w 0.6:** Centrum dowodzenia z kondycją firmy i rekomendacjami AI, wbudowany **Evolution Agent** działający bez klucza API, katalog konektorów premium i odczyt płatności **Stripe**. Plan i szczegóły: [docs/PRODUCT-POLISH.md](docs/PRODUCT-POLISH.md).
 
 ![Pulpit Evolution Growth OS z wynikami kampanii DEMO](docs/screenshots/local-dashboard.png)
 
@@ -20,16 +24,16 @@ _Działająca aplikacja, lokalny zapis SQLite i zaimportowane dane demonstracyjn
 
 ## Co możesz zrobić w aplikacji
 
-| Moduł                     | Do czego służy                                                                                                                                       |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.                         |
-| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                                          |
-| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                                         |
-| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                                              |
-| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                                        |
-| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                                              |
-| **AI Brain**              | Wybrany model przez OpenRouter, Codex CLI lub Claude Code; analiza CRM i wiedzy oraz propozycje zadań i notatek.                                     |
-| **Konektory i poczta**    | Ręczne odczyty GA4, Search Console, WordPress i PostHog, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
+| Moduł                     | Do czego służy                                                                                                                                                                   |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Lead Hub**              | Jedna karta potencjalnego klienta: kontakt, status, źródła, kampanie, UTM, rozmowy, oferty, rezerwacje, realizacje i wpłaty.                                                     |
+| **CRM i sprzedaż**        | Firmy, kontakty, szanse sprzedaży, etapy, zadania, wyszukiwanie i eksporty.                                                                                                      |
+| **Firma usługowa**        | Klienci, rezerwacje prac, terminy, przypisanie osoby lub stanowiska, kontrola kolizji i historia realizacji.                                                                     |
+| **Pulpit**                | Wykresy sprzedaży i usług; po imporcie CSV także wyniki marketingu, koszty, leady i wskaźniki kampanii.                                                                          |
+| **Company Brain**         | Wiedza firmy w Markdown: oferta, marka, marketing, foldery, wikilinki, wersje notatek i eksport do Obsidiana.                                                                    |
+| **Generator mózgu firmy** | Publiczna strona firmy → szkic wiedzy ze źródłami i pytaniami o braki → podgląd → zatwierdzenie zapisu.                                                                          |
+| **AI Brain**              | Wbudowany Evolution Agent (offline, bez klucza) lub wybrany model przez OpenRouter, Codex CLI albo Claude Code; propozycje zadań i notatek.                                      |
+| **Konektory i poczta**    | Katalog z filtrami; ręczne odczyty GA4, Search Console, WordPress, PostHog i Stripe, import wyników kampanii, zatwierdzana wysyłka przez Resend lub szkic w programie pocztowym. |
 
 **Dwa sposoby pracy:** CRM i sprzedaż albo Firma usługowa. Przełączenie zmienia widoki i zachowuje dane. Lead Hub działa obok dotychczasowego CRM; nie przenosi automatycznie kontaktów ani zleceń między modułami.
 

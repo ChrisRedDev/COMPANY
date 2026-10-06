@@ -33,7 +33,7 @@ import {
   clearSessionKey,
 } from "@/lib/ai/providers";
 import { ask, history, decide } from "@/lib/ai/service";
-import { AI_PROVIDERS, validModel } from "@/lib/ai/model";
+import { AI_PROVIDERS, AGENT_PROVIDERS, validModel } from "@/lib/ai/model";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ path: string[] }> };
@@ -182,7 +182,7 @@ async function handler(request: Request, context: Context) {
             return json({ messages: history(wid) });
           }
           if (
-            !AI_PROVIDERS.includes(body.provider as never) ||
+            !AGENT_PROVIDERS.includes(body.provider as never) ||
             !validModel(body.model) ||
             typeof body.prompt !== "string"
           )
@@ -190,7 +190,7 @@ async function handler(request: Request, context: Context) {
           return json(
             await ask(
               wid,
-              body.provider as "openrouter" | "codex" | "claude",
+              body.provider as (typeof AGENT_PROVIDERS)[number],
               body.model,
               body.prompt,
             ),

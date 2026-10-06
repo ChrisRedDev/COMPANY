@@ -55,6 +55,7 @@ export async function aiStatus(wid: string) {
     ),
   );
   return {
+    builtin: true,
     openrouter: Boolean(key(wid)),
     codex: availability[0],
     claude: availability[1],
